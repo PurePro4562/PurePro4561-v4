@@ -1236,25 +1236,25 @@ function pickBestImageFile(files) {
   const imageFiles = files.filter(f => f.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i));
   if (imageFiles.length === 0) return null;
 
-  // Prefer true icons/logos over splash/og images.
+  // Prefer nice-looking splash/thumb/logo images that work well as cover art.
   const score = (f) => {
     const name = f.toLowerCase();
     let s = 0;
 
-    // Strong signals
-    if (/(^|\/)(favicon|icon|logo)([-_.]|\b)/.test(name)) s += 100;
-    if (/(^|\/)icons?\//.test(name)) s += 25;
+    // Strong signals – these are usually what we want to show in the grid
+    if (/splash/.test(name)) s += 100;
+    if (/thumb/.test(name)) s += 80;
+    if (/(^|\/)(favicon|icon|logo)([-_.]|\b)/.test(name)) s += 70;
+    if (/(^|\/)icons?\//.test(name)) s += 30;
     if (/[-_.](256|512|1024)\b/.test(name)) s += 15;
 
-    // Weak signals (often OK, but not as ideal as icon/logo)
-    if (/thumb/.test(name)) s += 5;
-    if (/(^|\/)image\b/.test(name)) s += 2;
+    // Other "okay" names
+    if (/(^|\/)image\b/.test(name)) s += 5;
 
-    // Things that commonly aren't "icons"
-    if (/splash/.test(name)) s -= 10;
-    if (/og[_-]?image/.test(name)) s -= 15;
-    if (/banner/.test(name)) s -= 8;
-    if (/background|bg\b/.test(name)) s -= 6;
+    // Things that commonly aren't good cover art
+    if (/og[_-]?image/.test(name)) s -= 20;
+    if (/banner/.test(name)) s -= 15;
+    if (/background|bg\b/.test(name)) s -= 10;
 
     // Prefer smaller/standard icon formats a bit
     if (name.endsWith('.ico')) s += 8;
