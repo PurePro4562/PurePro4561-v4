@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
-import { playCoin, playWin, playLose, playCard, playChip } from '../audio';
+import { playCoin, playWin, playLose, playCard, playChip, playClick } from '../audio';
 
 const SUITS = ['♠', '♥', '♦', '♣'];
 const VALUES = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
@@ -13,6 +13,8 @@ interface BlackjackProps {
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
   themeGradient: string;
+  themeColor: string;
+  onRecordBet: (amount: number, winnings: number, game: string, type: 'chips' | 'tokens') => void;
 }
 
 const getCardValue = (card: Card) => {
@@ -36,7 +38,7 @@ const calculateScore = (hand: Card[]) => {
   return score;
 };
 
-export default function Blackjack({ balance, setBalance, onExit, themeGradient }: BlackjackProps) {
+export default function Blackjack({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet }: BlackjackProps) {
   const [deck, setDeck] = useState<Card[]>([]);
   const [playerHand, setPlayerHand] = useState<Card[]>([]);
   const [dealerHand, setDealerHand] = useState<Card[]>([]);
@@ -153,22 +155,27 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
   const endGame = (pHand: Card[], dHand: Card[], msg: string) => {
     setGameState('gameOver');
     setMessage(msg);
+    setTimeout(() => setMessage(''), 3000);
     
     if (dHand[1] && dHand[1].hidden) {
       dHand[1].hidden = false;
       setDealerHand([...dHand]);
     }
 
+    let winnings = 0;
     if (msg.includes('win')) {
       const multiplier = msg.includes('Blackjack') ? 2.5 : 2;
-      setBalance(b => b + bet * multiplier);
+      winnings = bet * multiplier;
+      setBalance(b => b + winnings);
       playWin();
     } else if (msg.includes('Push')) {
-      setBalance(b => b + bet);
+      winnings = bet;
+      setBalance(b => b + winnings);
       playCoin();
     } else {
       playLose();
     }
+    onRecordBet(bet, winnings, 'High Roller Blackjack', 'chips');
   };
 
   const renderCard = (card: Card, index: number) => {
@@ -179,8 +186,8 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
         animate={{ opacity: 1, x: 0, y: 0, rotate: 0 }}
         transition={{ type: 'spring', damping: 15 }}
         key={index}
-        className={`w-20 h-28 sm:w-24 sm:h-36 rounded-xl bg-white flex flex-col justify-between p-2 sm:p-3 shadow-xl border border-zinc-200 ${card.hidden ? 'bg-gradient-to-br from-blue-800 to-blue-900 border-blue-400' : ''} ${index > 0 ? '-ml-10 sm:-ml-12' : ''}`}
-        style={{ zIndex: index }}
+        className={`w-20 h-28 sm:w-24 sm:h-36 rounded-xl bg-white flex flex-col justify-between p-2 sm:p-3 shadow-xl border-2 ${card.hidden ? 'bg-zinc-800' : ''} ${index > 0 ? '-ml-10 sm:-ml-12' : ''}`}
+        style={{ zIndex: index, borderColor: `${themeColor}4d` }}
       >
         {!card.hidden && (
           <>
@@ -190,8 +197,8 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
           </>
         )}
         {card.hidden && (
-          <div className="w-full h-full border-2 border-blue-400/30 rounded-lg flex items-center justify-center">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-400/20" />
+          <div className="w-full h-full border-2 border-white/10 rounded-lg flex items-center justify-center bg-zinc-900">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full opacity-20" style={{ backgroundColor: themeColor }} />
           </div>
         )}
       </motion.div>
@@ -206,20 +213,20 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
       className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto"
     >
       <div className="w-full flex justify-between items-center mb-4">
-        <button onClick={onExit} className="flex items-center gap-2 text-zinc-400 hover:text-red-500 transition-colors">
+        <button onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors" style={{ color: `${themeColor}cc` }}>
           <ArrowLeft className="w-5 h-5" /> Leave Table
         </button>
       </div>
 
-      <div className="bg-emerald-900/40 border-4 border-emerald-800 rounded-[3rem] p-4 sm:p-8 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative w-full min-h-[500px] sm:min-h-[600px] flex flex-col justify-between overflow-hidden">
+      <div className="bg-zinc-900/80 border-4 rounded-[3rem] p-4 sm:p-8 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative w-full min-h-[500px] sm:min-h-[600px] flex flex-col justify-between overflow-hidden" style={{ borderColor: `${themeColor}4d` }}>
         
         <div className="flex flex-col items-center">
-          <div className="text-emerald-400/50 font-mono mb-4 uppercase tracking-widest text-xs sm:text-sm">Dealer Must Hit Soft 17</div>
+          <div className="text-zinc-500 font-mono mb-4 uppercase tracking-widest text-xs sm:text-sm">Dealer Must Hit Soft 17</div>
           <div className="flex justify-center h-28 sm:h-36">
             {dealerHand.map((card, i) => renderCard(card, i))}
           </div>
           {gameState !== 'betting' && (
-            <div className="mt-2 bg-black/50 px-3 py-1 rounded-full text-white font-mono text-sm">
+            <div className="mt-2 bg-black/50 px-3 py-1 rounded-full text-white font-mono text-sm border border-white/10">
               {calculateScore(dealerHand)}
             </div>
           )}
@@ -233,7 +240,8 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.5 }}
-                className="text-3xl sm:text-5xl font-black text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]"
+                className="text-3xl sm:text-6xl font-black drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] italic tracking-tighter"
+                style={{ color: themeColor }}
               >
                 {message}
               </motion.div>
@@ -243,7 +251,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
 
         <div className="flex flex-col items-center mt-8">
           {gameState !== 'betting' && (
-            <div className="mb-2 bg-black/50 px-3 py-1 rounded-full text-white font-mono text-sm">
+            <div className="mb-2 bg-black/50 px-3 py-1 rounded-full text-white font-mono text-sm border border-white/10">
               {calculateScore(playerHand)}
             </div>
           )}
@@ -252,39 +260,50 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient }
           </div>
 
           {gameState === 'betting' || gameState === 'gameOver' ? (
-            <div className="flex flex-col sm:flex-row items-center gap-4 bg-black/40 p-4 rounded-2xl backdrop-blur-md border border-white/10">
-              <div className="flex items-center gap-2">
-                <button onClick={() => setBet(b => Math.max(10, b - 10))} className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">-</button>
-                <div className="w-24 text-center text-2xl font-mono text-amber-400 font-bold">${bet}</div>
-                <button onClick={() => setBet(b => b + 10)} className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">+</button>
+            <div className="flex flex-col items-center gap-6 bg-black/40 p-6 rounded-2xl backdrop-blur-md border border-white/10 w-full max-w-xl">
+              <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <button onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">-</button>
+                  <div className="w-24 text-center text-2xl font-mono font-bold" style={{ color: themeColor }}>${bet.toLocaleString()}</div>
+                  <button onClick={() => { playClick(); setBet(b => b + 10); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">+</button>
+                </div>
+
+                <div className="flex gap-2">
+                  <button onClick={() => { playClick(); setBet(b => b + 100); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+100</button>
+                  <button onClick={() => { playClick(); setBet(b => b + 1000); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+1k</button>
+                  <button onClick={() => { playClick(); setBet(balance); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">MAX</button>
+                </div>
               </div>
+
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={balance >= bet ? { scale: 1.02 } : {}}
+                whileTap={balance >= bet ? { scale: 0.98 } : {}}
                 onClick={startGame}
                 disabled={balance < bet}
-                className={`px-8 py-3 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-bold uppercase tracking-wider disabled:opacity-50 w-full sm:w-auto`}
+                className={`w-full py-4 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-black text-xl uppercase tracking-wider disabled:opacity-50 shadow-lg`}
+                style={{ boxShadow: balance >= bet ? `0 0 20px ${themeColor}66` : 'none' }}
               >
                 {gameState === 'gameOver' ? 'Play Again' : 'Place Bet'}
               </motion.button>
             </div>
           ) : (
-            <div className="flex gap-4">
+            <div className="flex gap-4 w-full max-w-md">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={hit}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { playClick(); hit(); }}
                 disabled={gameState !== 'playing'}
-                className="px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-wider shadow-lg disabled:opacity-50"
+                className="flex-1 py-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-black text-xl uppercase tracking-wider border border-white/10 disabled:opacity-50"
               >
                 Hit
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={stand}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => { playClick(); stand(); }}
                 disabled={gameState !== 'playing'}
-                className="px-8 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold uppercase tracking-wider shadow-lg disabled:opacity-50"
+                className={`flex-1 py-4 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-black text-xl uppercase tracking-wider shadow-lg disabled:opacity-50`}
+                style={{ boxShadow: `0 0 20px ${themeColor}66` }}
               >
                 Stand
               </motion.button>

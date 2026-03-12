@@ -48,3 +48,8 @@ export const playLose = () => {
 };
 export const playCard = () => playTone(150, 'square', 0.05, 0.05);
 export const playChip = () => playTone(2000, 'sine', 0.05, 0.05);
+
+export const playClick = () => {
+  playTone(180, 'triangle', 0.1, 0.05);
+  playTone(800, 'sine', 0.02, 0.02);
+};
