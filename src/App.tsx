@@ -26,33 +26,36 @@ import {
   Ticket,
   Store,
   Key,
-  History
+  History,
+  ArrowLeft
 } from 'lucide-react';
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
 import { playClick, playHover } from './audio';
+import externalGames from './externalGames.json';
 
 const STANDARD_GAMES = [
-  { id: 1, title: 'Cyber Strike', category: 'FPS', icon: Crosshair, color: 'from-lime-400 to-cyan-400', players: '1.2k', status: 'ONLINE' },
-  { id: 2, title: 'Neon Drift', category: 'Racing', icon: Car, color: 'from-cyan-400 to-blue-500', players: '850', status: 'ONLINE' },
-  { id: 3, title: 'Logic Grid', category: 'Puzzle', icon: Puzzle, color: 'from-lime-500 to-emerald-500', players: '3.4k', status: 'UPDATE' },
-  { id: 4, title: 'Stellar Void', category: 'Space', icon: Rocket, color: 'from-cyan-300 to-lime-300', players: '5.1k', status: 'ONLINE' },
-  { id: 5, title: 'Blade Runner', category: 'RPG', icon: Swords, color: 'from-lime-600 to-cyan-600', players: '920', status: 'BETA' },
-  { id: 6, title: 'Phantom Protocol', category: 'Stealth', icon: Ghost, color: 'from-cyan-500 to-teal-500', players: '410', status: 'ONLINE' },
-  { id: 7, title: 'Terminal Hack', category: 'Strategy', icon: Terminal, color: 'from-lime-400 to-cyan-400', players: '2.8k', status: 'EVENT' },
-  { id: 8, title: 'Arcade Classic', category: 'Retro', icon: Gamepad2, color: 'from-teal-400 to-lime-400', players: '1.1k', status: 'ONLINE' },
+  ...externalGames,
+  { id: 'custom-1', title: 'Cyber Strike', category: 'FPS', icon: Crosshair, color: 'from-lime-400 to-cyan-400', players: '1.2k', status: 'ONLINE' },
+  { id: 'custom-2', title: 'Neon Drift', category: 'Racing', icon: Car, color: 'from-cyan-400 to-blue-500', players: '850', status: 'ONLINE' },
+  { id: 'custom-3', title: 'Logic Grid', category: 'Puzzle', icon: Puzzle, color: 'from-lime-500 to-emerald-500', players: '3.4k', status: 'UPDATE' },
+  { id: 'custom-4', title: 'Stellar Void', category: 'Space', icon: Rocket, color: 'from-cyan-300 to-lime-300', players: '5.1k', status: 'ONLINE' },
+  { id: 'custom-5', title: 'Blade Runner', category: 'RPG', icon: Swords, color: 'from-lime-600 to-cyan-600', players: '920', status: 'BETA' },
+  { id: 'custom-6', title: 'Phantom Protocol', category: 'Stealth', icon: Ghost, color: 'from-cyan-500 to-teal-500', players: '410', status: 'ONLINE' },
+  { id: 'custom-7', title: 'Terminal Hack', category: 'Strategy', icon: Terminal, color: 'from-lime-400 to-cyan-400', players: '2.8k', status: 'EVENT' },
+  { id: 'custom-8', title: 'Arcade Classic', category: 'Retro', icon: Gamepad2, color: 'from-teal-400 to-lime-400', players: '1.1k', status: 'ONLINE' },
 ];
 
 const ADULT_GAMES = [
-  { id: 101, title: 'Neon Slots', category: 'Slots', icon: Coins, color: 'from-amber-400 to-red-500', players: '4.2k', status: 'HOT' },
-  { id: 102, title: 'High Roller Blackjack', category: 'Cards', icon: Spade, color: 'from-red-500 to-rose-600', players: '2.1k', status: 'ONLINE' },
-  { id: 103, title: 'Cyber Poker', category: 'Cards', icon: Club, color: 'from-amber-500 to-orange-600', players: '5.5k', status: 'TOURNAMENT' },
-  { id: 104, title: 'Quantum Roulette', category: 'Table', icon: Crosshair, color: 'from-rose-400 to-red-500', players: '1.8k', status: 'ONLINE' },
-  { id: 105, title: 'Crypto Craps', category: 'Dice', icon: Dices, color: 'from-amber-400 to-orange-500', players: '950', status: 'ONLINE' },
-  { id: 106, title: 'Baccarat Royale', category: 'Cards', icon: Diamond, color: 'from-red-400 to-rose-500', players: '620', status: 'VIP ONLY' },
-  { id: 107, title: 'Hearts of Fire', category: 'Cards', icon: Heart, color: 'from-rose-500 to-red-600', players: '1.1k', status: 'ONLINE' },
-  { id: 108, title: 'Jackpot Terminal', category: 'Slots', icon: Terminal, color: 'from-amber-300 to-red-500', players: '8.9k', status: 'MEGA DROP' },
+  { id: 'custom-101', title: 'Neon Slots', category: 'Slots', icon: Coins, color: 'from-amber-400 to-red-500', players: '4.2k', status: 'HOT' },
+  { id: 'custom-102', title: 'High Roller Blackjack', category: 'Cards', icon: Spade, color: 'from-red-500 to-rose-600', players: '2.1k', status: 'ONLINE' },
+  { id: 'custom-103', title: 'Cyber Poker', category: 'Cards', icon: Club, color: 'from-amber-500 to-orange-600', players: '5.5k', status: 'TOURNAMENT' },
+  { id: 'custom-104', title: 'Quantum Roulette', category: 'Table', icon: Crosshair, color: 'from-rose-400 to-red-500', players: '1.8k', status: 'ONLINE' },
+  { id: 'custom-105', title: 'Crypto Craps', category: 'Dice', icon: Dices, color: 'from-amber-400 to-orange-500', players: '950', status: 'ONLINE' },
+  { id: 'custom-106', title: 'Baccarat Royale', category: 'Cards', icon: Diamond, color: 'from-red-400 to-rose-500', players: '620', status: 'VIP ONLY' },
+  { id: 'custom-107', title: 'Hearts of Fire', category: 'Cards', icon: Heart, color: 'from-rose-500 to-red-600', players: '1.1k', status: 'ONLINE' },
+  { id: 'custom-108', title: 'Jackpot Terminal', category: 'Slots', icon: Terminal, color: 'from-amber-300 to-red-500', players: '8.9k', status: 'MEGA DROP' },
 ];
 
 const THEMES = {
@@ -108,8 +111,8 @@ export default function App() {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   // Game State
-  const [launchingGame, setLaunchingGame] = useState<number | null>(null);
-  const [activeGame, setActiveGame] = useState<number | null>(null);
+  const [launchingGame, setLaunchingGame] = useState<string | number | null>(null);
+  const [activeGame, setActiveGame] = useState<string | number | null>(null);
 
   const gamesSectionRef = useRef<HTMLElement>(null);
 
@@ -156,7 +159,7 @@ export default function App() {
     }, 100);
   };
 
-  const handlePlayGame = (id: number) => {
+  const handlePlayGame = (id: string | number) => {
     setLaunchingGame(id);
     setTimeout(() => {
       setLaunchingGame(null);
@@ -354,17 +357,18 @@ export default function App() {
         ) : activeGame === 102 ? (
           <Blackjack balance={balance} setBalance={setBalance} onExit={() => setActiveGame(null)} themeGradient={themeGradient} themeColor={themeColor} onRecordBet={recordBet} />
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-md bg-zinc-900/50 p-8 rounded-3xl border border-white/10">
-              <div className="w-20 h-20 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/10">
-                <Loader2 className={`w-10 h-10 animate-spin ${isProMode ? 'text-amber-500' : 'text-zinc-400'}`} />
-              </div>
-              <h2 className="text-3xl font-bold mb-4">Connecting to Secure Server...</h2>
-              <p className="text-zinc-400 mb-8">This module is currently undergoing maintenance or requires a higher clearance level.</p>
-              <button onClick={handleReturnToLobby} className="px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors font-bold">
-                Return to Lobby
-              </button>
-            </motion.div>
+          <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full">
+            <button 
+              onClick={handleReturnToLobby}
+              className="absolute top-20 left-6 z-50 px-4 py-2 bg-zinc-900/80 backdrop-blur rounded-xl border border-white/10 hover:bg-zinc-800 transition-colors flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" /> Return to Lobby
+            </button>
+            <iframe 
+              src={([...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.id === activeGame)?.url) || ''}
+              className="fixed inset-0 w-screen h-screen z-40 border-none bg-black"
+              title="Game"
+            />
           </div>
         )
       ) : (
@@ -503,8 +507,26 @@ export default function App() {
                               <motion.div
                                 whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
                                 transition={{ type: 'spring', stiffness: 300 }}
+                                className="w-full h-full flex items-center justify-center"
                               >
-                                <game.icon className="w-16 h-16 text-zinc-100" strokeWidth={1.5} />
+                                {game.image ? (
+                                  <img 
+                                    src={game.image} 
+                                    alt={game.title} 
+                                    className="w-full h-full object-cover" 
+                                    referrerPolicy="no-referrer" 
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                      const fallback = (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-icon');
+                                      if (fallback) fallback.classList.remove('hidden');
+                                    }}
+                                  />
+                                ) : null}
+                                <div className={`fallback-icon ${game.image ? 'hidden' : ''}`}>
+                                  {game.icon ? (
+                                    <game.icon className="w-16 h-16 text-zinc-100" strokeWidth={1.5} />
+                                  ) : null}
+                                </div>
                               </motion.div>
                             )}
                           </div>

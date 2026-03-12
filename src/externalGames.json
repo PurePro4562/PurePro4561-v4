@@ -1,0 +1,4062 @@
+[
+  {
+    "id": "1",
+    "title": "1",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/1/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/1/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "10-minutes-till-dawn",
+    "title": "10 Minutes Till Dawn",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/10-minutes-till-dawn/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/10-minutes-till-dawn/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "100ng",
+    "title": "100ng",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/100ng/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/100ng/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "1v1-lol",
+    "title": "1v1 Lol",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/1v1-lol/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/1v1-lol/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "1v1space",
+    "title": "1v1space",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/1v1space/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/1v1space/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "2048",
+    "title": "2048",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/2048/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/2048/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "2048-multitask",
+    "title": "2048 Multitask",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/2048-multitask/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/2048-multitask/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "9007199254740992",
+    "title": "9007199254740992",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/9007199254740992/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/9007199254740992/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "99balls",
+    "title": "99balls",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/99balls/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/99balls/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "a-dance-of-fire-and-ice",
+    "title": "A Dance Of Fire And Ice",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/a-dance-of-fire-and-ice/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/a-dance-of-fire-and-ice/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "achievementunlocked",
+    "title": "Achievementunlocked",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/achievementunlocked/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/achievementunlocked/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "adarkroom",
+    "title": "Adarkroom",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/adarkroom/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/adarkroom/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "adrenalinechallenge",
+    "title": "Adrenalinechallenge",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/adrenalinechallenge/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/adrenalinechallenge/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "adventure-drivers",
+    "title": "Adventure Drivers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/adventure-drivers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/adventure-drivers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ages-of-conflict",
+    "title": "Ages Of Conflict",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ages-of-conflict/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ages-of-conflict/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "alienhominid",
+    "title": "Alienhominid",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/alienhominid/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/alienhominid/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "amazing-rope-police",
+    "title": "Amazing Rope Police",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/amazing-rope-police/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/amazing-rope-police/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "amidst-the-clouds",
+    "title": "Amidst The Clouds",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/amidst-the-clouds/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/amidst-the-clouds/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "among-us",
+    "title": "Among Us",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/among-us/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/among-us/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "angry-sharks",
+    "title": "Angry Sharks",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/angry-sharks/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/angry-sharks/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "aquapark-slides",
+    "title": "Aquapark Slides",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/aquapark-slides/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/aquapark-slides/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "astray",
+    "title": "Astray",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/astray/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/astray/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "avalanche",
+    "title": "Avalanche",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/avalanche/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/avalanche/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "awesometanks2",
+    "title": "Awesometanks2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/awesometanks2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/awesometanks2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "backrooms",
+    "title": "Backrooms",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/backrooms/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/backrooms/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "backrooms-2d",
+    "title": "Backrooms 2d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/backrooms-2d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/backrooms-2d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "backrooms2d",
+    "title": "Backrooms2d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/backrooms2d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/backrooms2d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bacon-may-die",
+    "title": "Bacon May Die",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bacon-may-die/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bacon-may-die/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bad-ice-cream",
+    "title": "Bad Ice Cream",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bad-ice-cream/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bad-ice-cream/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bad-ice-cream-2",
+    "title": "Bad Ice Cream 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bad-ice-cream-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bad-ice-cream-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bad-ice-cream-3",
+    "title": "Bad Ice Cream 3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bad-ice-cream-3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bad-ice-cream-3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "baldis-basics",
+    "title": "Baldis Basics",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/baldis-basics/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/baldis-basics/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "balldodge",
+    "title": "Balldodge",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/balldodge/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/balldodge/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ballistic-chickens",
+    "title": "Ballistic Chickens",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ballistic-chickens/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ballistic-chickens/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "basket-random",
+    "title": "Basket Random",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/basket-random/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/basket-random/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "basketball-stars",
+    "title": "Basketball Stars",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/basketball-stars/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/basketball-stars/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "basketbros-io",
+    "title": "Basketbros Io",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/basketbros-io/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/basketbros-io/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "battleforgondor",
+    "title": "Battleforgondor",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/battleforgondor/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/battleforgondor/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bigredbutton",
+    "title": "Bigredbutton",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bigredbutton/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bigredbutton/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bitlife",
+    "title": "Bitlife",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bitlife/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bitlife/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "blacholesquare",
+    "title": "Blacholesquare",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/blacholesquare/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/blacholesquare/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "blackknight",
+    "title": "Blackknight",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/blackknight/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/blackknight/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "blockpost",
+    "title": "Blockpost",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/blockpost/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/blockpost/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bloonstd",
+    "title": "Bloonstd",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bloonstd/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bloonstd/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bloonstd2",
+    "title": "Bloonstd2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bloonstd2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bloonstd2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bloxors",
+    "title": "Bloxors",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bloxors/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bloxors/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bntts",
+    "title": "Bntts",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bntts/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bntts/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bobtherobber2",
+    "title": "Bobtherobber2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bobtherobber2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bobtherobber2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bonkio",
+    "title": "Bonkio",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bonkio/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bonkio/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "boxhead2play",
+    "title": "Boxhead2play",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/boxhead2play/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/boxhead2play/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "boxing-random",
+    "title": "Boxing Random",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/boxing-random/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/boxing-random/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "breakingthebank",
+    "title": "Breakingthebank",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/breakingthebank/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/breakingthebank/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "btd4",
+    "title": "Btd4",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/btd4/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/btd4/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "btd5",
+    "title": "Btd5",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/btd5/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/btd5/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "btts",
+    "title": "Btts",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/btts/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/btts/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "burger-and-frights",
+    "title": "Burger And Frights",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/burger-and-frights/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/burger-and-frights/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "bus and subway",
+    "title": "Bus and subway",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bus and subway/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/bus and subway/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "busandsubway",
+    "title": "Busandsubway",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/busandsubway/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/busandsubway/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cannon-basketball-4",
+    "title": "Cannon Basketball 4",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cannon-basketball-4/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cannon-basketball-4/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "canyondefense",
+    "title": "Canyondefense",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/canyondefense/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/canyondefense/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cars-simulator",
+    "title": "Cars Simulator",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cars-simulator/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cars-simulator/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cell-machine",
+    "title": "Cell Machine",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cell-machine/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cell-machine/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "champion-island",
+    "title": "Champion Island",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/champion-island/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/champion-island/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "championarcher",
+    "title": "Championarcher",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/championarcher/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/championarcher/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "checkers",
+    "title": "Checkers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/checkers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/checkers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "chess",
+    "title": "Chess",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/chess/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/chess/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "chill-radio",
+    "title": "Chill Radio",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/chill-radio/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/chill-radio/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "chrome-dino",
+    "title": "Chrome Dino",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/chrome-dino/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/chrome-dino/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "circlo",
+    "title": "Circlo",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/circlo/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/circlo/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "classicube",
+    "title": "Classicube",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/classicube/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/classicube/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cluster-rush",
+    "title": "Cluster Rush",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cluster-rush/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cluster-rush/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "CMM-Client",
+    "title": "CMM Client",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/CMM-Client/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/CMM-Client/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cnpingpong",
+    "title": "Cnpingpong",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cnpingpong/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cnpingpong/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "connect3",
+    "title": "Connect3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/connect3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/connect3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cookie-clickers",
+    "title": "Cookie Clickers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cookie-clickers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cookie-clickers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "core-ball",
+    "title": "Core Ball",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/core-ball/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/core-ball/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "craftmine",
+    "title": "Craftmine",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/craftmine/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/craftmine/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "creativekillchamber",
+    "title": "Creativekillchamber",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/creativekillchamber/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/creativekillchamber/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "crossyroad",
+    "title": "Crossyroad",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/crossyroad/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/crossyroad/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "csgo-clicker",
+    "title": "Csgo Clicker",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/csgo-clicker/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/csgo-clicker/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ctr",
+    "title": "Ctr",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ctr/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ctr/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ctr-holiday",
+    "title": "Ctr Holiday",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ctr-holiday/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ctr-holiday/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ctr-tr",
+    "title": "Ctr Tr",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ctr-tr/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ctr-tr/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cubefield",
+    "title": "Cubefield",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cubefield/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cubefield/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "cupcake2048",
+    "title": "Cupcake2048",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cupcake2048/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/cupcake2048/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "dante",
+    "title": "Dante",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dante/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dante/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "deal-or-no-deal",
+    "title": "Deal Or No Deal",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/deal-or-no-deal/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/deal-or-no-deal/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "death-run-3d",
+    "title": "Death Run 3d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/death-run-3d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/death-run-3d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "deepest-sword",
+    "title": "Deepest Sword",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/deepest-sword/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/deepest-sword/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "defend-the-tank",
+    "title": "Defend The Tank",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/defend-the-tank/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/defend-the-tank/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "doctor-acorn2",
+    "title": "Doctor Acorn2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doctor-acorn2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doctor-acorn2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "dodge",
+    "title": "Dodge",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dodge/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dodge/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "doge2048",
+    "title": "Doge2048",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doge2048/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doge2048/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "DogeMiner",
+    "title": "DogeMiner",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/DogeMiner/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/DogeMiner/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "Dogeminer2",
+    "title": "Dogeminer2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Dogeminer2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Dogeminer2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "doodle-jump",
+    "title": "Doodle Jump",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doodle-jump/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doodle-jump/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "doom",
+    "title": "Doom",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doom/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doom/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "DOOMORI",
+    "title": "DOOMORI",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/DOOMORI/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/DOOMORI/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "doublewires",
+    "title": "Doublewires",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doublewires/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/doublewires/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "dragon-vs-bricks",
+    "title": "Dragon Vs Bricks",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dragon-vs-bricks/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dragon-vs-bricks/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "draw-the-hill",
+    "title": "Draw The Hill",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/draw-the-hill/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/draw-the-hill/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "drift-boss",
+    "title": "Drift Boss",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/drift-boss/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/drift-boss/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "drift-hunters",
+    "title": "Drift Hunters",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/drift-hunters/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/drift-hunters/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "drive-mad",
+    "title": "Drive Mad",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/drive-mad/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/drive-mad/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ducklife1",
+    "title": "Ducklife1",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife1/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife1/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ducklife2",
+    "title": "Ducklife2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ducklife3",
+    "title": "Ducklife3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ducklife4",
+    "title": "Ducklife4",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife4/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ducklife4/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "duke-nukem-2",
+    "title": "Duke Nukem 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/duke-nukem-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/duke-nukem-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "dumbwaystodie",
+    "title": "Dumbwaystodie",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dumbwaystodie/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/dumbwaystodie/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "eaglerfaithful",
+    "title": "Eaglerfaithful",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/eaglerfaithful/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/eaglerfaithful/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "earntodie",
+    "title": "Earntodie",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/earntodie/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/earntodie/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "edge-surf",
+    "title": "Edge Surf",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/edge-surf/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/edge-surf/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "edgenotfound",
+    "title": "Edgenotfound",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/edgenotfound/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/edgenotfound/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "eel-slap",
+    "title": "Eel Slap",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/eel-slap/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/eel-slap/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "eggycar",
+    "title": "Eggycar",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/eggycar/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/eggycar/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "elasticman",
+    "title": "Elasticman",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/elasticman/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/elasticman/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "endlesswar3",
+    "title": "Endlesswar3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/endlesswar3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/endlesswar3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "escapingtheprison",
+    "title": "Escapingtheprison",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/escapingtheprison/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/escapingtheprison/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "evil-glitch",
+    "title": "Evil Glitch",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/evil-glitch/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/evil-glitch/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "evolution",
+    "title": "Evolution",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/evolution/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/evolution/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "exo",
+    "title": "Exo",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/exo/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/exo/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "factoryballs",
+    "title": "Factoryballs",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/factoryballs/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/factoryballs/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fairsquares",
+    "title": "Fairsquares",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fairsquares/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fairsquares/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fake-virus",
+    "title": "Fake Virus",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fake-virus/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fake-virus/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fancypantsadventures",
+    "title": "Fancypantsadventures",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fancypantsadventures/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fancypantsadventures/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fantasy-dash",
+    "title": "Fantasy Dash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fantasy-dash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fantasy-dash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fireboywatergirlforesttemple",
+    "title": "Fireboywatergirlforesttemple",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fireboywatergirlforesttemple/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fireboywatergirlforesttemple/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flappy plane",
+    "title": "Flappy plane",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappy plane/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappy plane/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flappy-2048",
+    "title": "Flappy 2048",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappy-2048/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappy-2048/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flappy-bird",
+    "title": "Flappy Bird",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappy-bird/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappy-bird/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flappybird",
+    "title": "Flappybird",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappybird/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappybird/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flappyplane",
+    "title": "Flappyplane",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappyplane/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flappyplane/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flashtetris",
+    "title": "Flashtetris",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flashtetris/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flashtetris/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fleeingthecomplex",
+    "title": "Fleeingthecomplex",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fleeingthecomplex/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fleeingthecomplex/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "flippy-fish",
+    "title": "Flippy Fish",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flippy-fish/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/flippy-fish/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fnaw",
+    "title": "Fnaw",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fnaw/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fnaw/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fridaynightfunkin",
+    "title": "Fridaynightfunkin",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fridaynightfunkin/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fridaynightfunkin/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "froggys-battle",
+    "title": "Froggys Battle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/froggys-battle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/froggys-battle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "fruitninja",
+    "title": "Fruitninja",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fruitninja/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/fruitninja/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "frying-nemo",
+    "title": "Frying Nemo",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/frying-nemo/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/frying-nemo/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "gachalife",
+    "title": "Gachalife",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gachalife/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gachalife/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "game-inside",
+    "title": "Game Inside",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/game-inside/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/game-inside/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "gearsofbabies",
+    "title": "Gearsofbabies",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gearsofbabies/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gearsofbabies/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "generic-fishing-game",
+    "title": "Generic Fishing Game",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/generic-fishing-game/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/generic-fishing-game/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "geochallenge",
+    "title": "Geochallenge",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geochallenge/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geochallenge/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "geodash",
+    "title": "Geodash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geodash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geodash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "geodashlite",
+    "title": "Geodashlite",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geodashlite/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geodashlite/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "geogeo",
+    "title": "Geogeo",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geogeo/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geogeo/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "geops1",
+    "title": "Geops1",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geops1/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geops1/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "georash",
+    "title": "Georash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/georash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/georash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "georgeandtheprinter",
+    "title": "Georgeandtheprinter",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/georgeandtheprinter/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/georgeandtheprinter/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "geotrash",
+    "title": "Geotrash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geotrash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/geotrash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "getaway-shootout",
+    "title": "Getaway Shootout",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/getaway-shootout/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/getaway-shootout/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "gimme-the-airpod",
+    "title": "Gimme The Airpod",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gimme-the-airpod/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gimme-the-airpod/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "gladihoppers",
+    "title": "Gladihoppers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gladihoppers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gladihoppers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "glass-city",
+    "title": "Glass City",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/glass-city/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/glass-city/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "gmonster",
+    "title": "Gmonster",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gmonster/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gmonster/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "go-ball",
+    "title": "Go Ball",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/go-ball/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/go-ball/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "goodnight",
+    "title": "Goodnight",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/goodnight/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/goodnight/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "goodnight-meowmie",
+    "title": "Goodnight Meowmie",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/goodnight-meowmie/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/goodnight-meowmie/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "google-feud",
+    "title": "Google Feud",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/google-feud/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/google-feud/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "google-snake",
+    "title": "Google Snake",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/google-snake/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/google-snake/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "gravity-soccer",
+    "title": "Gravity Soccer",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gravity-soccer/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/gravity-soccer/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "greybox",
+    "title": "Greybox",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/greybox/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/greybox/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "grindcraft",
+    "title": "Grindcraft",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/grindcraft/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/grindcraft/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hackertype",
+    "title": "Hackertype",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hackertype/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hackertype/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "handshakes",
+    "title": "Handshakes",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/handshakes/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/handshakes/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "happy-hop",
+    "title": "Happy Hop",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/happy-hop/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/happy-hop/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "happywheels",
+    "title": "Happywheels",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/happywheels/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/happywheels/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hardware-tycoon",
+    "title": "Hardware Tycoon",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hardware-tycoon/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hardware-tycoon/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hba",
+    "title": "Hba",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hba/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hba/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "helicopter",
+    "title": "Helicopter",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/helicopter/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/helicopter/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hellscaper",
+    "title": "Hellscaper",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hellscaper/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hellscaper/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hexempire",
+    "title": "Hexempire",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hexempire/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hexempire/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "HexGL",
+    "title": "HexGL",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/HexGL/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/HexGL/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hextris",
+    "title": "Hextris",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hextris/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hextris/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "highrisehop",
+    "title": "Highrisehop",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/highrisehop/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/highrisehop/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hill-climb-racing",
+    "title": "Hill Climb Racing",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hill-climb-racing/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hill-climb-racing/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "hungry-lamu",
+    "title": "Hungry Lamu",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hungry-lamu/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/hungry-lamu/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "iceagebaby",
+    "title": "Iceagebaby",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/iceagebaby/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/iceagebaby/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "iceagebaby2",
+    "title": "Iceagebaby2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/iceagebaby2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/iceagebaby2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "idle-breakout",
+    "title": "Idle Breakout",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/idle-breakout/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/idle-breakout/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "idle-shark",
+    "title": "Idle Shark",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/idle-shark/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/idle-shark/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "idledice",
+    "title": "Idledice",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/idledice/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/idledice/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "impossiblequiz",
+    "title": "Impossiblequiz",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/impossiblequiz/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/impossiblequiz/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "impossiblequiz2",
+    "title": "Impossiblequiz2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/impossiblequiz2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/impossiblequiz2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "impossiblequizbeta",
+    "title": "Impossiblequizbeta",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/impossiblequizbeta/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/impossiblequizbeta/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "interactivebuddy",
+    "title": "Interactivebuddy",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/interactivebuddy/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/interactivebuddy/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "invite-the-blackbird",
+    "title": "Invite The Blackbird",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/invite-the-blackbird/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/invite-the-blackbird/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "iron dash",
+    "title": "Iron dash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/iron dash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/iron dash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "irondash",
+    "title": "Irondash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/irondash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/irondash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "jetpack-joyride",
+    "title": "Jetpack Joyride",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/jetpack-joyride/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/jetpack-joyride/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "jmw-v6",
+    "title": "Jmw V6",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/jmw-v6/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/jmw-v6/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "just-fall",
+    "title": "Just Fall",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/just-fall/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/just-fall/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "just-one-boss",
+    "title": "Just One Boss",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/just-one-boss/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/just-one-boss/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "kirkaio",
+    "title": "Kirkaio",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/kirkaio/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/kirkaio/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "kitchen-gun-game",
+    "title": "Kitchen Gun Game",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/kitchen-gun-game/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/kitchen-gun-game/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "kittencannon",
+    "title": "Kittencannon",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/kittencannon/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/kittencannon/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "knife-master",
+    "title": "Knife Master",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/knife-master/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/knife-master/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "krunker",
+    "title": "Krunker",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/krunker/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/krunker/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "learntofly",
+    "title": "Learntofly",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/learntofly/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/learntofly/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "learntofly2",
+    "title": "Learntofly2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/learntofly2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/learntofly2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "level13",
+    "title": "Level13",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/level13/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/level13/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "linerider",
+    "title": "Linerider",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/linerider/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/linerider/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "linkgen",
+    "title": "Linkgen",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/linkgen/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/linkgen/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ltf-idle",
+    "title": "Ltf Idle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ltf-idle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ltf-idle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ltf3",
+    "title": "Ltf3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ltf3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ltf3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "madalin-stunt-cars-2",
+    "title": "Madalin Stunt Cars 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/madalin-stunt-cars-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/madalin-stunt-cars-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "madalin-stunt-cars-3",
+    "title": "Madalin Stunt Cars 3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/madalin-stunt-cars-3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/madalin-stunt-cars-3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "mario",
+    "title": "Mario",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mario/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mario/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "marvinspectrum",
+    "title": "Marvinspectrum",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/marvinspectrum/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/marvinspectrum/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "matrixrampage",
+    "title": "Matrixrampage",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/matrixrampage/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/matrixrampage/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "mcje",
+    "title": "Mcje",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mcje/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mcje/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "meme2048",
+    "title": "Meme2048",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/meme2048/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/meme2048/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "merge-round-racers",
+    "title": "Merge Round Racers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/merge-round-racers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/merge-round-racers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "mindustry",
+    "title": "Mindustry",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mindustry/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mindustry/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "mineblocks",
+    "title": "Mineblocks",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mineblocks/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/mineblocks/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "minecraft-15",
+    "title": "Minecraft 15",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraft-15/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraft-15/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "minecraft-18",
+    "title": "Minecraft 18",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraft-18/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraft-18/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "minecraft-classic",
+    "title": "Minecraft Classic",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraft-classic/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraft-classic/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "minecraftbeta",
+    "title": "Minecraftbeta",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraftbeta/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecraftbeta/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "minecrafttowerdefence",
+    "title": "Minecrafttowerdefence",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecrafttowerdefence/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minecrafttowerdefence/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "minesweeper",
+    "title": "Minesweeper",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minesweeper/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/minesweeper/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "miniputt",
+    "title": "Miniputt",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/miniputt/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/miniputt/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "missiles",
+    "title": "Missiles",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/missiles/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/missiles/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "MonkeyMart",
+    "title": "MonkeyMart",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/MonkeyMart/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/MonkeyMart/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "monster-tracks",
+    "title": "Monster Tracks",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/monster-tracks/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/monster-tracks/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "motox3m",
+    "title": "Motox3m",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "motox3m-pool",
+    "title": "Motox3m Pool",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m-pool/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m-pool/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "motox3m-spooky",
+    "title": "Motox3m Spooky",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m-spooky/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m-spooky/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "motox3m-winter",
+    "title": "Motox3m Winter",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m-winter/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m-winter/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "motox3m2",
+    "title": "Motox3m2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/motox3m2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "my-rusty-submarine",
+    "title": "My Rusty Submarine",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/my-rusty-submarine/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/my-rusty-submarine/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "n-gon",
+    "title": "N Gon",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/n-gon/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/n-gon/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ninja",
+    "title": "Ninja",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ninja/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ninja/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ninjavsevilcorp",
+    "title": "Ninjavsevilcorp",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ninjavsevilcorp/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ninjavsevilcorp/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "noob-steve-parkour",
+    "title": "Noob Steve Parkour",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/noob-steve-parkour/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/noob-steve-parkour/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ns-shaft",
+    "title": "Ns Shaft",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ns-shaft/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ns-shaft/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "nsresurgence",
+    "title": "Nsresurgence",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/nsresurgence/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/nsresurgence/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "OfflineParadise",
+    "title": "OfflineParadise",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/OfflineParadise/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/OfflineParadise/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "om-bounce",
+    "title": "Om Bounce",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/om-bounce/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/om-bounce/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "osu!",
+    "title": "Osu!",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/osu!/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/osu!/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "out-of-ctrl",
+    "title": "Out Of Ctrl",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/out-of-ctrl/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/out-of-ctrl/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "overwatch",
+    "title": "Overwatch",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/overwatch/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/overwatch/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ovo",
+    "title": "Ovo",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ovo/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ovo/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "pandemic2",
+    "title": "Pandemic2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/pandemic2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/pandemic2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "papasburgeria",
+    "title": "Papasburgeria",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/papasburgeria/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/papasburgeria/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "papaspizzaria",
+    "title": "Papaspizzaria",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/papaspizzaria/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/papaspizzaria/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "paperio2",
+    "title": "Paperio2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/paperio2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/paperio2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "papery-planes",
+    "title": "Papery Planes",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/papery-planes/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/papery-planes/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "particle-clicker",
+    "title": "Particle Clicker",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/particle-clicker/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/particle-clicker/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "piclient",
+    "title": "Piclient",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/piclient/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/piclient/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "pigeon-ascent",
+    "title": "Pigeon Ascent",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/pigeon-ascent/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/pigeon-ascent/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "pixel-gun-survival",
+    "title": "Pixel Gun Survival",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/pixel-gun-survival/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/pixel-gun-survival/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "planetlife",
+    "title": "Planetlife",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/planetlife/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/planetlife/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "plantsvzombie1",
+    "title": "Plantsvzombie1",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/plantsvzombie1/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/plantsvzombie1/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "polybranch",
+    "title": "Polybranch",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/polybranch/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/polybranch/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "popcat-classic",
+    "title": "Popcat Classic",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/popcat-classic/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/popcat-classic/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "portalflash",
+    "title": "Portalflash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/portalflash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/portalflash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "precision-client",
+    "title": "Precision Client",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/precision-client/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/precision-client/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "protektor",
+    "title": "Protektor",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/protektor/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/protektor/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "push-the-square",
+    "title": "Push The Square",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/push-the-square/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/push-the-square/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "push-your-luck",
+    "title": "Push Your Luck",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/push-your-luck/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/push-your-luck/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "rabbit-samurai",
+    "title": "Rabbit Samurai",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rabbit-samurai/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rabbit-samurai/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "rabbit-samurai2",
+    "title": "Rabbit Samurai2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rabbit-samurai2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rabbit-samurai2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "resent-client",
+    "title": "Resent Client",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/resent-client/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/resent-client/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "retro-bowl",
+    "title": "Retro Bowl",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/retro-bowl/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/retro-bowl/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "rhythm-doctor",
+    "title": "Rhythm Doctor",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rhythm-doctor/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rhythm-doctor/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddleschool",
+    "title": "Riddleschool",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddleschool2",
+    "title": "Riddleschool2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddleschool3",
+    "title": "Riddleschool3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddleschool4",
+    "title": "Riddleschool4",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool4/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool4/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddleschool5",
+    "title": "Riddleschool5",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool5/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddleschool5/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddletransfer",
+    "title": "Riddletransfer",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddletransfer/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddletransfer/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "riddletransfer2",
+    "title": "Riddletransfer2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddletransfer2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/riddletransfer2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "roblox",
+    "title": "Roblox",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/roblox/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/roblox/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "roblox copy",
+    "title": "Roblox copy",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/roblox copy/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/roblox copy/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "robuxclicker",
+    "title": "Robuxclicker",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/robuxclicker/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/robuxclicker/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "Rocket-League",
+    "title": "Rocket League",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Rocket-League/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Rocket-League/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "rolling-forests",
+    "title": "Rolling Forests",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rolling-forests/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rolling-forests/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "rolly-vortex",
+    "title": "Rolly Vortex",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rolly-vortex/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rolly-vortex/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "rooftop-snipers",
+    "title": "Rooftop Snipers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rooftop-snipers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/rooftop-snipers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "roommate",
+    "title": "Roommate",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/roommate/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/roommate/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ruffle",
+    "title": "Ruffle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ruffle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ruffle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "run",
+    "title": "Run",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "Run 2",
+    "title": "Run 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Run 2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Run 2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "run 3",
+    "title": "Run 3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run 3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run 3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "run2",
+    "title": "Run2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "run3",
+    "title": "Run3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "run4bootleg",
+    "title": "Run4bootleg",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run4bootleg/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/run4bootleg/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "runner",
+    "title": "Runner",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/runner/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/runner/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sand-game",
+    "title": "Sand Game",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sand-game/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sand-game/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sandboxels",
+    "title": "Sandboxels",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sandboxels/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sandboxels/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "santy-is-home",
+    "title": "Santy Is Home",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/santy-is-home/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/santy-is-home/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "scooperia",
+    "title": "Scooperia",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/scooperia/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/scooperia/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "scrapmetal",
+    "title": "Scrapmetal",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/scrapmetal/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/scrapmetal/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "scratcharia",
+    "title": "Scratcharia",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/scratcharia/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/scratcharia/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ShapeShootout",
+    "title": "ShapeShootout",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ShapeShootout/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ShapeShootout/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "shellshockers",
+    "title": "Shellshockers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shellshockers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shellshockers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "shogunshowdown",
+    "title": "Shogunshowdown",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shogunshowdown/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shogunshowdown/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "shotinthedark",
+    "title": "Shotinthedark",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shotinthedark/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shotinthedark/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "shuttledeck",
+    "title": "Shuttledeck",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shuttledeck/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/shuttledeck/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sky-car-stunt",
+    "title": "Sky Car Stunt",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sky-car-stunt/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sky-car-stunt/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sleepingbeauty",
+    "title": "Sleepingbeauty",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sleepingbeauty/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sleepingbeauty/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "slime-rush-td",
+    "title": "Slime Rush Td",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slime-rush-td/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slime-rush-td/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "slitherio",
+    "title": "Slitherio",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slitherio/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slitherio/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "slope",
+    "title": "Slope",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slope/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slope/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "slope-2",
+    "title": "Slope 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slope-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slope-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "slope-ball",
+    "title": "Slope Ball",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slope-ball/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/slope-ball/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sm64",
+    "title": "Sm64",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sm64/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sm64/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "smashkarts",
+    "title": "Smashkarts",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/smashkarts/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/smashkarts/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "smokingbarrels",
+    "title": "Smokingbarrels",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/smokingbarrels/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/smokingbarrels/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "snowbattle",
+    "title": "Snowbattle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/snowbattle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/snowbattle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "snowrider3d",
+    "title": "Snowrider3d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/snowrider3d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/snowrider3d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "soccer-random",
+    "title": "Soccer Random",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soccer-random/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soccer-random/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "soccer-skills",
+    "title": "Soccer Skills",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soccer-skills/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soccer-skills/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "soldier-legend",
+    "title": "Soldier Legend",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soldier-legend/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soldier-legend/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "solitaire",
+    "title": "Solitaire",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/solitaire/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/solitaire/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sort-the-court",
+    "title": "Sort The Court",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sort-the-court/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sort-the-court/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "soundboard",
+    "title": "Soundboard",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soundboard/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/soundboard/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "space-company",
+    "title": "Space Company",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/space-company/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/space-company/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "spacegarden",
+    "title": "Spacegarden",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/spacegarden/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/spacegarden/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "spelunky",
+    "title": "Spelunky",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/spelunky/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/spelunky/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "spinningrat",
+    "title": "Spinningrat",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/spinningrat/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/spinningrat/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "squaredash",
+    "title": "Squaredash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/squaredash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/squaredash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "ssurferbotleg",
+    "title": "Ssurferbotleg",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ssurferbotleg/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/ssurferbotleg/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stack",
+    "title": "Stack",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stack/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stack/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stack-bump-3d",
+    "title": "Stack Bump 3d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stack-bump-3d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stack-bump-3d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "starve",
+    "title": "Starve",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/starve/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/starve/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "station-141",
+    "title": "Station 141",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/station-141/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/station-141/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stationmeltdown",
+    "title": "Stationmeltdown",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stationmeltdown/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stationmeltdown/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stealingthediamond",
+    "title": "Stealingthediamond",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stealingthediamond/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stealingthediamond/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stick-archers",
+    "title": "Stick Archers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stick-archers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stick-archers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stick-duel-battle",
+    "title": "Stick Duel Battle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stick-duel-battle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stick-duel-battle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stick-merge",
+    "title": "Stick Merge",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stick-merge/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stick-merge/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stickman-boost",
+    "title": "Stickman Boost",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickman-boost/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickman-boost/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stickman-golf",
+    "title": "Stickman Golf",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickman-golf/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickman-golf/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stickman-hook",
+    "title": "Stickman Hook",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickman-hook/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickman-hook/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "Stickman-Survival",
+    "title": "Stickman Survival",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Stickman-Survival/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Stickman-Survival/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stickwar",
+    "title": "Stickwar",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickwar/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stickwar/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stormthehouse2",
+    "title": "Stormthehouse2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stormthehouse2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stormthehouse2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "stumble-guys",
+    "title": "Stumble Guys",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stumble-guys/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/stumble-guys/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "subway-surfers",
+    "title": "Subway Surfers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/subway-surfers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/subway-surfers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "subway-surfers-ny",
+    "title": "Subway Surfers Ny",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/subway-surfers-ny/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/subway-surfers-ny/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "suggestions",
+    "title": "Suggestions",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/suggestions/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/suggestions/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "superautopets",
+    "title": "Superautopets",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/superautopets/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/superautopets/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "superfowlist",
+    "title": "Superfowlist",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/superfowlist/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/superfowlist/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "superhot",
+    "title": "Superhot",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/superhot/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/superhot/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "supermarioconstruct",
+    "title": "Supermarioconstruct",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/supermarioconstruct/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/supermarioconstruct/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "surviv",
+    "title": "Surviv",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/surviv/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/surviv/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "sushi-unroll",
+    "title": "Sushi Unroll",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sushi-unroll/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/sushi-unroll/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "swarmsimulator",
+    "title": "Swarmsimulator",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/swarmsimulator/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/swarmsimulator/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "swerve",
+    "title": "Swerve",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/swerve/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/swerve/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "synesthesia",
+    "title": "Synesthesia",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/synesthesia/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/synesthesia/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tactical-weapon-pack-2",
+    "title": "Tactical Weapon Pack 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tactical-weapon-pack-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tactical-weapon-pack-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tacticalassasin2",
+    "title": "Tacticalassasin2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tacticalassasin2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tacticalassasin2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tank-trouble-2",
+    "title": "Tank Trouble 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tank-trouble-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tank-trouble-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tanuki-sunset",
+    "title": "Tanuki Sunset",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tanuki-sunset/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tanuki-sunset/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "temple-run-2",
+    "title": "Temple Run 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/temple-run-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/temple-run-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "the-final-earth",
+    "title": "The Final Earth",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/the-final-earth/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/the-final-earth/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "the-final-earth-2",
+    "title": "The Final Earth 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/the-final-earth-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/the-final-earth-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "the-hotel",
+    "title": "The Hotel",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/the-hotel/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/the-hotel/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "thebattle",
+    "title": "Thebattle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/thebattle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/thebattle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "theheist",
+    "title": "Theheist",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/theheist/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/theheist/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "there-is-no-game",
+    "title": "There Is No Game",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/there-is-no-game/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/there-is-no-game/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "thisistheonlylevel",
+    "title": "Thisistheonlylevel",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/thisistheonlylevel/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/thisistheonlylevel/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "throwrocks",
+    "title": "Throwrocks",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/throwrocks/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/throwrocks/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tiny-fishing",
+    "title": "Tiny Fishing",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tiny-fishing/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tiny-fishing/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tiny-islands",
+    "title": "Tiny Islands",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tiny-islands/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tiny-islands/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tosstheturtle",
+    "title": "Tosstheturtle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tosstheturtle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tosstheturtle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "townscaper",
+    "title": "Townscaper",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/townscaper/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/townscaper/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "Trimps",
+    "title": "Trimps",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Trimps/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/Trimps/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tube-jumpers",
+    "title": "Tube Jumpers",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tube-jumpers/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tube-jumpers/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tunnel-rush",
+    "title": "Tunnel Rush",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tunnel-rush/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tunnel-rush/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "tv-static",
+    "title": "Tv Static",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tv-static/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/tv-static/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "twitch-tetris",
+    "title": "Twitch Tetris",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/twitch-tetris/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/twitch-tetris/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "unfairmario",
+    "title": "Unfairmario",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/unfairmario/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/unfairmario/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "veloce",
+    "title": "Veloce",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/veloce/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/veloce/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "vex2",
+    "title": "Vex2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "vex3",
+    "title": "Vex3",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex3/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex3/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "vex4",
+    "title": "Vex4",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex4/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex4/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "vex5",
+    "title": "Vex5",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex5/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex5/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "vex6",
+    "title": "Vex6",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex6/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex6/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "vex7",
+    "title": "Vex7",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex7/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/vex7/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "volley-random",
+    "title": "Volley Random",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/volley-random/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/volley-random/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "wallsmash",
+    "title": "Wallsmash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wallsmash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wallsmash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "weavesilk",
+    "title": "Weavesilk",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/weavesilk/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/weavesilk/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "webcleaner",
+    "title": "Webcleaner",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webcleaner/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webcleaner/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "webgl-fluid-simulation",
+    "title": "Webgl Fluid Simulation",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webgl-fluid-simulation/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webgl-fluid-simulation/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "webretro",
+    "title": "Webretro",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webretro/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webretro/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "webxash",
+    "title": "Webxash",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webxash/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/webxash/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "win-the-whitehouse",
+    "title": "Win The Whitehouse",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/win-the-whitehouse/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/win-the-whitehouse/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "wolf2d",
+    "title": "Wolf2d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wolf2d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wolf2d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "wolf3d",
+    "title": "Wolf3d",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wolf3d/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wolf3d/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "wordle",
+    "title": "Wordle",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wordle/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wordle/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "worlds-hardest-game",
+    "title": "Worlds Hardest Game",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/worlds-hardest-game/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/worlds-hardest-game/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "worlds-hardest-game-2",
+    "title": "Worlds Hardest Game 2",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/worlds-hardest-game-2/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/worlds-hardest-game-2/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "wounded-summer-baby-edition",
+    "title": "Wounded Summer Baby Edition",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wounded-summer-baby-edition/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/wounded-summer-baby-edition/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "x-trial-racing",
+    "title": "X Trial Racing",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/x-trial-racing/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/x-trial-racing/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "xx142-b2exe",
+    "title": "Xx142 B2exe",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/xx142-b2exe/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/xx142-b2exe/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "yohoho",
+    "title": "Yohoho",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/yohoho/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/yohoho/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "yoshifabrication",
+    "title": "Yoshifabrication",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/yoshifabrication/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/yoshifabrication/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "you-are-bezos",
+    "title": "You Are Bezos",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/you-are-bezos/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/you-are-bezos/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "zigzag",
+    "title": "Zigzag",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/zigzag/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/zigzag/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  },
+  {
+    "id": "zombs-royale",
+    "title": "Zombs Royale",
+    "url": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/zombs-royale/index.html",
+    "image": "https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2/zombs-royale/splash.png",
+    "category": "Arcade",
+    "players": "100k",
+    "status": "ONLINE",
+    "color": "from-blue-500 to-cyan-500"
+  }
+]
