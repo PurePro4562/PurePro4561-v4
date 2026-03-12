@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Gamepad2,
@@ -210,12 +210,15 @@ export default function App() {
   };
 
   const activeGames = isProMode ? ADULT_GAMES : STANDARD_GAMES;
-  const displayedGames = activeGames.filter(g => {
+  
+  const displayedGames = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
-    if (!query) return true;
-    return g.title.toLowerCase().includes(query) || 
-           g.category.toLowerCase().includes(query);
-  });
+    if (!query) return activeGames;
+    return activeGames.filter(g => 
+      g.title.toLowerCase().includes(query) || 
+      g.category.toLowerCase().includes(query)
+    );
+  }, [searchQuery, activeGames]);
 
   const currentThemeConfig = THEMES[activeTheme];
   const themeGradient = currentThemeConfig.gradient;
@@ -554,7 +557,7 @@ export default function App() {
               className="bg-zinc-900 border rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative overflow-hidden flex flex-col items-center text-center"
               style={{ borderColor: `${themeColor}33` }}
             >
-              <h3 className="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+              <h3 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} mb-4 flex items-center gap-2`}>
                 <Video style={{ color: themeColor }} /> Sponsor Message
               </h3>
               <div className="w-full aspect-video bg-black rounded-xl border border-white/10 mb-6 flex items-center justify-center relative overflow-hidden shadow-inner">
@@ -592,7 +595,7 @@ export default function App() {
               
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                 <div>
-                  <h3 className="text-3xl font-bold text-zinc-100 flex items-center gap-3">
+                  <h3 className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} flex items-center gap-3`}>
                     <Store style={{ color: themeColor }} className="w-8 h-8"/> The Shop
                   </h3>
                   <p className="text-zinc-400 mt-2">Spend your tokens and chips on custom themes, badges, or exchange currency.</p>
@@ -785,7 +788,7 @@ export default function App() {
                   <Key className="w-8 h-8 text-zinc-950" />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-zinc-100 mb-2">Access Key Required</h3>
+                <h3 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} mb-2`}>Access Key Required</h3>
                 <p className="text-zinc-400 mb-8 text-sm">
                   To access the High Stakes Lobby, please enter your unique access key.
                 </p>
@@ -807,8 +810,11 @@ export default function App() {
                         setKeyError(false);
                       }}
                       placeholder="Enter Access Key"
-                      className={`w-full bg-zinc-950 border ${keyError ? 'border-red-500 focus:border-red-500' : 'border-white/10'} rounded-xl px-4 py-4 text-center text-xl font-mono text-zinc-100 outline-none transition-colors uppercase`}
-                      style={{ borderColor: keyInput && !keyError ? themeColor : undefined }}
+                      className={`w-full bg-zinc-950 border ${keyError ? 'border-red-500 focus:border-red-500' : 'border-white/10'} rounded-xl px-4 py-4 text-center text-xl font-mono text-zinc-100 outline-none transition-all uppercase`}
+                      style={{ 
+                        borderColor: keyInput && !keyError ? themeColor : undefined,
+                        boxShadow: keyInput && !keyError ? `0 0 15px ${themeColor}33` : undefined
+                      }}
                     />
                     
                     <AnimatePresence>
@@ -838,10 +844,11 @@ export default function App() {
                       <button
                         type="button"
                         onClick={() => { playClick(); watchAdForKey(); }}
-                        className="w-full py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+                        className="w-full py-3 rounded-xl bg-zinc-900 border hover:bg-zinc-800 text-zinc-100 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+                        style={{ borderColor: `${themeColor}4d` }}
                       >
                         <Video className="w-4 h-4" style={{ color: themeColor }} />
-                        Get Access Key (Watch Ad)
+                        <span className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Get Access Key (Watch Ad)</span>
                       </button>
                     </div>
                   </div>
@@ -878,7 +885,7 @@ export default function App() {
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${themeColor}20` }}>
                   <History className="w-6 h-6" style={{ color: themeColor }} />
                 </div>
-                <h3 className="text-2xl font-bold text-zinc-100">Bet History</h3>
+                <h3 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Bet History</h3>
               </div>
 
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">

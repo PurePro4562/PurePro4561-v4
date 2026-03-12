@@ -213,8 +213,9 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
       className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto"
     >
       <div className="w-full flex justify-between items-center mb-4">
-        <button onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors" style={{ color: `${themeColor}cc` }}>
-          <ArrowLeft className="w-5 h-5" /> Leave Table
+        <button onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
+          <ArrowLeft className="w-5 h-5" style={{ color: themeColor }} /> 
+          <span className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Leave Table</span>
         </button>
       </div>
 
@@ -264,7 +265,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
               <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <button onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">-</button>
-                  <div className="w-24 text-center text-2xl font-mono font-bold" style={{ color: themeColor }}>${bet.toLocaleString()}</div>
+                  <div className={`w-24 text-center text-2xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>${bet.toLocaleString()}</div>
                   <button onClick={() => { playClick(); setBet(b => b + 10); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">+</button>
                 </div>
 
