@@ -1213,7 +1213,7 @@ for (let line of lines) {
 
 const games = [];
 const commitHash = 'f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2';
-const baseUrl = \`https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/\${commitHash}/\`;
+const baseUrl = `https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/${commitHash}/`;
 
 const colors = [
   'from-purple-500 to-pink-500',
@@ -1226,11 +1226,52 @@ const colors = [
 
 let colorIndex = 0;
 
+function buildAssetUrl(base, dir, file) {
+  // Some filenames can include characters that need encoding.
+  // encodeURI keeps URL structure intact while escaping unsafe characters.
+  return encodeURI(base + dir + '/' + file);
+}
+
+function pickBestImageFile(files) {
+  const imageFiles = files.filter(f => f.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i));
+  if (imageFiles.length === 0) return null;
+
+  // Prefer true icons/logos over splash/og images.
+  const score = (f) => {
+    const name = f.toLowerCase();
+    let s = 0;
+
+    // Strong signals
+    if (/(^|\/)(favicon|icon|logo)([-_.]|\b)/.test(name)) s += 100;
+    if (/(^|\/)icons?\//.test(name)) s += 25;
+    if (/[-_.](256|512|1024)\b/.test(name)) s += 15;
+
+    // Weak signals (often OK, but not as ideal as icon/logo)
+    if (/thumb/.test(name)) s += 5;
+    if (/(^|\/)image\b/.test(name)) s += 2;
+
+    // Things that commonly aren't "icons"
+    if (/splash/.test(name)) s -= 10;
+    if (/og[_-]?image/.test(name)) s -= 15;
+    if (/banner/.test(name)) s -= 8;
+    if (/background|bg\b/.test(name)) s -= 6;
+
+    // Prefer smaller/standard icon formats a bit
+    if (name.endsWith('.ico')) s += 8;
+    if (name.endsWith('.svg')) s += 6;
+
+    return s;
+  };
+
+  imageFiles.sort((a, b) => score(b) - score(a));
+  return imageFiles[0];
+}
+
 for (let [dir, files] of Object.entries(gamesMap)) {
     let htmlFile = files.find(f => f.endsWith('.html'));
     
     if (htmlFile) {
-        let imgFile = files.find(f => f.match(/\.(png|jpg|jpeg|gif|webp)$/i));
+        let imgFile = pickBestImageFile(files);
         
         let title = dir.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         
@@ -1238,7 +1279,7 @@ for (let [dir, files] of Object.entries(gamesMap)) {
             id: dir,
             title: title,
             url: baseUrl + dir + '/' + htmlFile,
-            image: imgFile ? (baseUrl + dir + '/' + imgFile) : 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=60',
+            image: imgFile ? buildAssetUrl(baseUrl, dir, imgFile) : 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=60',
             category: 'Arcade',
             players: Math.floor(Math.random() * 900 + 10) + 'k',
             status: 'ONLINE',
@@ -1249,4 +1290,4 @@ for (let [dir, files] of Object.entries(gamesMap)) {
 }
 
 fs.writeFileSync('src/externalGames.json', JSON.stringify(games, null, 2));
-console.log(\`Extracted \${games.length} games!\`);
+console.log(`Extracted ${games.length} games!`);

@@ -485,8 +485,7 @@ export default function App() {
                   show: { opacity: 1, transition: { staggerChildren: 0.05 } }
                 }}
                 initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, margin: "-50px" }}
+                animate="show"
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
               >
                 <AnimatePresence mode="popLayout">
