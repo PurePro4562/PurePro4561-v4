@@ -13,8 +13,8 @@ const GameImage: React.FC<GameImageProps> = ({ src, alt, icon: Icon, className }
 
   if (!src || hasError) {
     return (
-      <div className={`flex items-center justify-center ${className}`}>
-        {Icon ? <Icon className="w-16 h-16 text-zinc-100" strokeWidth={1.5} /> : null}
+      <div className={`flex items-center justify-center bg-zinc-800 ${className}`}>
+        {Icon ? <Icon className="w-16 h-16 text-zinc-500" strokeWidth={1.5} /> : <div className="w-16 h-16 bg-zinc-700 rounded-full" />}
       </div>
     );
   }

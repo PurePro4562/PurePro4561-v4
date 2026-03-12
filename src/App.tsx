@@ -86,6 +86,14 @@ const EXCHANGE = {
 export default function App() {
   const [isProMode, setIsProMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
   
   // Modals & Verification
   const [showKeyModal, setShowKeyModal] = useState(false);
@@ -213,17 +221,23 @@ export default function App() {
     gamesSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const activeGames = isProMode ? ADULT_GAMES : STANDARD_GAMES;
+  const activeGames = useMemo(() => {
+    console.log('Active games changed, isProMode:', isProMode);
+    return isProMode ? ADULT_GAMES : STANDARD_GAMES;
+  }, [isProMode]);
   
   const displayedGames = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+    const query = debouncedSearchQuery.trim().toLowerCase();
+    console.log('Filtering games with query:', query, 'Active games count:', activeGames.length);
     if (query === '') return activeGames;
     
-    return activeGames.filter(g => 
+    const filtered = activeGames.filter(g => 
       g.title.toLowerCase().includes(query) || 
       g.category.toLowerCase().includes(query)
     );
-  }, [searchQuery, activeGames]);
+    console.log('Filtered games count:', filtered.length);
+    return filtered;
+  }, [debouncedSearchQuery, activeGames]);
 
   const currentThemeConfig = THEMES[activeTheme];
   const themeGradient = currentThemeConfig.gradient;
