@@ -32,6 +32,7 @@ import {
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
+import GameImage from './components/GameImage';
 import { playClick, playHover } from './audio';
 import externalGames from './externalGames.json';
 
@@ -352,9 +353,9 @@ export default function App() {
       </motion.nav>
 
       {activeGame ? (
-        activeGame === 101 ? (
+        activeGame === 'custom-101' ? (
           <Slots balance={balance} setBalance={setBalance} onExit={() => setActiveGame(null)} themeGradient={themeGradient} themeColor={themeColor} onRecordBet={recordBet} />
-        ) : activeGame === 102 ? (
+        ) : activeGame === 'custom-102' ? (
           <Blackjack balance={balance} setBalance={setBalance} onExit={() => setActiveGame(null)} themeGradient={themeGradient} themeColor={themeColor} onRecordBet={recordBet} />
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full">
@@ -364,11 +365,13 @@ export default function App() {
             >
               <ArrowLeft className="w-4 h-4" /> Return to Lobby
             </button>
-            <iframe 
-              src={([...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.id === activeGame)?.url) || ''}
-              className="fixed inset-0 w-screen h-screen z-40 border-none bg-black"
-              title="Game"
-            />
+            {activeGame && ([...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.id === activeGame)?.url) && (
+              <iframe 
+                src={([...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.id === activeGame)?.url)}
+                className="fixed inset-0 w-screen h-screen z-40 border-none bg-black"
+                title="Game"
+              />
+            )}
           </div>
         )
       ) : (
@@ -509,24 +512,12 @@ export default function App() {
                                 transition={{ type: 'spring', stiffness: 300 }}
                                 className="w-full h-full flex items-center justify-center"
                               >
-                                {game.image ? (
-                                  <img 
-                                    src={game.image} 
-                                    alt={game.title} 
-                                    className="w-full h-full object-cover" 
-                                    referrerPolicy="no-referrer" 
-                                    onError={(e) => {
-                                      (e.target as HTMLImageElement).style.display = 'none';
-                                      const fallback = (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-icon');
-                                      if (fallback) fallback.classList.remove('hidden');
-                                    }}
-                                  />
-                                ) : null}
-                                <div className={`fallback-icon ${game.image ? 'hidden' : ''}`}>
-                                  {game.icon ? (
-                                    <game.icon className="w-16 h-16 text-zinc-100" strokeWidth={1.5} />
-                                  ) : null}
-                                </div>
+                                <GameImage 
+                                  src={game.image} 
+                                  alt={game.title} 
+                                  icon={game.icon}
+                                  className="w-full h-full"
+                                />
                               </motion.div>
                             )}
                           </div>
