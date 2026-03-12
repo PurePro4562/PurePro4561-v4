@@ -31,7 +31,7 @@ import {
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
-import { playClick } from './audio';
+import { playClick, playHover } from './audio';
 
 const STANDARD_GAMES = [
   { id: 1, title: 'Cyber Strike', category: 'FPS', icon: Crosshair, color: 'from-lime-400 to-cyan-400', players: '1.2k', status: 'ONLINE' },
@@ -212,8 +212,9 @@ export default function App() {
   const activeGames = isProMode ? ADULT_GAMES : STANDARD_GAMES;
   
   const displayedGames = useMemo(() => {
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return activeGames;
+    const query = searchQuery.trim().toLowerCase();
+    if (query === '') return activeGames;
+    
     return activeGames.filter(g => 
       g.title.toLowerCase().includes(query) || 
       g.category.toLowerCase().includes(query)
@@ -276,6 +277,7 @@ export default function App() {
               {searchQuery && (
                 <motion.button 
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  onMouseEnter={playHover}
                   onClick={() => setSearchQuery('')}
                   className="text-zinc-500 hover:text-zinc-300"
                 >
@@ -289,17 +291,32 @@ export default function App() {
             {isProMode ? (
               <div className="hidden sm:flex items-center gap-2 bg-amber-500/10 pl-3 pr-1 py-1 rounded-full border border-amber-500/20 text-amber-400 font-mono text-sm">
                 <Coins className="w-4 h-4" /> ${balance.toLocaleString()}
-                <button onClick={watchAd} className="ml-2 bg-amber-500/20 hover:bg-amber-500/40 p-1.5 rounded-full transition-colors" title="Watch Ad for Chips">
+                <button 
+                  onMouseEnter={playHover}
+                  onClick={watchAd} 
+                  className="ml-2 bg-amber-500/20 hover:bg-amber-500/40 p-1.5 rounded-full transition-colors" 
+                  title="Watch Ad for Chips"
+                >
                   <Video className="w-4 h-4 text-amber-400" />
                 </button>
               </div>
             ) : (
               <div className="hidden sm:flex items-center gap-2 bg-zinc-800/50 pl-3 pr-1 py-1 rounded-full border border-white/10 text-zinc-300 font-mono text-sm">
                 <Ticket className="w-4 h-4" /> {tokens.toLocaleString()}
-                <button onClick={watchAd} className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors" title="Watch Ad for Tokens">
+                <button 
+                  onMouseEnter={playHover}
+                  onClick={watchAd} 
+                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors" 
+                  title="Watch Ad for Tokens"
+                >
                   <Video className="w-4 h-4 text-lime-400" />
                 </button>
-                <button onClick={() => setShowShopModal(true)} className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors" title="Open Shop">
+                <button 
+                  onMouseEnter={playHover}
+                  onClick={() => setShowShopModal(true)} 
+                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors" 
+                  title="Open Shop"
+                >
                   <Store className="w-4 h-4 text-zinc-300" />
                 </button>
               </div>
@@ -317,6 +334,7 @@ export default function App() {
             >
               <span className={`text-xs font-mono font-bold ${isProMode ? 'text-amber-500' : 'text-zinc-500'}`}>PRO</span>
               <button 
+                onMouseEnter={playHover}
                 onClick={handleToggleProMode} 
                 className={`w-10 h-5 rounded-full p-1 flex items-center transition-colors duration-300 ${isProMode ? 'bg-gradient-to-r from-amber-500 to-red-500 justify-end' : 'bg-zinc-700 justify-start'}`}
               >
@@ -451,62 +469,86 @@ export default function App() {
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
               >
                 <AnimatePresence mode="popLayout">
-                  {displayedGames.map((game) => (
-                    <motion.div
-                      layout
-                      key={game.id}
-                      variants={{
-                        hidden: { opacity: 0, y: 30, scale: 0.9 },
-                        show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
-                      }}
-                      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                      whileHover={{ y: -8, scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => { playClick(); handlePlayGame(game.id); }}
-                      className="group relative bg-zinc-900/40 backdrop-blur-sm border border-white/5 rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors hover:border-white/20 dynamic-glow-box-hover"
+                  {displayedGames.length > 0 ? (
+                    displayedGames.map((game) => (
+                      <motion.div
+                        layout
+                        key={game.id}
+                        variants={{
+                          hidden: { opacity: 0, y: 30, scale: 0.9 },
+                          show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
+                        }}
+                        exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                        whileHover={{ y: -8, scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        onMouseEnter={playHover}
+                        onClick={() => { playClick(); handlePlayGame(game.id); }}
+                        className="group relative bg-zinc-900/40 backdrop-blur-sm border border-white/5 rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors hover:border-white/20 dynamic-glow-box-hover"
+                      >
+                        <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+
+                        <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
+                          <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            
+                            {launchingGame === game.id ? (
+                              <motion.div
+                                initial={{ opacity: 0, rotate: -180 }}
+                                animate={{ opacity: 1, rotate: 0 }}
+                                className="text-zinc-100"
+                              >
+                                <Loader2 className="w-12 h-12 animate-spin" />
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
+                                transition={{ type: 'spring', stiffness: 300 }}
+                              >
+                                <game.icon className="w-16 h-16 text-zinc-100" strokeWidth={1.5} />
+                              </motion.div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
+                            <p className="text-zinc-500 text-sm">{game.category}</p>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
+                              {game.status}
+                            </span>
+                            <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
+                              {game.players}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.div 
+                      key="no-results"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="col-span-full py-20 flex flex-col items-center justify-center text-center"
                     >
-                      <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-
-                      <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
-                        <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                          
-                          {launchingGame === game.id ? (
-                            <motion.div
-                              initial={{ opacity: 0, rotate: -180 }}
-                              animate={{ opacity: 1, rotate: 0 }}
-                              className="text-zinc-100"
-                            >
-                              <Loader2 className="w-12 h-12 animate-spin" />
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
-                              transition={{ type: 'spring', stiffness: 300 }}
-                            >
-                              <game.icon className="w-16 h-16 text-zinc-100" strokeWidth={1.5} />
-                            </motion.div>
-                          )}
-                        </div>
+                      <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-white/5">
+                        <Search className="w-10 h-10 text-zinc-700" />
                       </div>
-
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
-                          <p className="text-zinc-500 text-sm">{game.category}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
-                            {game.status}
-                          </span>
-                          <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
-                            {game.players}
-                          </span>
-                        </div>
-                      </div>
+                      <h3 className="text-xl font-bold text-zinc-300">No matches found</h3>
+                      <p className="text-zinc-500 mt-2">Try searching for something else or clear the filter.</p>
+                      <button 
+                        onClick={() => setSearchQuery('')}
+                        onMouseEnter={playHover}
+                        className="mt-6 px-6 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-colors"
+                      >
+                        Clear Search
+                      </button>
                     </motion.div>
-                  ))}
+                  )}
                 </AnimatePresence>
               </motion.div>
             )}
@@ -589,7 +631,7 @@ export default function App() {
               className="bg-zinc-900 border rounded-3xl p-8 max-w-4xl w-full shadow-2xl relative overflow-hidden"
               style={{ borderColor: `${themeColor}33` }}
             >
-              <button onClick={() => { playClick(); setShowShopModal(false); }} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors">
+              <button onMouseEnter={playHover} onClick={() => { playClick(); setShowShopModal(false); }} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors">
                 <X className="w-6 h-6" />
               </button>
               
@@ -614,6 +656,7 @@ export default function App() {
 
               <div className="flex gap-2 mb-6 border-b border-white/10 pb-4 overflow-x-auto custom-scrollbar">
                 <button 
+                  onMouseEnter={playHover}
                   onClick={() => { playClick(); setShopTab('themes'); }}
                   className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'themes' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                   style={shopTab === 'themes' ? { backgroundColor: themeColor } : {}}
@@ -621,6 +664,7 @@ export default function App() {
                   Themes
                 </button>
                 <button 
+                  onMouseEnter={playHover}
                   onClick={() => { playClick(); setShopTab('badges'); }}
                   className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'badges' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                   style={shopTab === 'badges' ? { backgroundColor: themeColor } : {}}
@@ -628,6 +672,7 @@ export default function App() {
                   Badges
                 </button>
                 <button 
+                  onMouseEnter={playHover}
                   onClick={() => { playClick(); setShopTab('exchange'); }}
                   className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'exchange' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                   style={shopTab === 'exchange' ? { backgroundColor: themeColor } : {}}
@@ -654,9 +699,16 @@ export default function App() {
                       {isActive ? (
                         <span className="px-4 py-2 rounded-xl font-bold text-sm border" style={{ backgroundColor: `${themeColor}33`, color: themeColor, borderColor: `${themeColor}4d` }}>Equipped</span>
                       ) : isOwned ? (
-                        <button onClick={() => { playClick(); setActiveTheme(id as keyof typeof THEMES); }} className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors">Equip</button>
+                        <button 
+                          onMouseEnter={playHover}
+                          onClick={() => { playClick(); setActiveTheme(id as keyof typeof THEMES); }} 
+                          className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors"
+                        >
+                          Equip
+                        </button>
                       ) : (
                         <button 
+                          onMouseEnter={playHover}
                           onClick={() => {
                             playClick();
                             if (tokens >= theme.price) {
@@ -699,8 +751,10 @@ export default function App() {
                         <span className="px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm border border-amber-500/30">Owned</span>
                       ) : (
                         <button 
+                          onMouseEnter={playHover}
                           onClick={() => {
                             if (canAfford) {
+                              playClick();
                               if (isChips) setBalance(b => b - badge.price);
                               else setTokens(t => t - badge.price);
                               setOwnedBadges(prev => [...prev, id]);
@@ -733,8 +787,10 @@ export default function App() {
                         </div>
                       </div>
                       <button 
+                        onMouseEnter={playHover}
                         onClick={() => {
                           if (canAfford) {
+                            playClick();
                             if (isChips) setBalance(b => b - item.price);
                             else setTokens(t => t - item.price);
                             
@@ -777,6 +833,7 @@ export default function App() {
               <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: `${themeColor}33` }} />
 
               <button 
+                onMouseEnter={playHover}
                 onClick={() => { playClick(); setShowKeyModal(false); }}
                 className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors"
               >
@@ -832,6 +889,7 @@ export default function App() {
 
                     <button
                       type="submit"
+                      onMouseEnter={playHover}
                       disabled={!keyInput}
                       className="w-full py-4 rounded-xl text-zinc-950 font-bold text-lg shadow-lg transition-all disabled:opacity-50"
                       style={{ background: `linear-gradient(to right, ${themeColors[0]}, ${themeColors[1]})`, boxShadow: keyInput ? `0 0 20px ${themeColor}4d` : 'none' }}
@@ -843,6 +901,7 @@ export default function App() {
                       <p className="text-zinc-500 text-xs mb-3 font-mono">DON'T HAVE A KEY?</p>
                       <button
                         type="button"
+                        onMouseEnter={playHover}
                         onClick={() => { playClick(); watchAdForKey(); }}
                         className="w-full py-3 rounded-xl bg-zinc-900 border hover:bg-zinc-800 text-zinc-100 font-bold text-sm flex items-center justify-center gap-2 transition-all"
                         style={{ borderColor: `${themeColor}4d` }}

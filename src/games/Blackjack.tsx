@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
-import { playCoin, playWin, playLose, playCard, playChip, playClick } from '../audio';
+import { playCoin, playWin, playLose, playCard, playChip, playClick, playHover } from '../audio';
 
 const SUITS = ['♠', '♥', '♦', '♣'];
 const VALUES = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
@@ -213,7 +213,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
       className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto"
     >
       <div className="w-full flex justify-between items-center mb-4">
-        <button onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
+        <button onMouseEnter={playHover} onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
           <ArrowLeft className="w-5 h-5" style={{ color: themeColor }} /> 
           <span className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Leave Table</span>
         </button>
@@ -264,21 +264,22 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
             <div className="flex flex-col items-center gap-6 bg-black/40 p-6 rounded-2xl backdrop-blur-md border border-white/10 w-full max-w-xl">
               <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <button onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">-</button>
+                  <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">-</button>
                   <div className={`w-24 text-center text-2xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>${bet.toLocaleString()}</div>
-                  <button onClick={() => { playClick(); setBet(b => b + 10); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">+</button>
+                  <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(b => b + 10); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">+</button>
                 </div>
 
                 <div className="flex gap-2">
-                  <button onClick={() => { playClick(); setBet(b => b + 100); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+100</button>
-                  <button onClick={() => { playClick(); setBet(b => b + 1000); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+1k</button>
-                  <button onClick={() => { playClick(); setBet(balance); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">MAX</button>
+                  <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(b => b + 100); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+100</button>
+                  <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(b => b + 1000); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+1k</button>
+                  <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(balance); }} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">MAX</button>
                 </div>
               </div>
 
               <motion.button
                 whileHover={balance >= bet ? { scale: 1.02 } : {}}
                 whileTap={balance >= bet ? { scale: 0.98 } : {}}
+                onMouseEnter={playHover}
                 onClick={startGame}
                 disabled={balance < bet}
                 className={`w-full py-4 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-black text-xl uppercase tracking-wider disabled:opacity-50 shadow-lg`}
@@ -292,6 +293,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onMouseEnter={playHover}
                 onClick={() => { playClick(); hit(); }}
                 disabled={gameState !== 'playing'}
                 className="flex-1 py-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-black text-xl uppercase tracking-wider border border-white/10 disabled:opacity-50"
@@ -301,6 +303,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onMouseEnter={playHover}
                 onClick={() => { playClick(); stand(); }}
                 disabled={gameState !== 'playing'}
                 className={`flex-1 py-4 rounded-xl bg-gradient-to-r ${themeGradient} text-white font-black text-xl uppercase tracking-wider shadow-lg disabled:opacity-50`}

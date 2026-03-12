@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Coins } from 'lucide-react';
-import { playCoin, playWin, playLose, playSpin, playClick } from '../audio';
+import { playCoin, playWin, playLose, playSpin, playClick, playHover } from '../audio';
 
 const SYMBOLS = ['🍒', '🍋', '🍇', '🔔', '💎', '7️⃣'];
 const MULTIPLIERS: Record<string, number> = { '🍒': 2, '🍋': 3, '🍇': 5, '🔔': 10, '💎': 25, '7️⃣': 50 };
@@ -83,7 +83,7 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
       className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-4xl mx-auto"
     >
       <div className="w-full flex justify-between items-center mb-8">
-        <button onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
+        <button onMouseEnter={playHover} onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
           <ArrowLeft className="w-5 h-5" style={{ color: themeColor }} /> 
           <span className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Leave Machine</span>
         </button>
@@ -141,14 +141,29 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
             <div className="flex flex-col items-center sm:items-start">
               <span className="text-zinc-500 text-xs font-mono mb-1">BET AMOUNT</span>
               <div className="flex items-center gap-2">
-                <button onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} disabled={isSpinning} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 disabled:opacity-50 text-xl font-bold">-</button>
+                <button 
+                  onMouseEnter={playHover}
+                  onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} 
+                  disabled={isSpinning} 
+                  className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 disabled:opacity-50 text-xl font-bold"
+                >
+                  -
+                </button>
                 <span className={`text-2xl font-mono font-bold w-24 text-center text-transparent bg-clip-text bg-gradient-to-b ${themeGradient}`}>${bet.toLocaleString()}</span>
-                <button onClick={() => { playClick(); setBet(b => b + 10); }} disabled={isSpinning} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 disabled:opacity-50 text-xl font-bold">+</button>
+                <button 
+                  onMouseEnter={playHover}
+                  onClick={() => { playClick(); setBet(b => b + 10); }} 
+                  disabled={isSpinning} 
+                  className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 disabled:opacity-50 text-xl font-bold"
+                >
+                  +
+                </button>
               </div>
             </div>
 
             <div className="flex gap-2">
               <button 
+                onMouseEnter={playHover}
                 onClick={() => { playClick(); setBet(b => b + 100); }} 
                 disabled={isSpinning}
                 className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors"
@@ -156,6 +171,7 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
                 +100
               </button>
               <button 
+                onMouseEnter={playHover}
                 onClick={() => { playClick(); setBet(b => b + 1000); }} 
                 disabled={isSpinning}
                 className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors"
@@ -163,6 +179,7 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
                 +1k
               </button>
               <button 
+                onMouseEnter={playHover}
                 onClick={() => { playClick(); setBet(balance); }} 
                 disabled={isSpinning}
                 className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors"
@@ -175,6 +192,7 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
           <motion.button
             whileHover={!isSpinning && balance >= bet ? { scale: 1.02 } : {}}
             whileTap={!isSpinning && balance >= bet ? { scale: 0.98 } : {}}
+            onMouseEnter={playHover}
             onClick={spin}
             disabled={isSpinning || balance < bet}
             className={`w-full py-5 rounded-xl bg-gradient-to-b ${themeGradient} text-white font-black text-2xl tracking-wider shadow-lg disabled:opacity-50 disabled:grayscale transition-all`}
