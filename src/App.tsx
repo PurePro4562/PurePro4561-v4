@@ -87,10 +87,12 @@ export default function App() {
   const [isProMode, setIsProMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [visibleCount, setVisibleCount] = useState(24);
 
   React.useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
+      setVisibleCount(24); // Reset visible count on new search
     }, 300);
     return () => clearTimeout(handler);
   }, [searchQuery]);
@@ -228,15 +230,25 @@ export default function App() {
   
   const displayedGames = useMemo(() => {
     const query = debouncedSearchQuery.trim().toLowerCase();
-    console.log('Filtering games with query:', query, 'Active games count:', activeGames.length);
-    if (query === '') return activeGames;
     
-    const filtered = activeGames.filter(g => 
+    let filtered = activeGames;
+    if (query !== '') {
+      filtered = activeGames.filter(g => 
+        g.title.toLowerCase().includes(query) || 
+        g.category.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered.slice(0, visibleCount);
+  }, [debouncedSearchQuery, activeGames, visibleCount]);
+
+  const totalFilteredGames = useMemo(() => {
+    const query = debouncedSearchQuery.trim().toLowerCase();
+    if (query === '') return activeGames.length;
+    return activeGames.filter(g => 
       g.title.toLowerCase().includes(query) || 
       g.category.toLowerCase().includes(query)
-    );
-    console.log('Filtered games count:', filtered.length);
-    return filtered;
+    ).length;
   }, [debouncedSearchQuery, activeGames]);
 
   const currentThemeConfig = THEMES[activeTheme];
@@ -463,7 +475,7 @@ export default function App() {
                 {isProMode ? <ShieldAlert className="w-6 h-6 text-amber-500" /> : <Terminal className="w-6 h-6 text-zinc-300" />}
                 {isProMode ? 'High_Stakes_Lobby' : 'Featured_Executables'}
               </h2>
-              <span className="text-zinc-500 font-mono text-sm">{displayedGames.length} MODULES</span>
+              <span className="text-zinc-500 font-mono text-sm">{totalFilteredGames} MODULES</span>
             </motion.div>
 
             {displayedGames.length === 0 ? (
@@ -478,106 +490,115 @@ export default function App() {
                 </button>
               </motion.div>
             ) : (
-              <motion.div
-                key={isProMode ? 'adult-grid' : 'standard-grid'}
-                variants={{
-                  hidden: { opacity: 0 },
-                  show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-                }}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, margin: "-50px" }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-              >
-                <AnimatePresence mode="popLayout">
-                  {displayedGames.length > 0 ? (
-                    displayedGames.map((game) => (
-                      <motion.div
-                        layout
-                        key={game.id}
-                        variants={{
-                          hidden: { opacity: 0, y: 30, scale: 0.9 },
-                          show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
-                        }}
-                        exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                        whileHover={{ y: -8, scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        onMouseEnter={playHover}
-                        onClick={() => { playClick(); handlePlayGame(game.id); }}
-                        className="group relative bg-zinc-900/40 backdrop-blur-sm border border-white/5 rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors hover:border-white/20 dynamic-glow-box-hover"
-                      >
-                        <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-
-                        <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
-                          <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            
-                            {launchingGame === game.id ? (
-                              <motion.div
-                                initial={{ opacity: 0, rotate: -180 }}
-                                animate={{ opacity: 1, rotate: 0 }}
-                                className="text-zinc-100"
-                              >
-                                <Loader2 className="w-12 h-12 animate-spin" />
-                              </motion.div>
-                            ) : (
-                              <motion.div
-                                whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
-                                transition={{ type: 'spring', stiffness: 300 }}
-                                className="w-full h-full flex items-center justify-center"
-                              >
-                                <GameImage 
-                                  src={game.image} 
-                                  alt={game.title} 
-                                  icon={game.icon}
-                                  className="w-full h-full"
-                                />
-                              </motion.div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
-                            <p className="text-zinc-500 text-sm">{game.category}</p>
-                          </div>
-                          <div className="flex flex-col items-end gap-1">
-                            <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
-                              {game.status}
-                            </span>
-                            <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
-                              {game.players}
-                            </span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))
-                  ) : (
-                    <motion.div 
-                      key="no-results"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      className="col-span-full py-20 flex flex-col items-center justify-center text-center"
+              <>
+                <motion.div
+                  key={isProMode ? 'adult-grid' : 'standard-grid'}
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+                  }}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "-50px" }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                >
+                {displayedGames.length > 0 ? (
+                  displayedGames.map((game) => (
+                    <motion.div
+                      key={game.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 30, scale: 0.9 },
+                        show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
+                      }}
+                      whileHover={{ y: -8, scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onMouseEnter={playHover}
+                      onClick={() => { playClick(); handlePlayGame(game.id); }}
+                      className="group relative bg-zinc-900/40 backdrop-blur-sm border border-white/5 rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors hover:border-white/20 dynamic-glow-box-hover"
                     >
-                      <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-white/5">
-                        <Search className="w-10 h-10 text-zinc-700" />
+                      <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+
+                      <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
+                        <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          
+                          {launchingGame === game.id ? (
+                            <motion.div
+                              initial={{ opacity: 0, rotate: -180 }}
+                              animate={{ opacity: 1, rotate: 0 }}
+                              className="text-zinc-100"
+                            >
+                              <Loader2 className="w-12 h-12 animate-spin" />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
+                              transition={{ type: 'spring', stiffness: 300 }}
+                              className="w-full h-full flex items-center justify-center"
+                            >
+                              <GameImage 
+                                src={game.image} 
+                                alt={game.title} 
+                                icon={game.icon}
+                                className="w-full h-full"
+                              />
+                            </motion.div>
+                          )}
+                        </div>
                       </div>
-                      <h3 className="text-xl font-bold text-zinc-300">No matches found</h3>
-                      <p className="text-zinc-500 mt-2">Try searching for something else or clear the filter.</p>
-                      <button 
-                        onClick={() => setSearchQuery('')}
-                        onMouseEnter={playHover}
-                        className="mt-6 px-6 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-colors"
-                      >
-                        Clear Search
-                      </button>
+
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
+                          <p className="text-zinc-500 text-sm">{game.category}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
+                            {game.status}
+                          </span>
+                          <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
+                            {game.players}
+                          </span>
+                        </div>
+                      </div>
                     </motion.div>
-                  )}
-                </AnimatePresence>
+                  ))
+                ) : (
+                  <motion.div 
+                    key="no-results"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="col-span-full py-20 flex flex-col items-center justify-center text-center"
+                  >
+                    <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-white/5">
+                      <Search className="w-10 h-10 text-zinc-700" />
+                    </div>
+                    <h3 className="text-xl font-bold text-zinc-300">No matches found</h3>
+                    <p className="text-zinc-500 mt-2">Try searching for something else or clear the filter.</p>
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      onMouseEnter={playHover}
+                      className="mt-6 px-6 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-colors"
+                    >
+                      Clear Search
+                    </button>
+                  </motion.div>
+                )}
               </motion.div>
+              
+              {displayedGames.length > 0 && visibleCount < totalFilteredGames && (
+                <div className="mt-12 flex justify-center">
+                  <button
+                    onClick={() => setVisibleCount(prev => prev + 24)}
+                    onMouseEnter={playHover}
+                    className="px-8 py-3 rounded-xl bg-zinc-900 border border-white/10 hover:border-white/20 text-zinc-300 font-bold transition-all hover:bg-zinc-800"
+                  >
+                    Load More Games
+                  </button>
+                </div>
+              )}
+              </>
             )}
           </section>
         </main>
