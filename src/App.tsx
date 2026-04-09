@@ -35,7 +35,7 @@ import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
 import GameImage from './components/GameImage';
 import AuraPackModal from './components/AuraPackModal';
-import { playClick, playHover } from './audio';
+import { playClick, playHover, playCoin, playLose } from './audio';
 import externalGames from './externalGames.json';
 
 const STANDARD_GAMES = [
@@ -70,6 +70,7 @@ const THEMES = {
   cyberpunk: { name: 'Cyberpunk', gradient: 'from-pink-500 to-yellow-500', colors: ['#ec4899', '#eab308'], glow: 'rgba(236, 72, 153, 0.5)', primary: '#ec4899', price: 10000 },
   matrix: { name: 'The Matrix', gradient: 'from-green-500 to-emerald-700', colors: ['#22c55e', '#047857'], glow: 'rgba(34, 197, 94, 0.5)', primary: '#22c55e', price: 15000 },
   blood: { name: 'Blood Moon', gradient: 'from-red-600 to-rose-900', colors: ['#dc2626', '#4c0519'], glow: 'rgba(220, 38, 38, 0.5)', primary: '#dc2626', price: 25000 },
+  godAura: { name: 'God Aura', gradient: 'from-amber-300 via-orange-500 to-red-600', colors: ['#fcd34d', '#dc2626'], glow: 'rgba(251, 191, 36, 0.8)', primary: '#f59e0b', price: 999999 },
   theme_liquid_gold: { name: 'Liquid Gold', gradient: 'from-yellow-300 via-yellow-500 to-amber-700', colors: ['#fde047', '#b45309'], glow: 'rgba(253, 224, 71, 0.6)', primary: '#eab308', price: 999999 }, // Only from packs
   theme_midnight_nebula: { name: 'Midnight Nebula', gradient: 'from-indigo-900 via-purple-900 to-black', colors: ['#312e81', '#000000'], glow: 'rgba(79, 70, 229, 0.6)', primary: '#4f46e5', price: 999999 }, // Only from packs
 };
@@ -855,6 +856,8 @@ export default function App() {
                             if (tokens >= theme.price) {
                               setTokens(t => t - theme.price);
                               setOwnedThemes(prev => [...prev, id]);
+                              setRewardMessage(`Unlocked ${theme.name}!`);
+                              setTimeout(() => setRewardMessage(''), 3000);
                             }
                           }}
                           disabled={tokens < theme.price}
@@ -898,10 +901,11 @@ export default function App() {
                               setShowAuraPackModal(true);
                             } else {
                               playLose();
+                              setRewardMessage('Need 1,500 Tokens!');
+                              setTimeout(() => setRewardMessage(''), 3000);
                             }
                           }}
-                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-sm transition-colors hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap shadow-[0_0_15px_rgba(168,85,247,0.5)]"
-                          disabled={tokens < 1500}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-sm transition-colors hover:scale-105 whitespace-nowrap shadow-[0_0_15px_rgba(168,85,247,0.5)]"
                         >
                           BUY PACK
                         </button>
@@ -925,18 +929,22 @@ export default function App() {
                         </div>
                         <button 
                           onClick={() => {
+                            if (ownedThemes.includes('godAura')) return;
                             if (balance >= 2500) {
                               playCoin();
                               setBalance(b => b - 2500);
-                              setOwnedBadges(prev => [...prev, 'godAura']);
+                              setOwnedThemes(prev => [...prev, 'godAura']);
+                              setRewardMessage('God Aura Unlocked!');
+                              setTimeout(() => setRewardMessage(''), 3000);
                             } else {
                               playLose();
+                              setRewardMessage('Need 2,500 Chips!');
+                              setTimeout(() => setRewardMessage(''), 3000);
                             }
                           }}
-                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black text-sm transition-colors disabled:opacity-50 whitespace-nowrap"
-                          disabled={balance < 2500 || ownedBadges.includes('godAura')}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black text-sm transition-colors whitespace-nowrap shadow-lg hover:scale-105 active:scale-95"
                         >
-                          {ownedBadges.includes('godAura') ? 'OWNED' : 'BUY AURA'}
+                          {ownedThemes.includes('godAura') ? 'OWNED' : 'BUY AURA'}
                         </button>
                       </div>
                     </div>
@@ -972,6 +980,8 @@ export default function App() {
                                   if (isChips) setBalance(b => b - badge.price);
                                   else setTokens(t => t - badge.price);
                                   setOwnedBadges(prev => [...prev, id]);
+                                  setRewardMessage(`Unlocked ${badge.name}!`);
+                                  setTimeout(() => setRewardMessage(''), 3000);
                                 }
                               }}
                               disabled={!canAfford}
@@ -1026,17 +1036,6 @@ export default function App() {
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Aura Pack Modal */}
-      <AnimatePresence>
-        {showAuraPackModal && (
-          <AuraPackModal 
-            onClose={() => setShowAuraPackModal(false)} 
-            onReward={handleAuraPackReward}
-            pityTimer={auraPackPityTimer}
-          />
         )}
       </AnimatePresence>
 

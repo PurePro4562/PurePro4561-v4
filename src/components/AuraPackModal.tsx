@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useAnimation, useMotionValue, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useAnimation, useMotionValue, useTransform } from 'motion/react';
 import { X, Sparkles, Key, Music, Palette, Shield } from 'lucide-react';
 import { playClick, playHover, playCoin, playWin, playSpin } from '../audio';
 
@@ -35,18 +35,26 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
   const [containerWidth, setContainerWidth] = useState(300);
 
   useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth);
-    }
-  }, []);
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+    
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, [step]); // Re-run if step changes to ensure measurement is correct when zipper appears
 
-  // Calculate resistance: as x approaches width, resistance increases
-  // We map dragX to a visual progress (0 to 1)
-  const progress = useTransform(dragX, [0, containerWidth - 60], [0, 1]);
+  // Calculate progress: map dragX to 0-1
+  // The handle is 48px (w-12), container has px-2 (16px total)
+  // Max travel is containerWidth - 48 - 16
+  const maxTravel = Math.max(100, containerWidth - 64);
+  const progress = useTransform(dragX, [0, maxTravel], [0, 1]);
   
   // Light leak intensity based on progress
-  const lightOpacity = useTransform(progress, [0.5, 1], [0, 1]);
-  const lightScale = useTransform(progress, [0.5, 1], [0.5, 1.5]);
+  const lightOpacity = useTransform(progress, [0.4, 0.9], [0, 1]);
+  const lightScale = useTransform(progress, [0.4, 0.9], [0.8, 1.5]);
 
   useEffect(() => {
     // Determine rarity when component mounts
@@ -68,10 +76,10 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
     const possibleRewards = REWARDS.filter(r => r.rarity === selectedRarity);
     const selectedReward = possibleRewards[Math.floor(Math.random() * possibleRewards.length)];
     setReward(selectedReward);
-  }, [pityTimer]);
+  }, []); // Only run once on mount
 
-  const handleDragEnd = (event: any, info: any) => {
-    if (progress.get() > 0.9) {
+  const handleDragEnd = () => {
+    if (progress.get() > 0.85) {
       // Successfully zipped
       setStep('opening');
       playSpin(); // Play a build-up sound
@@ -80,7 +88,6 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
         setStep('revealed');
         if (rarity === 'LEGENDARY') {
           playWin(); // Big win sound
-          // Screen shake could be added here via a class on body
         } else {
           playCoin();
         }
@@ -89,6 +96,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
     } else {
       // Snap back
       dragX.set(0);
+      setStep('idle');
     }
   };
 
@@ -100,7 +108,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
       className="fixed inset-0 z-[120] flex items-center justify-center bg-zinc-950/90 backdrop-blur-xl p-4"
     >
       {step === 'revealed' && (
-        <button onClick={onClose} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors">
+        <button onClick={onClose} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors z-50">
           <X className="w-8 h-8" />
         </button>
       )}
@@ -166,7 +174,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
                 
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 rounded-xl bg-white text-black font-black hover:bg-zinc-200 transition-colors"
+                  className="px-8 py-3 rounded-xl bg-white text-black font-black hover:bg-zinc-200 transition-colors shadow-lg"
                 >
                   COLLECT
                 </button>
@@ -176,10 +184,10 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
         </AnimatePresence>
 
         {/* The Zipper */}
-        {step === 'idle' || step === 'zipping' ? (
+        {(step === 'idle' || step === 'zipping') && (
           <div className="w-full max-w-xs" ref={containerRef}>
             <p className="text-center text-zinc-500 text-xs font-mono mb-4 uppercase tracking-widest">Pull to Open</p>
-            <div className="h-16 bg-zinc-900 rounded-full border border-white/10 relative overflow-hidden shadow-inner flex items-center px-2">
+            <div className="h-16 bg-zinc-950 rounded-full border border-white/10 relative overflow-hidden shadow-inner flex items-center px-2">
               {/* Track background that fills as you pull */}
               <motion.div 
                 style={{ scaleX: progress, transformOrigin: 'left' }}
@@ -188,10 +196,13 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
               
               <motion.div
                 drag="x"
-                dragConstraints={containerRef}
-                dragElastic={0.05} // High resistance
+                dragConstraints={{ left: 0, right: maxTravel }}
+                dragElastic={0.05}
                 dragMomentum={false}
-                onDragStart={() => setStep('zipping')}
+                onDragStart={() => {
+                  playHover();
+                  setStep('zipping');
+                }}
                 onDragEnd={handleDragEnd}
                 style={{ x: dragX }}
                 whileHover={{ scale: 1.1 }}
@@ -202,7 +213,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
               </motion.div>
             </div>
           </div>
-        ) : null}
+        )}
 
       </div>
     </motion.div>
