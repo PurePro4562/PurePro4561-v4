@@ -1,31 +1,47 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation, useMotionValue, useTransform } from 'motion/react';
-import { X, Sparkles, Key, Music, Palette, Shield } from 'lucide-react';
+import { X, Sparkles, Key, Music, Palette, Shield, User, Zap, Skull, Crown } from 'lucide-react';
 import { playClick, playHover, playCoin, playWin, playSpin } from '../audio';
+
+export type PackType = 'AURA' | 'AVATAR' | 'GOD';
 
 interface AuraPackModalProps {
   onClose: () => void;
   onReward: (reward: any) => void;
   pityTimer: number;
+  packType?: PackType;
 }
 
 const RARITIES = {
   COMMON: { name: 'Common', color: 'bg-zinc-400', glow: 'shadow-[0_0_30px_rgba(161,161,170,0.8)]', light: 'bg-zinc-400', text: 'text-zinc-400' },
   EPIC: { name: 'Epic', color: 'bg-purple-500', glow: 'shadow-[0_0_40px_rgba(168,85,247,0.8)]', light: 'bg-purple-500', text: 'text-purple-400' },
   LEGENDARY: { name: 'Legendary', color: 'bg-yellow-400', glow: 'shadow-[0_0_50px_rgba(250,204,21,0.8)]', light: 'bg-yellow-400', text: 'text-yellow-400' },
+  GODLY: { name: 'Godly', color: 'bg-amber-500', glow: 'shadow-[0_0_60px_rgba(245,158,11,1)]', light: 'bg-amber-500', text: 'text-amber-500' },
 };
 
-const REWARDS = [
-  { id: 'theme_liquid_gold', type: 'theme', rarity: 'LEGENDARY', name: 'Liquid Gold Aura', icon: <Palette className="w-12 h-12" /> },
-  { id: 'theme_midnight_nebula', type: 'theme', rarity: 'EPIC', name: 'Midnight Nebula Aura', icon: <Palette className="w-12 h-12" /> },
-  { id: 'badge_diamond', type: 'badge', rarity: 'EPIC', name: 'Spinning Diamond', icon: <Shield className="w-12 h-12" /> },
-  { id: 'badge_whale_pulse', type: 'badge', rarity: 'LEGENDARY', name: 'Pulsing Whale', icon: <Shield className="w-12 h-12" /> },
-  { id: 'sfx_synthwave', type: 'sfx', rarity: 'EPIC', name: 'Synthwave Bass Drop', icon: <Music className="w-12 h-12" /> },
-  { id: 'sfx_apple_pay', type: 'sfx', rarity: 'COMMON', name: 'High-Fidelity Chime', icon: <Music className="w-12 h-12" /> },
-  { id: 'key_fragment', type: 'fragment', rarity: 'COMMON', name: 'Key Fragment', icon: <Key className="w-12 h-12" /> },
-];
+const REWARDS = {
+  AURA: [
+    { id: 'theme_liquid_gold', type: 'theme', rarity: 'LEGENDARY', name: 'Liquid Gold Aura', icon: <Palette className="w-12 h-12" /> },
+    { id: 'theme_midnight_nebula', type: 'theme', rarity: 'EPIC', name: 'Midnight Nebula Aura', icon: <Palette className="w-12 h-12" /> },
+    { id: 'badge_diamond', type: 'badge', rarity: 'EPIC', name: 'Spinning Diamond', icon: <Shield className="w-12 h-12" /> },
+    { id: 'badge_whale_pulse', type: 'badge', rarity: 'LEGENDARY', name: 'Pulsing Whale', icon: <Shield className="w-12 h-12" /> },
+    { id: 'sfx_synthwave', type: 'sfx', rarity: 'EPIC', name: 'Synthwave Bass Drop', icon: <Music className="w-12 h-12" /> },
+    { id: 'sfx_apple_pay', type: 'sfx', rarity: 'COMMON', name: 'High-Fidelity Chime', icon: <Music className="w-12 h-12" /> },
+    { id: 'key_fragment', type: 'fragment', rarity: 'COMMON', name: 'Key Fragment', icon: <Key className="w-12 h-12" /> },
+  ],
+  AVATAR: [
+    { id: 'avatar_hacker', type: 'avatar', rarity: 'COMMON', name: 'Ghost Hacker', icon: <User className="w-12 h-12" /> },
+    { id: 'avatar_cyberpunk', type: 'avatar', rarity: 'COMMON', name: 'Neon Samurai', icon: <Zap className="w-12 h-12" /> },
+    { id: 'avatar_reaper', type: 'avatar', rarity: 'EPIC', name: 'Digital Reaper', icon: <Skull className="w-12 h-12" /> },
+    { id: 'avatar_king', type: 'avatar', rarity: 'LEGENDARY', name: 'Crypto King', icon: <Crown className="w-12 h-12" /> },
+    { id: 'key_fragment', type: 'fragment', rarity: 'COMMON', name: 'Key Fragment', icon: <Key className="w-12 h-12" /> },
+  ],
+  GOD: [
+    { id: 'godAura', type: 'theme', rarity: 'GODLY', name: 'God Aura', icon: <Sparkles className="w-12 h-12" /> },
+  ]
+};
 
-export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPackModalProps) {
+export default function AuraPackModal({ onClose, onReward, pityTimer, packType = 'AURA' }: AuraPackModalProps) {
   const [step, setStep] = useState<'idle' | 'zipping' | 'opening' | 'revealed'>('idle');
   const [rarity, setRarity] = useState<keyof typeof RARITIES>('COMMON');
   const [reward, setReward] = useState<any>(null);
@@ -61,7 +77,9 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
     let selectedRarity: keyof typeof RARITIES = 'COMMON';
     const rand = Math.random();
     
-    if (pityTimer >= 4) {
+    if (packType === 'GOD') {
+      selectedRarity = 'GODLY';
+    } else if (pityTimer >= 4) {
       // Guaranteed Epic or Legendary
       selectedRarity = rand < 0.33 ? 'LEGENDARY' : 'EPIC';
     } else {
@@ -73,7 +91,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
     setRarity(selectedRarity);
 
     // Select a reward based on rarity
-    const possibleRewards = REWARDS.filter(r => r.rarity === selectedRarity);
+    const possibleRewards = REWARDS[packType].filter(r => r.rarity === selectedRarity);
     const selectedReward = possibleRewards[Math.floor(Math.random() * possibleRewards.length)];
     setReward(selectedReward);
   }, []); // Only run once on mount
@@ -86,7 +104,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
       
       setTimeout(() => {
         setStep('revealed');
-        if (rarity === 'LEGENDARY') {
+        if (rarity === 'LEGENDARY' || rarity === 'GODLY') {
           playWin(); // Big win sound
         } else {
           playCoin();
@@ -98,6 +116,12 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
       dragX.set(0);
       setStep('idle');
     }
+  };
+
+  const packColors = {
+    AURA: 'from-purple-600 to-pink-600',
+    AVATAR: 'from-blue-600 to-cyan-600',
+    GOD: 'from-amber-400 via-orange-500 to-red-600'
   };
 
   return (
@@ -128,12 +152,14 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
               <motion.div 
                 animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.8, 0.5] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                className="absolute inset-0 bg-zinc-800 rounded-3xl blur-2xl"
+                className={`absolute inset-0 bg-gradient-to-br ${packColors[packType]} opacity-20 blur-2xl rounded-3xl`}
               />
               
               {/* The Box itself */}
               <div className="absolute inset-0 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl shadow-[inset_0_0_40px_rgba(255,255,255,0.05)] flex items-center justify-center overflow-hidden">
-                <Sparkles className="w-16 h-16 text-zinc-700" />
+                {packType === 'AURA' && <Sparkles className="w-16 h-16 text-zinc-700" />}
+                {packType === 'AVATAR' && <User className="w-16 h-16 text-zinc-700" />}
+                {packType === 'GOD' && <Crown className="w-16 h-16 text-amber-500/50 animate-pulse" />}
                 
                 {/* Light Leak */}
                 <motion.div 
@@ -150,7 +176,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer }: AuraPack
               className="flex flex-col items-center text-center"
             >
               <motion.div 
-                animate={rarity === 'LEGENDARY' ? { y: [0, -10, 0] } : {}}
+                animate={(rarity === 'LEGENDARY' || rarity === 'GODLY') ? { y: [0, -10, 0] } : {}}
                 transition={{ repeat: Infinity, duration: 2 }}
                 className={`w-32 h-32 rounded-2xl bg-zinc-900 border-2 border-white/10 flex items-center justify-center mb-6 relative ${RARITIES[rarity].glow}`}
               >

@@ -28,13 +28,18 @@ import {
   Key,
   History,
   ArrowLeft,
-  Sparkles
+  Sparkles,
+  User,
+  Zap,
+  Skull,
+  Crown,
+  ShieldCheck
 } from 'lucide-react';
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
 import GameImage from './components/GameImage';
-import AuraPackModal from './components/AuraPackModal';
+import AuraPackModal, { PackType } from './components/AuraPackModal';
 import { playClick, playHover, playCoin, playLose } from './audio';
 import externalGames from './externalGames.json';
 
@@ -90,6 +95,14 @@ const EXCHANGE = {
   tokens1k: { name: '1,000 Tokens', price: 5000, currency: 'chips' as const, reward: 1000, rewardCurrency: 'tokens' as const },
 };
 
+const AVATARS = {
+  avatar_default: { name: 'Guest', icon: <User className="w-full h-full" />, rarity: 'COMMON' },
+  avatar_hacker: { name: 'Ghost Hacker', icon: <User className="w-full h-full text-lime-400" />, rarity: 'COMMON' },
+  avatar_cyberpunk: { name: 'Neon Samurai', icon: <Zap className="w-full h-full text-cyan-400" />, rarity: 'COMMON' },
+  avatar_reaper: { name: 'Digital Reaper', icon: <Skull className="w-full h-full text-purple-500" />, rarity: 'EPIC' },
+  avatar_king: { name: 'Crypto King', icon: <Crown className="w-full h-full text-yellow-400" />, rarity: 'LEGENDARY' },
+};
+
 export default function App() {
   const [isProMode, setIsProMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,14 +134,18 @@ export default function App() {
   const [tokens, setTokens] = useState(250); // Arcade Tokens
   const [ownedThemes, setOwnedThemes] = useState<string[]>(['default']);
   const [ownedBadges, setOwnedBadges] = useState<string[]>([]);
+  const [ownedAvatars, setOwnedAvatars] = useState<string[]>(['avatar_default']);
+  const [activeAvatar, setActiveAvatar] = useState('avatar_default');
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>('default');
-  const [shopTab, setShopTab] = useState<'themes' | 'badges' | 'exchange'>('themes');
+  const [shopTab, setShopTab] = useState<'themes' | 'badges' | 'avatars' | 'exchange'>('themes');
   const [rewardMessage, setRewardMessage] = useState('');
   const [adsWatchedToday, setAdsWatchedToday] = useState(0);
   const [adsWatchedWithoutWin, setAdsWatchedWithoutWin] = useState(0);
   
   // Aura Pack State
   const [auraPackPityTimer, setAuraPackPityTimer] = useState(0);
+  const [avatarPackPityTimer, setAvatarPackPityTimer] = useState(0);
+  const [activePackType, setActivePackType] = useState<PackType>('AURA');
   const [keyFragments, setKeyFragments] = useState(0);
 
   // Bet History
@@ -156,10 +173,13 @@ export default function App() {
   };
 
   const handleAuraPackReward = (reward: any) => {
-    if (reward.rarity === 'COMMON') {
-      setAuraPackPityTimer(prev => prev + 1);
-    } else {
-      setAuraPackPityTimer(0);
+    // Update Pity Timers
+    if (activePackType === 'AVATAR') {
+      if (reward.rarity === 'LEGENDARY') setAvatarPackPityTimer(0);
+      else setAvatarPackPityTimer(prev => prev + 1);
+    } else if (activePackType === 'AURA') {
+      if (reward.rarity === 'LEGENDARY') setAuraPackPityTimer(0);
+      else setAuraPackPityTimer(prev => prev + 1);
     }
 
     if (reward.type === 'theme') {
@@ -169,6 +189,14 @@ export default function App() {
         setRewardMessage(`Duplicate Aura shattered into 1,500 Tokens!`);
       } else {
         setOwnedThemes(prev => [...prev, reward.id]);
+        setRewardMessage(`Unlocked ${reward.name}!`);
+      }
+    } else if (reward.type === 'avatar') {
+      if (ownedAvatars.includes(reward.id)) {
+        setTokens(t => t + 1000);
+        setRewardMessage(`Duplicate Avatar shattered into 1,000 Tokens!`);
+      } else {
+        setOwnedAvatars(prev => [...prev, reward.id]);
         setRewardMessage(`Unlocked ${reward.name}!`);
       }
     } else if (reward.type === 'badge') {
@@ -435,6 +463,19 @@ export default function App() {
                 <motion.div layout className="w-3 h-3 rounded-full bg-white shadow-sm" />
               </button>
             </motion.div>
+
+            {/* Active Avatar */}
+            <motion.div 
+              whileHover={{ scale: 1.1 }}
+              onClick={() => setShowShopModal(true)}
+              className="w-10 h-10 rounded-full bg-zinc-900 border border-white/10 p-1.5 cursor-pointer flex items-center justify-center relative group"
+            >
+              <div className="w-full h-full">
+                {AVATARS[activeAvatar as keyof typeof AVATARS].icon}
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-lime-500 rounded-full border-2 border-zinc-950" />
+            </motion.div>
+
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="md:hidden p-2 text-zinc-400 hover:text-zinc-100">
               <Menu className="w-6 h-6" />
             </motion.button>
@@ -815,6 +856,14 @@ export default function App() {
                 </button>
                 <button 
                   onMouseEnter={playHover}
+                  onClick={() => { playClick(); setShopTab('avatars'); }}
+                  className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'avatars' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
+                  style={shopTab === 'avatars' ? { backgroundColor: themeColor } : {}}
+                >
+                  Avatars
+                </button>
+                <button 
+                  onMouseEnter={playHover}
                   onClick={() => { playClick(); setShopTab('exchange'); }}
                   className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'exchange' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                   style={shopTab === 'exchange' ? { backgroundColor: themeColor } : {}}
@@ -897,6 +946,7 @@ export default function App() {
                             if (tokens >= 1500) {
                               playClick();
                               setTokens(t => t - 1500);
+                              setActivePackType('AURA');
                               setShowShopModal(false);
                               setShowAuraPackModal(true);
                             } else {
@@ -933,9 +983,9 @@ export default function App() {
                             if (balance >= 2500) {
                               playCoin();
                               setBalance(b => b - 2500);
-                              setOwnedThemes(prev => [...prev, 'godAura']);
-                              setRewardMessage('God Aura Unlocked!');
-                              setTimeout(() => setRewardMessage(''), 3000);
+                              setActivePackType('GOD');
+                              setShowShopModal(false);
+                              setShowAuraPackModal(true);
                             } else {
                               playLose();
                               setRewardMessage('Need 2,500 Chips!');
@@ -990,6 +1040,86 @@ export default function App() {
                             >
                               Buy
                             </button>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </>
+                )}
+
+                {shopTab === 'avatars' && (
+                  <>
+                    {/* Avatar Pack */}
+                    <div className="bg-zinc-950 border border-blue-500/50 rounded-2xl p-6 flex flex-col relative overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.2)] md:col-span-2 mb-4">
+                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded-bl-lg z-10">IDENTITY PACK</div>
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center shadow-inner relative overflow-hidden group">
+                          <motion.div 
+                            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                            className="absolute inset-0 bg-blue-500 blur-xl"
+                          />
+                          <User className="w-8 h-8 text-white relative z-10 group-hover:animate-bounce" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-zinc-100 text-lg">Avatar Pack</h4>
+                          <p className="text-xs text-zinc-400">Unlock unique profile avatars and rare identity icons.</p>
+                          <p className="text-sm font-mono text-lime-500 flex items-center gap-1 mt-1">
+                            <Ticket className="w-3 h-3" /> 1,000
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            if (tokens >= 1000) {
+                              playClick();
+                              setTokens(t => t - 1000);
+                              setActivePackType('AVATAR');
+                              setShowShopModal(false);
+                              setShowAuraPackModal(true);
+                            } else {
+                              playLose();
+                              setRewardMessage('Need 1,000 Tokens!');
+                              setTimeout(() => setRewardMessage(''), 3000);
+                            }
+                          }}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-black text-sm transition-colors hover:scale-105 whitespace-nowrap shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                        >
+                          BUY PACK
+                        </button>
+                      </div>
+                    </div>
+
+                    {Object.entries(AVATARS).map(([id, avatar]) => {
+                      const isOwned = ownedAvatars.includes(id);
+                      const isActive = activeAvatar === id;
+                      return (
+                        <div key={id} className={`bg-zinc-950 border ${isActive ? 'border-blue-500/50' : 'border-white/5'} rounded-2xl p-6 flex items-center justify-between transition-colors`}>
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-white/10 p-2 flex items-center justify-center">
+                              {avatar.icon}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-zinc-100">{avatar.name}</h4>
+                              <p className={`text-[10px] font-black tracking-widest uppercase ${
+                                avatar.rarity === 'LEGENDARY' ? 'text-yellow-400' : 
+                                avatar.rarity === 'EPIC' ? 'text-purple-400' : 'text-zinc-500'
+                              }`}>
+                                {avatar.rarity}
+                              </p>
+                            </div>
+                          </div>
+                          {isActive ? (
+                            <span className="px-4 py-2 rounded-xl font-bold text-sm border border-blue-500/30 bg-blue-500/10 text-blue-400">Active</span>
+                          ) : isOwned ? (
+                            <button 
+                              onMouseEnter={playHover}
+                              onClick={() => { playClick(); setActiveAvatar(id); }} 
+                              className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors"
+                            >
+                              Equip
+                            </button>
+                          ) : (
+                            <span className="text-xs font-mono text-zinc-600 uppercase tracking-tighter">Locked</span>
                           )}
                         </div>
                       )
@@ -1150,7 +1280,8 @@ export default function App() {
           <AuraPackModal 
             onClose={() => setShowAuraPackModal(false)} 
             onReward={handleAuraPackReward}
-            pityTimer={auraPackPityTimer}
+            pityTimer={activePackType === 'AVATAR' ? avatarPackPityTimer : auraPackPityTimer}
+            packType={activePackType}
           />
         )}
       </AnimatePresence>
