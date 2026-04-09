@@ -27,12 +27,14 @@ import {
   Store,
   Key,
   History,
-  ArrowLeft
+  ArrowLeft,
+  Sparkles
 } from 'lucide-react';
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
 import GameImage from './components/GameImage';
+import AuraPackModal from './components/AuraPackModal';
 import { playClick, playHover } from './audio';
 import externalGames from './externalGames.json';
 
@@ -68,6 +70,8 @@ const THEMES = {
   cyberpunk: { name: 'Cyberpunk', gradient: 'from-pink-500 to-yellow-500', colors: ['#ec4899', '#eab308'], glow: 'rgba(236, 72, 153, 0.5)', primary: '#ec4899', price: 10000 },
   matrix: { name: 'The Matrix', gradient: 'from-green-500 to-emerald-700', colors: ['#22c55e', '#047857'], glow: 'rgba(34, 197, 94, 0.5)', primary: '#22c55e', price: 15000 },
   blood: { name: 'Blood Moon', gradient: 'from-red-600 to-rose-900', colors: ['#dc2626', '#4c0519'], glow: 'rgba(220, 38, 38, 0.5)', primary: '#dc2626', price: 25000 },
+  theme_liquid_gold: { name: 'Liquid Gold', gradient: 'from-yellow-300 via-yellow-500 to-amber-700', colors: ['#fde047', '#b45309'], glow: 'rgba(253, 224, 71, 0.6)', primary: '#eab308', price: 999999 }, // Only from packs
+  theme_midnight_nebula: { name: 'Midnight Nebula', gradient: 'from-indigo-900 via-purple-900 to-black', colors: ['#312e81', '#000000'], glow: 'rgba(79, 70, 229, 0.6)', primary: '#4f46e5', price: 999999 }, // Only from packs
 };
 
 const BADGES = {
@@ -75,6 +79,8 @@ const BADGES = {
   highRoller: { name: 'High Roller', icon: '🎲', price: 100000, currency: 'chips' as const },
   whale: { name: 'Casino Whale', icon: '🐋', price: 500000, currency: 'chips' as const },
   arcadeKing: { name: 'Arcade King', icon: '👾', price: 50000, currency: 'tokens' as const },
+  badge_diamond: { name: 'Spinning Diamond', icon: '💎', price: 999999, currency: 'tokens' as const }, // Only from packs
+  badge_whale_pulse: { name: 'Pulsing Whale', icon: '🐳', price: 999999, currency: 'tokens' as const }, // Only from packs
 };
 
 const EXCHANGE = {
@@ -107,6 +113,7 @@ export default function App() {
   const [showAdModal, setShowAdModal] = useState(false);
   const [adProgress, setAdProgress] = useState(0);
   const [showShopModal, setShowShopModal] = useState(false);
+  const [showAuraPackModal, setShowAuraPackModal] = useState(false);
   
   // Currencies & Customization
   const [balance, setBalance] = useState(1000); // Casino Chips
@@ -116,6 +123,12 @@ export default function App() {
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>('default');
   const [shopTab, setShopTab] = useState<'themes' | 'badges' | 'exchange'>('themes');
   const [rewardMessage, setRewardMessage] = useState('');
+  const [adsWatchedToday, setAdsWatchedToday] = useState(0);
+  const [adsWatchedWithoutWin, setAdsWatchedWithoutWin] = useState(0);
+  
+  // Aura Pack State
+  const [auraPackPityTimer, setAuraPackPityTimer] = useState(0);
+  const [keyFragments, setKeyFragments] = useState(0);
 
   // Bet History
   const [betHistory, setBetHistory] = useState<{id: string, date: string, amount: number, winnings: number, game: string, type: string}[]>([]);
@@ -139,6 +152,49 @@ export default function App() {
       setShowKeyModal(true);
       setSearchQuery('');
     }
+  };
+
+  const handleAuraPackReward = (reward: any) => {
+    if (reward.rarity === 'COMMON') {
+      setAuraPackPityTimer(prev => prev + 1);
+    } else {
+      setAuraPackPityTimer(0);
+    }
+
+    if (reward.type === 'theme') {
+      if (ownedThemes.includes(reward.id)) {
+        // Duplicate Logic: Shatter into tokens
+        setTokens(t => t + 1500);
+        setRewardMessage(`Duplicate Aura shattered into 1,500 Tokens!`);
+      } else {
+        setOwnedThemes(prev => [...prev, reward.id]);
+        setRewardMessage(`Unlocked ${reward.name}!`);
+      }
+    } else if (reward.type === 'badge') {
+      if (ownedBadges.includes(reward.id)) {
+        setTokens(t => t + 1500);
+        setRewardMessage(`Duplicate Badge shattered into 1,500 Tokens!`);
+      } else {
+        setOwnedBadges(prev => [...prev, reward.id]);
+        setRewardMessage(`Unlocked ${reward.name}!`);
+      }
+    } else if (reward.type === 'sfx') {
+      // For now, just show a message. In a real app, we'd save this to state and use it in audio.ts
+      setRewardMessage(`Unlocked Premium SFX: ${reward.name}!`);
+    } else if (reward.type === 'fragment') {
+      setKeyFragments(prev => {
+        const newCount = prev + 1;
+        if (newCount >= 5) {
+          setIsProMode(true);
+          setRewardMessage(`5 Fragments Collected! VIP Key Forged!`);
+          return 0;
+        }
+        setRewardMessage(`Key Fragment Found! (${newCount}/5)`);
+        return newCount;
+      });
+    }
+    
+    setTimeout(() => setRewardMessage(''), 4000);
   };
 
   const handleKeySubmit = (e: React.FormEvent) => {
@@ -205,13 +261,20 @@ export default function App() {
       if (progress >= 100) {
         clearInterval(interval);
         setTimeout(() => {
+          // Value Anchoring: Base reward is just enough for a 2-3 minute session (e.g., 5 spins)
+          const baseReward = isProMode ? 500 : 500;
+          const reward = Math.floor(baseReward * Math.pow(1.2, adsWatchedToday));
+          
           if (isProMode) {
-            setBalance(b => b + 2500);
-            setRewardMessage('+2500 Chips Earned!');
+            setBalance(b => b + reward);
+            setRewardMessage(`+${reward.toLocaleString()} Chips Earned!`);
           } else {
-            setTokens(t => t + 500);
-            setRewardMessage('+500 Tokens Earned!');
+            setTokens(t => t + reward);
+            setRewardMessage(`+${reward.toLocaleString()} Tokens Earned!`);
           }
+          
+          setAdsWatchedToday(prev => prev + 1);
+          setAdsWatchedWithoutWin(prev => prev + 1); // Increment pity timer
           setTimeout(() => setRewardMessage(''), 3000);
           setShowAdModal(false);
         }, 500);
@@ -380,7 +443,18 @@ export default function App() {
 
       {activeGame ? (
         activeGame === 'custom-101' ? (
-          <Slots balance={balance} setBalance={setBalance} onExit={() => setActiveGame(null)} themeGradient={themeGradient} themeColor={themeColor} onRecordBet={recordBet} />
+          <Slots 
+            balance={balance} 
+            setBalance={setBalance} 
+            onExit={() => setActiveGame(null)} 
+            themeGradient={themeGradient} 
+            themeColor={themeColor} 
+            onRecordBet={recordBet}
+            onWatchAd={watchAd}
+            adsWatchedToday={adsWatchedToday}
+            adsWatchedWithoutWin={adsWatchedWithoutWin}
+            resetPityTimer={() => setAdsWatchedWithoutWin(0)}
+          />
         ) : activeGame === 'custom-102' ? (
           <Blackjack balance={balance} setBalance={setBalance} onExit={() => setActiveGame(null)} themeGradient={themeGradient} themeColor={themeColor} onRecordBet={recordBet} />
         ) : (
@@ -514,7 +588,7 @@ export default function App() {
                       whileTap={{ scale: 0.97 }}
                       onMouseEnter={playHover}
                       onClick={() => { playClick(); handlePlayGame(game.id); }}
-                      className="group relative bg-zinc-900/40 backdrop-blur-sm border border-white/5 rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors hover:border-white/20 dynamic-glow-box-hover"
+                      className={`group relative bg-zinc-900/40 backdrop-blur-sm border rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors dynamic-glow-box-hover ${launchingGame === game.id ? 'border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'border-white/5 hover:border-white/20'}`}
                     >
                       <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
 
@@ -522,28 +596,47 @@ export default function App() {
                         <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
                           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                           
-                          {launchingGame === game.id ? (
-                            <motion.div
-                              initial={{ opacity: 0, rotate: -180 }}
-                              animate={{ opacity: 1, rotate: 0 }}
-                              className="text-zinc-100"
-                            >
-                              <Loader2 className="w-12 h-12 animate-spin" />
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
-                              transition={{ type: 'spring', stiffness: 300 }}
-                              className="w-full h-full flex items-center justify-center"
-                            >
-                              <GameImage 
-                                src={game.image} 
-                                alt={game.title} 
-                                icon={game.icon}
-                                className="w-full h-full"
-                              />
-                            </motion.div>
-                          )}
+                          <motion.div
+                            whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                            className={`w-full h-full flex items-center justify-center transition-all duration-500 ${launchingGame === game.id ? 'scale-110 blur-sm opacity-40' : ''}`}
+                          >
+                            <GameImage 
+                              src={game.image} 
+                              alt={game.title} 
+                              icon={game.icon}
+                              className="w-full h-full"
+                            />
+                          </motion.div>
+                          
+                          <AnimatePresence>
+                            {launchingGame === game.id && (
+                              <motion.div 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-zinc-950/40 backdrop-blur-[2px]"
+                              >
+                                <motion.div
+                                  initial={{ scale: 0.8, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                                  className="flex flex-col items-center"
+                                >
+                                  <Loader2 className="w-10 h-10 text-white animate-spin mb-4 drop-shadow-lg" />
+                                  <div className="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden backdrop-blur-md border border-white/10">
+                                    <motion.div 
+                                      initial={{ width: "0%" }}
+                                      animate={{ width: "100%" }}
+                                      transition={{ duration: 1, ease: "easeInOut" }}
+                                      className="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                                    />
+                                  </div>
+                                  <span className="text-[10px] font-mono text-white/80 mt-2 tracking-widest uppercase">Initializing</span>
+                                </motion.div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
 
@@ -717,7 +810,7 @@ export default function App() {
                   className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'badges' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                   style={shopTab === 'badges' ? { backgroundColor: themeColor } : {}}
                 >
-                  Badges
+                  Badges & Auras
                 </button>
                 <button 
                   onMouseEnter={playHover}
@@ -775,48 +868,124 @@ export default function App() {
                   )
                 })}
 
-                {shopTab === 'badges' && Object.entries(BADGES).map(([id, badge]) => {
-                  const isOwned = ownedBadges.includes(id);
-                  const isChips = badge.currency === 'chips';
-                  const canAfford = isChips ? balance >= badge.price : tokens >= badge.price;
-                  return (
-                    <div key={id} className={`bg-zinc-950 border ${isOwned ? 'border-amber-500/50' : 'border-white/5'} rounded-2xl p-6 flex items-center justify-between transition-colors`}>
-                      <div className="flex items-center gap-4">
-                        <div className="text-4xl">{badge.icon}</div>
-                        <div>
-                          <h4 className="font-bold text-zinc-100">{badge.name}</h4>
-                          <p className="text-sm font-mono text-zinc-500 flex items-center gap-1">
-                            {isOwned ? 'Owned' : (
-                              <>
-                                {isChips ? <Coins className="w-3 h-3 text-amber-500" /> : <Ticket className="w-3 h-3 text-lime-500" />}
-                                {badge.price.toLocaleString()}
-                              </>
-                            )}
+                {shopTab === 'badges' && (
+                  <>
+                    {/* Aura Pack - The Token Sink */}
+                    <div className="bg-zinc-950 border border-purple-500/50 rounded-2xl p-6 flex flex-col relative overflow-hidden shadow-[0_0_20px_rgba(168,85,247,0.2)] md:col-span-2 mb-4">
+                      <div className="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-black px-2 py-1 rounded-bl-lg z-10">PREMIUM LOOT</div>
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center shadow-inner relative overflow-hidden group">
+                          <motion.div 
+                            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                            className="absolute inset-0 bg-purple-500 blur-xl"
+                          />
+                          <Sparkles className="w-8 h-8 text-white relative z-10 group-hover:animate-spin-slow" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-zinc-100 text-lg">Aura Pack</h4>
+                          <p className="text-xs text-zinc-400">Unlock Auras, Premium SFX, Prestige Badges, or Key Fragments.</p>
+                          <p className="text-sm font-mono text-lime-500 flex items-center gap-1 mt-1">
+                            <Ticket className="w-3 h-3" /> 1,500
                           </p>
                         </div>
-                      </div>
-                      {isOwned ? (
-                        <span className="px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm border border-amber-500/30">Owned</span>
-                      ) : (
                         <button 
-                          onMouseEnter={playHover}
                           onClick={() => {
-                            if (canAfford) {
+                            if (tokens >= 1500) {
                               playClick();
-                              if (isChips) setBalance(b => b - badge.price);
-                              else setTokens(t => t - badge.price);
-                              setOwnedBadges(prev => [...prev, id]);
+                              setTokens(t => t - 1500);
+                              setShowShopModal(false);
+                              setShowAuraPackModal(true);
+                            } else {
+                              playLose();
                             }
                           }}
-                          disabled={!canAfford}
-                          className={`px-4 py-2 rounded-xl font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${isChips ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950' : 'bg-lime-500 hover:bg-lime-400 text-zinc-950'}`}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-sm transition-colors hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 whitespace-nowrap shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+                          disabled={tokens < 1500}
                         >
-                          Buy
+                          BUY PACK
                         </button>
-                      )}
+                      </div>
                     </div>
-                  )
-                })}
+
+                    {/* Siege Pack Psychology: Currency Devaluation via Aura Packs */}
+                    <div className="bg-zinc-950 border border-amber-500/50 rounded-2xl p-6 flex flex-col relative overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.2)] md:col-span-2">
+                      <div className="absolute top-0 right-0 bg-amber-500 text-black text-[10px] font-black px-2 py-1 rounded-bl-lg z-10">LIMITED EDITION</div>
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 flex items-center justify-center shadow-inner relative overflow-hidden">
+                          <Sparkles className="absolute w-full h-full text-white/30 animate-pulse" />
+                          <span className="text-white font-black text-xs tracking-widest drop-shadow-md z-10">GOD</span>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-zinc-100 text-lg">God Aura Pack</h4>
+                          <p className="text-xs text-zinc-400">The ultimate flex. Drains your balance but makes you look like a high roller.</p>
+                          <p className="text-sm font-mono text-amber-500 flex items-center gap-1 mt-1">
+                            <Coins className="w-3 h-3" /> 2,500
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            if (balance >= 2500) {
+                              playCoin();
+                              setBalance(b => b - 2500);
+                              setOwnedBadges(prev => [...prev, 'godAura']);
+                            } else {
+                              playLose();
+                            }
+                          }}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black text-sm transition-colors disabled:opacity-50 whitespace-nowrap"
+                          disabled={balance < 2500 || ownedBadges.includes('godAura')}
+                        >
+                          {ownedBadges.includes('godAura') ? 'OWNED' : 'BUY AURA'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {Object.entries(BADGES).map(([id, badge]) => {
+                      const isOwned = ownedBadges.includes(id);
+                      const isChips = badge.currency === 'chips';
+                      const canAfford = isChips ? balance >= badge.price : tokens >= badge.price;
+                      return (
+                        <div key={id} className={`bg-zinc-950 border ${isOwned ? 'border-amber-500/50' : 'border-white/5'} rounded-2xl p-6 flex items-center justify-between transition-colors`}>
+                          <div className="flex items-center gap-4">
+                            <div className="text-4xl">{badge.icon}</div>
+                            <div>
+                              <h4 className="font-bold text-zinc-100">{badge.name}</h4>
+                              <p className="text-sm font-mono text-zinc-500 flex items-center gap-1">
+                                {isOwned ? 'Owned' : (
+                                  <>
+                                    {isChips ? <Coins className="w-3 h-3 text-amber-500" /> : <Ticket className="w-3 h-3 text-lime-500" />}
+                                    {badge.price.toLocaleString()}
+                                  </>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          {isOwned ? (
+                            <span className="px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm border border-amber-500/30">Owned</span>
+                          ) : (
+                            <button 
+                              onMouseEnter={playHover}
+                              onClick={() => {
+                                if (canAfford) {
+                                  playClick();
+                                  if (isChips) setBalance(b => b - badge.price);
+                                  else setTokens(t => t - badge.price);
+                                  setOwnedBadges(prev => [...prev, id]);
+                                }
+                              }}
+                              disabled={!canAfford}
+                              className="px-4 py-2 rounded-xl text-zinc-950 font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              style={{ backgroundColor: themeColor }}
+                            >
+                              Buy
+                            </button>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </>
+                )}
 
                 {shopTab === 'exchange' && Object.entries(EXCHANGE).map(([id, item]) => {
                   const isChips = item.currency === 'chips';
@@ -857,6 +1026,17 @@ export default function App() {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Aura Pack Modal */}
+      <AnimatePresence>
+        {showAuraPackModal && (
+          <AuraPackModal 
+            onClose={() => setShowAuraPackModal(false)} 
+            onReward={handleAuraPackReward}
+            pityTimer={auraPackPityTimer}
+          />
         )}
       </AnimatePresence>
 
@@ -965,6 +1145,17 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Aura Pack Modal */}
+      <AnimatePresence>
+        {showAuraPackModal && (
+          <AuraPackModal 
+            onClose={() => setShowAuraPackModal(false)} 
+            onReward={handleAuraPackReward}
+            pityTimer={auraPackPityTimer}
+          />
+        )}
+      </AnimatePresence>
+
       {/* History Modal */}
       <AnimatePresence>
         {showHistoryModal && (
