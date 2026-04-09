@@ -42,45 +42,42 @@ const REWARDS = {
 };
 
 export default function AuraPackModal({ onClose, onReward, pityTimer, packType = 'AURA' }: AuraPackModalProps) {
-  const [step, setStep] = useState<'idle' | 'zipping' | 'opening' | 'revealed'>('idle');
+  const [step, setStep] = useState<'idle' | 'zipping' | 'opening' | 'card' | 'revealed'>('idle');
   const [rarity, setRarity] = useState<keyof typeof RARITIES>('COMMON');
   const [reward, setReward] = useState<any>(null);
+  const [isShattered, setIsShattered] = useState(false);
   
-  const dragX = useMotionValue(0);
+  const dragY = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(300);
+  const [containerHeight, setContainerHeight] = useState(300);
 
   useEffect(() => {
-    const updateWidth = () => {
+    const updateHeight = () => {
       if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
+        setContainerHeight(containerRef.current.offsetHeight);
       }
     };
     
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
-  }, [step]); // Re-run if step changes to ensure measurement is correct when zipper appears
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, [step]);
 
-  // Calculate progress: map dragX to 0-1
-  // The handle is 48px (w-12), container has px-2 (16px total)
-  // Max travel is containerWidth - 48 - 16
-  const maxTravel = Math.max(100, containerWidth - 64);
-  const progress = useTransform(dragX, [0, maxTravel], [0, 1]);
+  // Calculate progress: map dragY to 0-1 (dragging UP, so dragY will be negative)
+  const maxTravel = Math.max(100, containerHeight - 64);
+  const progress = useTransform(dragY, [0, -maxTravel], [0, 1]);
   
   // Light leak intensity based on progress
   const lightOpacity = useTransform(progress, [0.4, 0.9], [0, 1]);
   const lightScale = useTransform(progress, [0.4, 0.9], [0.8, 1.5]);
 
   useEffect(() => {
-    // Determine rarity when component mounts
     let selectedRarity: keyof typeof RARITIES = 'COMMON';
     const rand = Math.random();
     
     if (packType === 'GOD') {
       selectedRarity = 'GODLY';
     } else if (pityTimer >= 4) {
-      // Guaranteed Epic or Legendary
       selectedRarity = rand < 0.33 ? 'LEGENDARY' : 'EPIC';
     } else {
       if (rand < 0.10) selectedRarity = 'LEGENDARY';
@@ -89,33 +86,38 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
     }
     
     setRarity(selectedRarity);
-
-    // Select a reward based on rarity
     const possibleRewards = REWARDS[packType].filter(r => r.rarity === selectedRarity);
     const selectedReward = possibleRewards[Math.floor(Math.random() * possibleRewards.length)];
     setReward(selectedReward);
-  }, []); // Only run once on mount
+  }, []);
 
   const handleDragEnd = () => {
     if (progress.get() > 0.85) {
-      // Successfully zipped
       setStep('opening');
-      playSpin(); // Play a build-up sound
+      playSpin();
       
       setTimeout(() => {
-        setStep('revealed');
+        setStep('card');
         if (rarity === 'LEGENDARY' || rarity === 'GODLY') {
-          playWin(); // Big win sound
+          playWin();
         } else {
           playCoin();
         }
-        onReward({ ...reward, rarity });
-      }, 1500);
+      }, 1000);
     } else {
-      // Snap back
-      dragX.set(0);
+      dragY.set(0);
       setStep('idle');
     }
+  };
+
+  const handleShatter = () => {
+    if (isShattered) return;
+    setIsShattered(true);
+    playClick();
+    setTimeout(() => {
+      setStep('revealed');
+      onReward({ ...reward, rarity });
+    }, 400);
   };
 
   const packColors = {
@@ -129,8 +131,30 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[120] flex items-center justify-center bg-zinc-950/90 backdrop-blur-xl p-4"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-zinc-950/95 backdrop-blur-2xl p-4 overflow-hidden"
     >
+      {/* Background Particles (Floating Prisms) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{
+              y: [-20, 1000],
+              x: Math.random() * 1000,
+              rotate: 360,
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 10 + 5,
+              repeat: Infinity,
+              delay: Math.random() * 5
+            }}
+            className={`absolute w-2 h-2 ${RARITIES[rarity].color} blur-sm`}
+            style={{ left: `${Math.random() * 100}%` }}
+          />
+        ))}
+      </div>
+
       {step === 'revealed' && (
         <button onClick={onClose} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors z-50">
           <X className="w-8 h-8" />
@@ -139,50 +163,125 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
 
       <div className="relative w-full max-w-md flex flex-col items-center">
         
-        {/* The Cube */}
         <AnimatePresence mode="wait">
-          {step !== 'revealed' ? (
+          {step === 'idle' || step === 'zipping' || step === 'opening' ? (
             <motion.div
               key="cube"
-              exit={{ scale: 1.5, opacity: 0, filter: 'blur(20px)' }}
-              transition={{ duration: 0.5 }}
+              exit={{ scale: 2, opacity: 0, filter: 'blur(40px)' }}
+              transition={{ duration: 0.8, ease: "circIn" }}
               className="relative w-64 h-64 mb-12"
             >
-              {/* Hover Pulse Effect */}
               <motion.div 
-                animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.8, 0.5] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                className={`absolute inset-0 bg-gradient-to-br ${packColors[packType]} opacity-20 blur-2xl rounded-3xl`}
+                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                className={`absolute inset-0 bg-gradient-to-br ${packColors[packType]} opacity-20 blur-3xl rounded-3xl`}
               />
               
-              {/* The Box itself */}
-              <div className="absolute inset-0 bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl shadow-[inset_0_0_40px_rgba(255,255,255,0.05)] flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[inset_0_0_60px_rgba(255,255,255,0.05)] flex items-center justify-center overflow-hidden">
                 {packType === 'AURA' && <Sparkles className="w-16 h-16 text-zinc-700" />}
                 {packType === 'AVATAR' && <User className="w-16 h-16 text-zinc-700" />}
                 {packType === 'GOD' && <Crown className="w-16 h-16 text-amber-500/50 animate-pulse" />}
                 
-                {/* Light Leak */}
+                {/* Light Leaks */}
                 <motion.div 
                   style={{ opacity: lightOpacity, scale: lightScale }}
-                  className={`absolute inset-0 ${RARITIES[rarity].light} mix-blend-screen blur-xl`}
+                  className={`absolute inset-0 ${RARITIES[rarity].light} mix-blend-screen blur-3xl`}
                 />
+                
+                {/* Rays */}
+                <AnimatePresence>
+                  {step === 'zipping' && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 flex items-center justify-center"
+                    >
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          style={{ rotate: i * 45 }}
+                          animate={{ scaleX: [1, 2, 1], opacity: [0.2, 0.5, 0.2] }}
+                          transition={{ repeat: Infinity, duration: 0.5 }}
+                          className={`absolute w-full h-1 ${RARITIES[rarity].light} blur-md origin-center`}
+                        />
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
+            </motion.div>
+          ) : step === 'card' ? (
+            <motion.div
+              key="card"
+              initial={{ rotateY: 180, scale: 0.5, opacity: 0 }}
+              animate={{ rotateY: 0, scale: 1, opacity: 1 }}
+              className="relative w-64 h-96 cursor-pointer group"
+              onClick={handleShatter}
+            >
+              {/* Holographic Glass Card */}
+              <motion.div 
+                animate={isShattered ? { scale: 1.5, opacity: 0 } : {}}
+                className="absolute inset-0 bg-white/5 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
+                <div className="text-zinc-500 font-black text-xs tracking-widest uppercase mb-4 opacity-50">Locked Reward</div>
+                <div className="w-20 h-20 rounded-full bg-zinc-800/50 flex items-center justify-center border border-white/10">
+                  <Key className="w-8 h-8 text-zinc-600 animate-pulse" />
+                </div>
+                <div className="mt-8 text-white/30 text-[10px] font-mono uppercase tracking-tighter">Tap to Shatter</div>
+                
+                {/* Shine Effect */}
+                <motion.div 
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+                />
+              </motion.div>
+
+              {/* Shatter Particles */}
+              {isShattered && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  {[...Array(12)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ x: 0, y: 0, opacity: 1 }}
+                      animate={{ 
+                        x: (Math.random() - 0.5) * 400, 
+                        y: (Math.random() - 0.5) * 400, 
+                        opacity: 0,
+                        rotate: 360
+                      }}
+                      className="absolute w-8 h-8 bg-white/20 backdrop-blur-sm border border-white/30 rotate-45"
+                    />
+                  ))}
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div
               key="reward"
-              initial={{ scale: 0.5, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               className="flex flex-col items-center text-center"
             >
+              {/* Legendary Explosion Background */}
+              {(rarity === 'LEGENDARY' || rarity === 'GODLY') && (
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 4, opacity: [0, 0.5, 0] }}
+                  transition={{ duration: 1 }}
+                  className={`absolute w-64 h-64 ${RARITIES[rarity].light} rounded-full blur-3xl`}
+                />
+              )}
+
               <motion.div 
-                animate={(rarity === 'LEGENDARY' || rarity === 'GODLY') ? { y: [0, -10, 0] } : {}}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className={`w-32 h-32 rounded-2xl bg-zinc-900 border-2 border-white/10 flex items-center justify-center mb-6 relative ${RARITIES[rarity].glow}`}
+                animate={(rarity === 'LEGENDARY' || rarity === 'GODLY') ? { y: [0, -15, 0], rotate: [0, 2, -2, 0] } : {}}
+                transition={{ repeat: Infinity, duration: 3 }}
+                className={`w-40 h-40 rounded-3xl bg-zinc-900/50 backdrop-blur-xl border-2 border-white/10 flex items-center justify-center mb-8 relative ${RARITIES[rarity].glow}`}
               >
-                <div className={`absolute inset-0 opacity-20 ${RARITIES[rarity].color} rounded-2xl blur-md`} />
+                <div className={`absolute inset-0 opacity-20 ${RARITIES[rarity].color} rounded-3xl blur-xl`} />
                 <div className={RARITIES[rarity].text}>
-                  {reward?.icon}
+                  {React.cloneElement(reward?.icon as React.ReactElement, { className: "w-20 h-20" })}
                 </div>
               </motion.div>
               
@@ -194,13 +293,13 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
                 <h3 className={`text-sm font-black tracking-widest uppercase mb-2 ${RARITIES[rarity].text}`}>
                   {RARITIES[rarity].name}
                 </h3>
-                <h2 className="text-3xl font-black text-white mb-4 drop-shadow-lg">
+                <h2 className="text-4xl font-black text-white mb-6 drop-shadow-2xl">
                   {reward?.name}
                 </h2>
                 
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 rounded-xl bg-white text-black font-black hover:bg-zinc-200 transition-colors shadow-lg"
+                  className="px-12 py-4 rounded-2xl bg-white text-black font-black hover:bg-zinc-200 transition-all shadow-2xl hover:scale-105 active:scale-95"
                 >
                   COLLECT
                 </button>
@@ -209,20 +308,20 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
           )}
         </AnimatePresence>
 
-        {/* The Zipper */}
+        {/* The Vertical Zipper */}
         {(step === 'idle' || step === 'zipping') && (
-          <div className="w-full max-w-xs" ref={containerRef}>
-            <p className="text-center text-zinc-500 text-xs font-mono mb-4 uppercase tracking-widest">Pull to Open</p>
-            <div className="h-16 bg-zinc-950 rounded-full border border-white/10 relative overflow-hidden shadow-inner flex items-center px-2">
-              {/* Track background that fills as you pull */}
+          <div className="w-full max-w-[100px] mt-12" ref={containerRef}>
+            <p className="text-center text-zinc-500 text-[10px] font-mono mb-4 uppercase tracking-[0.3em] vertical-text">Pull Up</p>
+            <div className="w-16 h-64 bg-zinc-950 rounded-full border border-white/10 relative overflow-hidden shadow-inner flex flex-col items-center py-2 mx-auto">
+              {/* Track background */}
               <motion.div 
-                style={{ scaleX: progress, transformOrigin: 'left' }}
-                className={`absolute left-0 top-0 bottom-0 w-full ${RARITIES[rarity].color} opacity-20`}
+                style={{ scaleY: progress, transformOrigin: 'bottom' }}
+                className={`absolute left-0 right-0 bottom-0 w-full ${RARITIES[rarity].color} opacity-20`}
               />
               
               <motion.div
-                drag="x"
-                dragConstraints={{ left: 0, right: maxTravel }}
+                drag="y"
+                dragConstraints={{ top: -maxTravel, bottom: 0 }}
                 dragElastic={0.05}
                 dragMomentum={false}
                 onDragStart={() => {
@@ -230,10 +329,10 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
                   setStep('zipping');
                 }}
                 onDragEnd={handleDragEnd}
-                style={{ x: dragX }}
+                style={{ y: dragY }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-12 h-12 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.5)] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
+                className="w-12 h-12 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.4)] flex items-center justify-center cursor-grab active:cursor-grabbing z-10"
               >
                 <div className="w-4 h-4 rounded-full bg-zinc-900" />
               </motion.div>

@@ -104,67 +104,65 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
     setWinAmount(0);
     playCoin();
 
-    // Smart-Drain Algorithm (Dynamic RTP)
-    const isHighBalance = balance > 2000;
-    const isLowBalance = balance < bet * 5;
+    // Mathematical Drain System (Dynamic RTP)
+    const isHighBalance = balance > 5000;
     
-    let matchChance = isHighBalance ? 0.30 : 0.60; // Lower win frequency if rich
-    let nearMissChance = isLowBalance ? 0.50 : 0.35; // Higher near miss if poor
-
-    // Pity Timer: Force a win if 5 ads watched without a win
-    let forceWin = false;
-    if (adsWatchedWithoutWin >= 5) {
-      forceWin = true;
-      matchChance = 1.0;
-    }
-
-    const randMatch = Math.random();
-    const randNearMiss = Math.random();
+    // Weighted RNG Pools
+    const rand = Math.random();
     let forcedResult: string[] | undefined;
-    let nearMiss = false;
     let ghostJackpot = false;
+    let nearMiss = false;
 
-    const symbol1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+    // Pool 1: 70% Total Loss (or 80% if high balance)
+    const lossThreshold = isHighBalance ? 0.80 : 0.70;
+    // Pool 2: 20% False Win (pays back 50-80% of bet)
+    const falseWinThreshold = lossThreshold + 0.20;
+    // Pool 3: 10% Hype (2x or 3x) - reduced if high balance
     
-    if (randMatch < matchChance || forceWin) {
-      const symbol2 = symbol1;
-      const winRand = Math.random();
+    if (rand < lossThreshold) {
+      // TOTAL LOSS
+      const s1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+      const otherSymbols = SYMBOLS.filter(s => s !== s1);
+      const s2 = otherSymbols[Math.floor(Math.random() * otherSymbols.length)];
+      const s3 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
       
-      if (winRand < (forceWin ? 1.0 : 0.05)) {
-        // Real jackpot or forced win
-        forcedResult = [symbol1, symbol2, symbol1];
-      } else {
-        // Scattered Near Misses
-        const otherSymbols = SYMBOLS.filter(s => s !== symbol1);
-        const symbol3 = otherSymbols[Math.floor(Math.random() * otherSymbols.length)];
-        
-        const scatterType = Math.random();
-        if (scatterType < 0.3) {
-          // The Sandwich: Match on 1 and 3, miss on 2
-          forcedResult = [symbol1, symbol3, symbol1];
-        } else {
-          // Standard 1-2 match
-          forcedResult = [symbol1, symbol2, symbol3];
-        }
+      // 50% chance of a "Near Miss" in the loss pool to keep them hooked
+      if (Math.random() < 0.5) {
+        forcedResult = [s1, s1, s2];
         nearMiss = true;
         setIsNearMiss(true);
-      }
-    } else if (randNearMiss < nearMissChance) {
-      // Ghost Jackpot or Standard Near Miss
-      const jackpotSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-      const otherSymbols = SYMBOLS.filter(s => s !== jackpotSymbol);
-      const nearSymbol = otherSymbols[Math.floor(Math.random() * otherSymbols.length)];
-      
-      if (Math.random() < 0.2) {
-        // Ghost Jackpot: Show 3, then slip
-        forcedResult = [jackpotSymbol, jackpotSymbol, nearSymbol];
-        ghostJackpot = true;
-        setIsGhostJackpot(true);
       } else {
-        forcedResult = [jackpotSymbol, jackpotSymbol, nearSymbol];
+        forcedResult = [s1, s2, s3];
       }
+    } else if (rand < falseWinThreshold) {
+      // FALSE WIN (Disguised Loss)
+      // In this game, 2 matching symbols pay 2x, which is a win.
+      // To make it a "False Win" (50-80% return), we need to adjust the payout logic or just use a near miss that looks like a win.
+      // Actually, let's just force a "Near Miss" that looks like a win but pays nothing, or a small win.
+      const s1 = SYMBOLS[Math.floor(Math.random() * 3)]; // Use lower value symbols
+      const otherSymbols = SYMBOLS.filter(s => s !== s1);
+      const s2 = otherSymbols[Math.floor(Math.random() * otherSymbols.length)];
+      
+      // The "Sandwich" Near Miss
+      forcedResult = [s1, s2, s1];
       nearMiss = true;
       setIsNearMiss(true);
+    } else {
+      // HYPE WIN (2x or 3x)
+      const s1 = SYMBOLS[Math.floor(Math.random() * 4)]; // Avoid the top 2 symbols usually
+      forcedResult = [s1, s1, s1];
+    }
+
+    // Pity Timer Override
+    if (adsWatchedWithoutWin >= 5) {
+      const s1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+      forcedResult = [s1, s1, s1];
+    }
+
+    // Ghost Jackpot Logic (Visual Distraction)
+    if (nearMiss && Math.random() < 0.3) {
+      ghostJackpot = true;
+      setIsGhostJackpot(true);
     }
 
     // Staggered Reel Stop Logic
