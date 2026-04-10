@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Gamepad2,
@@ -33,8 +33,20 @@ import {
   Zap,
   Skull,
   Crown,
-  ShieldCheck
+  ShieldCheck,
+  LogOut,
+  Settings,
+  Database,
+  Users,
+  TrendingUp,
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
+
+import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import type { User as FirebaseUser } from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
@@ -111,7 +123,98 @@ const VFX_EFFECTS = {
   vfx_god_rays: { name: 'God Rays', rarity: 'GODLY' },
 };
 
+const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
+  if (activeVFX === 'vfx_none') return null;
+  
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+      {activeVFX === 'vfx_matrix' && (
+        <div className="absolute inset-0 opacity-20 flex justify-around">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ y: -100 }}
+              animate={{ y: ['0%', '100%'] }}
+              transition={{ duration: Math.random() * 5 + 5, repeat: Infinity, ease: "linear", delay: Math.random() * 5 }}
+              className="text-lime-500 font-mono text-xs whitespace-pre leading-none"
+            >
+              {Array(20).fill(0).map(() => String.fromCharCode(0x30A0 + Math.random() * 96)).join('\n')}
+            </motion.div>
+          ))}
+        </div>
+      )}
+      {activeVFX === 'vfx_gold_dust' && (
+        <div className="absolute inset-0">
+          {[...Array(30)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                y: [-20, 1000],
+                x: Math.random() * 1000,
+                rotate: 360,
+                opacity: [0, 0.8, 0]
+              }}
+              transition={{
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                delay: Math.random() * 10
+              }}
+              className="absolute w-1 h-1 bg-yellow-400 blur-[1px] rounded-full shadow-[0_0_10px_#facc15]"
+              style={{ left: `${Math.random() * 100}%` }}
+            />
+          ))}
+        </div>
+      )}
+      {activeVFX === 'vfx_cyber_glitch' && (
+        <motion.div
+          animate={{
+            opacity: [0, 0.1, 0, 0.05, 0],
+            x: [0, -5, 5, -2, 0],
+            filter: ['blur(0px)', 'blur(2px)', 'blur(0px)']
+          }}
+          transition={{
+            duration: 0.2,
+            repeat: Infinity,
+            repeatDelay: Math.random() * 10 + 5
+          }}
+          className="absolute inset-0 bg-cyan-500/10 mix-blend-overlay"
+        />
+      )}
+      {activeVFX === 'vfx_god_rays' && (
+        <div className="absolute inset-x-0 top-0 h-full flex justify-center opacity-30">
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                opacity: [0.1, 0.3, 0.1],
+                rotate: [i * 10 - 20, i * 10 - 25, i * 10 - 20]
+              }}
+              transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[-20%] w-32 h-[150%] bg-gradient-to-b from-white/40 to-transparent blur-3xl origin-top"
+              style={{ left: `${20 + i * 15}%` }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function App() {
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [adminStats, setAdminStats] = useState<any>(null);
+  const [adminTab, setAdminTab] = useState<'stats' | 'users' | 'system'>('stats');
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [systemConfig, setSystemConfig] = useState<any>({
+    maintenanceMode: false,
+    announcement: '',
+    globalMultiplier: 1
+  });
+
   const [isProMode, setIsProMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -136,6 +239,7 @@ export default function App() {
   const [adProgress, setAdProgress] = useState(0);
   const [showShopModal, setShowShopModal] = useState(false);
   const [showAuraPackModal, setShowAuraPackModal] = useState(false);
+  const [auraPackUpgradeTrigger, setAuraPackUpgradeTrigger] = useState(0);
   
   // Currencies & Customization
   const [balance, setBalance] = useState(1000); // Casino Chips
@@ -168,6 +272,242 @@ export default function App() {
   const [activeGame, setActiveGame] = useState<string | number | null>(null);
 
   const gamesSectionRef = useRef<HTMLElement>(null);
+
+  // Fetch System Config
+  useEffect(() => {
+    const configRef = doc(db, 'system', 'config');
+    const unsubscribe = onSnapshot(configRef, (doc) => {
+      if (doc.exists()) {
+        setSystemConfig(doc.data());
+      } else {
+        // Initialize config if it doesn't exist
+        setDoc(configRef, {
+          maintenanceMode: false,
+          announcement: 'Welcome to PurePro4561! Good luck!',
+          globalMultiplier: 1
+        });
+      }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'system/config');
+    });
+    return () => unsubscribe();
+  }, []);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        // Check if user exists in Firestore
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        try {
+          const userSnap = await getDoc(userRef);
+          if (!userSnap.exists()) {
+            // Create new user profile
+            const newProfile = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              role: firebaseUser.email === 'purepro4561@gmail.com' ? 'admin' : 'user',
+              balance: 1000,
+              tokens: 250,
+              ownedThemes: ['default'],
+              ownedBadges: [],
+              ownedAvatars: ['avatar_default'],
+              ownedVFX: ['vfx_none'],
+              activeAvatar: 'avatar_default',
+              activeVFX: 'vfx_none',
+              activeTheme: 'default',
+              adsWatchedToday: 0,
+              adsWatchedWithoutWin: 0,
+              keyFragments: 0,
+              isProMode: false
+            };
+            await setDoc(userRef, newProfile);
+            setUserProfile(newProfile);
+          } else {
+            setUserProfile(userSnap.data());
+          }
+        } catch (error) {
+          handleFirestoreError(error, OperationType.GET, `users/${firebaseUser.uid}`);
+        }
+      } else {
+        setUserProfile(null);
+      }
+      setIsAuthReady(true);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Sync state with userProfile
+  useEffect(() => {
+    if (userProfile) {
+      setBalance(userProfile.balance);
+      setTokens(userProfile.tokens);
+      setOwnedThemes(userProfile.ownedThemes);
+      setOwnedBadges(userProfile.ownedBadges);
+      setOwnedAvatars(userProfile.ownedAvatars);
+      setOwnedVFX(userProfile.ownedVFX);
+      setActiveAvatar(userProfile.activeAvatar);
+      setActiveVFX(userProfile.activeVFX);
+      setActiveTheme(userProfile.activeTheme);
+      setAdsWatchedToday(userProfile.adsWatchedToday);
+      setAdsWatchedWithoutWin(userProfile.adsWatchedWithoutWin);
+      setKeyFragments(userProfile.keyFragments);
+      setIsProMode(userProfile.isProMode);
+    }
+  }, [userProfile]);
+
+  // Real-time listener for user profile
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (doc) => {
+        if (doc.exists()) {
+          setUserProfile(doc.data());
+        }
+      }, (error) => {
+        handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
+      });
+      return () => unsubscribe();
+    }
+  }, [user]);
+
+  // Real-time listener for bet history
+  useEffect(() => {
+    if (user) {
+      const q = query(
+        collection(db, 'bets'),
+        where('uid', '==', user.uid),
+        orderBy('date', 'desc'),
+        limit(50)
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const history = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as any[];
+        setBetHistory(history);
+      }, (error) => {
+        handleFirestoreError(error, OperationType.LIST, 'bets');
+      });
+      return () => unsubscribe();
+    }
+  }, [user]);
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Sign in error:', error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setActiveGame(null);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
+  const updateFirestoreProfile = async (updates: any) => {
+    if (!user) return;
+    const userRef = doc(db, 'users', user.uid);
+    try {
+      await updateDoc(userRef, updates);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${user.uid}`);
+    }
+  };
+
+  const recordBet = async (amount: number, winnings: number, game: string, type: 'chips' | 'tokens' = 'chips') => {
+    if (!user) return;
+    const newBet = {
+      uid: user.uid,
+      date: new Date().toISOString(),
+      amount,
+      winnings,
+      game,
+      type
+    };
+    try {
+      await addDoc(collection(db, 'bets'), newBet);
+      // Update balance locally and in Firestore
+      if (type === 'chips') {
+        updateFirestoreProfile({ balance: balance + winnings });
+      } else {
+        updateFirestoreProfile({ tokens: tokens + winnings });
+      }
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'bets');
+    }
+  };
+
+  const fetchAdminStats = async () => {
+    if (!userProfile || userProfile.role !== 'admin') return;
+    try {
+      const usersSnap = await getDocs(collection(db, 'users'));
+      const betsSnap = await getDocs(collection(db, 'bets'));
+      
+      const totalUsers = usersSnap.size;
+      const totalBets = betsSnap.size;
+      let totalVolume = 0;
+      betsSnap.forEach(doc => {
+        totalVolume += doc.data().amount;
+      });
+
+      setAdminStats({
+        totalUsers,
+        totalBets,
+        totalVolume
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'admin_stats');
+    }
+  };
+
+  const fetchAllUsers = async () => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      const usersSnap = await getDocs(collection(db, 'users'));
+      setAllUsers(usersSnap.docs.map(doc => doc.data()));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.GET, 'admin/users');
+    }
+  };
+
+  const updateSystemConfig = async (newConfig: any) => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      await setDoc(doc(db, 'system', 'config'), newConfig, { merge: true });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'system/config');
+    }
+  };
+
+  const adjustUserCurrency = async (userId: string, amount: number, type: 'balance' | 'tokens') => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const currentVal = userSnap.data()[type] || 0;
+        await updateDoc(userRef, { [type]: currentVal + amount });
+        if (userId === user?.uid) {
+          if (type === 'balance') setBalance(prev => prev + amount);
+          else setTokens(prev => prev + amount);
+        }
+        fetchAllUsers(); // Refresh list
+      }
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `users/${userId}`);
+    }
+  };
+
+  useEffect(() => {
+    if (showAdminPanel) {
+      fetchAdminStats();
+      if (adminTab === 'users') fetchAllUsers();
+    }
+  }, [showAdminPanel, adminTab]);
 
   const handleToggleProMode = () => {
     if (isProMode) {
@@ -290,47 +630,48 @@ export default function App() {
     setActiveGame(null);
   };
 
-  const recordBet = (amount: number, winnings: number, game: string, type: 'chips' | 'tokens' = 'chips') => {
-    const newRecord = {
-      id: Math.random().toString(36).substr(2, 9),
-      date: new Date().toLocaleString(),
-      amount,
-      winnings,
-      game,
-      type
-    };
-    setBetHistory(prev => [newRecord, ...prev].slice(0, 50));
-  };
-
-  const watchAd = () => {
+  const watchAdWithCallback = (callback: () => void) => {
     setShowAdModal(true);
     setAdProgress(0);
     let progress = 0;
     const interval = setInterval(() => {
-      progress += 2; // 5 seconds total
+      progress += 2;
       setAdProgress(progress);
       if (progress >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-          // Value Anchoring: Base reward is just enough for a 2-3 minute session (e.g., 5 spins)
-          const baseReward = isProMode ? 500 : 500;
-          const reward = Math.floor(baseReward * Math.pow(1.2, adsWatchedToday));
-          
-          if (isProMode) {
-            setBalance(b => b + reward);
-            setRewardMessage(`+${reward.toLocaleString()} Chips Earned!`);
-          } else {
-            setTokens(t => t + reward);
-            setRewardMessage(`+${reward.toLocaleString()} Tokens Earned!`);
-          }
-          
-          setAdsWatchedToday(prev => prev + 1);
-          setAdsWatchedWithoutWin(prev => prev + 1); // Increment pity timer
-          setTimeout(() => setRewardMessage(''), 3000);
+          callback();
           setShowAdModal(false);
+          setAdsWatchedToday(prev => prev + 1);
         }, 500);
       }
     }, 100);
+  };
+
+  const handleUpgradePack = () => {
+    watchAdWithCallback(() => {
+      // The modal will handle the re-roll logic if we trigger a state change or just re-open it
+      // But it's easier to just let the modal know it's upgraded
+      setRewardMessage('Pack Upgraded to EPIC!');
+      setTimeout(() => setRewardMessage(''), 3000);
+    });
+  };
+
+  const watchAd = () => {
+    watchAdWithCallback(() => {
+      const baseReward = 500;
+      const reward = Math.floor(baseReward * Math.pow(1.2, adsWatchedToday));
+      
+      if (isProMode) {
+        setBalance(b => b + reward);
+        setRewardMessage(`+${reward.toLocaleString()} Chips Earned!`);
+      } else {
+        setTokens(t => t + reward);
+        setRewardMessage(`+${reward.toLocaleString()} Tokens Earned!`);
+      }
+      setAdsWatchedWithoutWin(prev => prev + 1);
+      setTimeout(() => setRewardMessage(''), 3000);
+    });
   };
 
   const scrollToGames = () => {
@@ -371,86 +712,38 @@ export default function App() {
   const themeColors = currentThemeConfig.colors;
   const themeGlow = currentThemeConfig.glow;
 
-  const VFXOverlay = () => {
-    if (activeVFX === 'vfx_none') return null;
-    
-    return (
-      <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
-        {activeVFX === 'vfx_matrix' && (
-          <div className="absolute inset-0 opacity-20 flex justify-around">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ y: -100 }}
-                animate={{ y: ['0%', '100%'] }}
-                transition={{ duration: Math.random() * 5 + 5, repeat: Infinity, ease: "linear", delay: Math.random() * 5 }}
-                className="text-lime-500 font-mono text-xs whitespace-pre leading-none"
-              >
-                {Array(20).fill(0).map(() => String.fromCharCode(0x30A0 + Math.random() * 96)).join('\n')}
-              </motion.div>
-            ))}
-          </div>
-        )}
-        {activeVFX === 'vfx_gold_dust' && (
-          <div className="absolute inset-0">
-            {[...Array(30)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{
-                  y: [-20, 1000],
-                  x: Math.random() * 1000,
-                  rotate: 360,
-                  opacity: [0, 0.8, 0]
-                }}
-                transition={{
-                  duration: Math.random() * 10 + 10,
-                  repeat: Infinity,
-                  delay: Math.random() * 10
-                }}
-                className="absolute w-1 h-1 bg-yellow-400 blur-[1px] rounded-full shadow-[0_0_10px_#facc15]"
-                style={{ left: `${Math.random() * 100}%` }}
-              />
-            ))}
-          </div>
-        )}
-        {activeVFX === 'vfx_cyber_glitch' && (
-          <motion.div
-            animate={{
-              opacity: [0, 0.1, 0, 0.05, 0],
-              x: [0, -5, 5, -2, 0],
-              filter: ['blur(0px)', 'blur(2px)', 'blur(0px)']
-            }}
-            transition={{
-              duration: 0.2,
-              repeat: Infinity,
-              repeatDelay: Math.random() * 10 + 5
-            }}
-            className="absolute inset-0 bg-cyan-500/10 mix-blend-overlay"
-          />
-        )}
-        {activeVFX === 'vfx_god_rays' && (
-          <div className="absolute inset-x-0 top-0 h-full flex justify-center opacity-30">
-            {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{
-                  opacity: [0.1, 0.3, 0.1],
-                  rotate: [i * 10 - 20, i * 10 - 25, i * 10 - 20]
-                }}
-                transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-[-20%] w-32 h-[150%] bg-gradient-to-b from-white/40 to-transparent blur-3xl origin-top"
-                style={{ left: `${20 + i * 15}%` }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-700">
-      <VFXOverlay />
+      {/* Maintenance Mode Overlay */}
+      {systemConfig.maintenanceMode && userProfile?.role !== 'admin' && (
+        <div className="fixed inset-0 z-[200] bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-24 h-24 rounded-3xl bg-zinc-900 border border-amber-500/30 flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(245,158,11,0.2)]">
+            <AlertTriangle className="w-12 h-12 text-amber-500" />
+          </div>
+          <h1 className="text-4xl font-black text-white mb-4 tracking-tighter uppercase">System Maintenance</h1>
+          <p className="text-zinc-400 max-w-md leading-relaxed mb-8">
+            We are currently performing scheduled upgrades to the core engine. All systems are temporarily offline.
+          </p>
+          <div className="px-6 py-3 bg-zinc-900 rounded-2xl border border-white/5 font-mono text-sm text-zinc-500">
+            ESTIMATED DOWNTIME: 2 HOURS
+          </div>
+        </div>
+      )}
+
+      {/* Announcement Bar */}
+      {systemConfig.announcement && (
+        <div className="bg-amber-500 text-zinc-950 py-2 px-4 text-center font-bold text-sm tracking-tight relative z-50 overflow-hidden">
+          <motion.div
+            animate={{ x: [1000, -1000] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="whitespace-nowrap inline-block"
+          >
+            {systemConfig.announcement} • {systemConfig.announcement} • {systemConfig.announcement}
+          </motion.div>
+        </div>
+      )}
+
+      <VFXOverlay activeVFX={activeVFX} />
       <style>{`
         .dynamic-glow-text { text-shadow: 0 0 20px ${themeGlow}; }
         .dynamic-glow-box { box-shadow: 0 0 15px -3px ${themeGlow}; }
@@ -565,16 +858,49 @@ export default function App() {
             </motion.div>
 
             {/* Active Avatar */}
-            <motion.div 
-              whileHover={{ scale: 1.1 }}
-              onClick={() => setShowShopModal(true)}
-              className="w-10 h-10 rounded-full bg-zinc-900 border border-white/10 p-1.5 cursor-pointer flex items-center justify-center relative group"
-            >
-              <div className="w-full h-full">
-                {AVATARS[activeAvatar as keyof typeof AVATARS].icon}
+            {user ? (
+              <div className="flex items-center gap-4">
+                {userProfile?.role === 'admin' && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setShowAdminPanel(true)}
+                    className="p-2 bg-zinc-900 border border-amber-500/30 rounded-full text-amber-500 hover:bg-amber-500/10 transition-colors"
+                    title="Admin Panel"
+                  >
+                    <ShieldCheck className="w-5 h-5" />
+                  </motion.button>
+                )}
+                <motion.div 
+                  whileHover={{ scale: 1.1 }}
+                  onClick={() => setShowShopModal(true)}
+                  className="w-10 h-10 rounded-full bg-zinc-900 border border-white/10 p-1.5 cursor-pointer flex items-center justify-center relative group"
+                >
+                  <div className="w-full h-full">
+                    {AVATARS[activeAvatar as keyof typeof AVATARS].icon}
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-lime-500 rounded-full border-2 border-zinc-950" />
+                </motion.div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleSignOut}
+                  className="p-2 bg-zinc-900 border border-white/10 rounded-full text-zinc-400 hover:text-red-400 transition-colors"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-5 h-5" />
+                </motion.button>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-lime-500 rounded-full border-2 border-zinc-950" />
-            </motion.div>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSignIn}
+                className={`px-6 py-2 rounded-xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold text-sm flex items-center gap-2 shadow-lg`}
+              >
+                <User className="w-4 h-4" /> Sign In
+              </motion.button>
+            )}
 
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="md:hidden p-2 text-zinc-400 hover:text-zinc-100">
               <Menu className="w-6 h-6" />
@@ -584,7 +910,38 @@ export default function App() {
       </motion.nav>
 
       {activeGame ? (
-        activeGame === 'custom-101' ? (
+        !user ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full bg-zinc-950 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative z-10 flex flex-col items-center text-center max-w-md"
+            >
+              <div className="w-20 h-20 rounded-3xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-8 shadow-2xl">
+                <ShieldAlert className="w-10 h-10 text-amber-500" />
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">Authentication Required</h2>
+              <p className="text-zinc-400 mb-10 leading-relaxed">
+                You must be signed in to place bets, earn tokens, and save your progress. Initialize your session to continue.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSignIn}
+                className={`px-10 py-4 rounded-2xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-black text-lg shadow-[0_0_30px_rgba(255,255,255,0.1)] flex items-center gap-3`}
+              >
+                <User className="w-6 h-6" /> SIGN IN WITH GOOGLE
+              </motion.button>
+              <button 
+                onClick={() => setActiveGame(null)}
+                className="mt-8 text-zinc-500 hover:text-zinc-300 text-sm font-mono uppercase tracking-widest transition-colors"
+              >
+                Return to Lobby
+              </button>
+            </motion.div>
+          </div>
+        ) : activeGame === 'custom-101' ? (
           <Slots 
             balance={balance} 
             setBalance={setBalance} 
@@ -596,9 +953,18 @@ export default function App() {
             adsWatchedToday={adsWatchedToday}
             adsWatchedWithoutWin={adsWatchedWithoutWin}
             resetPityTimer={() => setAdsWatchedWithoutWin(0)}
+            globalMultiplier={systemConfig.globalMultiplier}
           />
         ) : activeGame === 'custom-102' ? (
-          <Blackjack balance={balance} setBalance={setBalance} onExit={() => setActiveGame(null)} themeGradient={themeGradient} themeColor={themeColor} onRecordBet={recordBet} />
+          <Blackjack 
+            balance={balance} 
+            setBalance={setBalance} 
+            onExit={() => setActiveGame(null)} 
+            themeGradient={themeGradient} 
+            themeColor={themeColor} 
+            onRecordBet={recordBet} 
+            globalMultiplier={systemConfig.globalMultiplier}
+          />
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full">
             <button 
@@ -1343,6 +1709,260 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Admin Panel Modal */}
+      <AnimatePresence>
+        {showAdminPanel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-zinc-950 border border-amber-500/30 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-[0_0_50px_rgba(245,158,11,0.1)]"
+            >
+              <div className="p-8 border-b border-white/5 flex items-center justify-between bg-zinc-900/30">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Admin Control Center</h2>
+                    <p className="text-zinc-500 text-sm font-mono tracking-tighter uppercase">System Oversight // Authorized Personnel Only</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowAdminPanel(false)}
+                  className="p-3 bg-zinc-900 hover:bg-zinc-800 rounded-2xl border border-white/5 transition-colors"
+                >
+                  <X className="w-6 h-6 text-zinc-400" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                {/* Admin Tabs */}
+                <div className="flex gap-2 mb-8 bg-zinc-900/50 p-1.5 rounded-2xl border border-white/5 w-fit">
+                  <button 
+                    onClick={() => setAdminTab('stats')}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'stats' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                  >
+                    Overview
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('users')}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'users' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                  >
+                    User Management
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('system')}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'system' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                  >
+                    System Settings
+                  </button>
+                </div>
+
+                {adminTab === 'stats' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                      <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
+                        <div className="flex items-center gap-3 text-zinc-400 mb-2">
+                          <Users className="w-4 h-4" />
+                          <span className="text-xs font-bold uppercase tracking-widest">Total Users</span>
+                        </div>
+                        <div className="text-3xl font-bold text-white">{adminStats?.totalUsers || '...'}</div>
+                      </div>
+                      <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
+                        <div className="flex items-center gap-3 text-zinc-400 mb-2">
+                          <TrendingUp className="w-4 h-4" />
+                          <span className="text-xs font-bold uppercase tracking-widest">Total Bets</span>
+                        </div>
+                        <div className="text-3xl font-bold text-white">{adminStats?.totalBets || '...'}</div>
+                      </div>
+                      <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
+                        <div className="flex items-center gap-3 text-zinc-400 mb-2">
+                          <Database className="w-4 h-4" />
+                          <span className="text-xs font-bold uppercase tracking-widest">Total Volume</span>
+                        </div>
+                        <div className="text-3xl font-bold text-amber-500">${adminStats?.totalVolume?.toLocaleString() || '...'}</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 mb-8">
+                      <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <Crown className="w-5 h-5 text-amber-500" />
+                        Quick Actions (My Account)
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button 
+                          onClick={() => adjustUserCurrency(user?.uid || '', 10000, 'balance')}
+                          className="flex items-center justify-between p-6 bg-zinc-900/50 hover:bg-zinc-800 rounded-2xl border border-white/5 transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                              <Coins className="w-6 h-6 text-amber-500" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-bold text-white">Add $10,000 Chips</div>
+                              <div className="text-xs text-zinc-500">Instant balance injection</div>
+                            </div>
+                          </div>
+                          <Zap className="w-5 h-5 text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </button>
+                        <button 
+                          onClick={() => adjustUserCurrency(user?.uid || '', 5000, 'tokens')}
+                          className="flex items-center justify-between p-6 bg-zinc-900/50 hover:bg-zinc-800 rounded-2xl border border-white/5 transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-lime-500/10 flex items-center justify-center">
+                              <Ticket className="w-6 h-6 text-lime-500" />
+                            </div>
+                            <div className="text-left">
+                              <div className="font-bold text-white">Add 5,000 Tokens</div>
+                              <div className="text-xs text-zinc-500">Instant token injection</div>
+                            </div>
+                          </div>
+                          <Zap className="w-5 h-5 text-lime-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {adminTab === 'users' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8">
+                      <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                          <Users className="w-5 h-5 text-zinc-400" />
+                          Registered Users ({allUsers.length})
+                        </h3>
+                        <button 
+                          onClick={fetchAllUsers}
+                          className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl border border-white/5 transition-colors"
+                        >
+                          <RefreshCw className="w-4 h-4 text-zinc-400" />
+                        </button>
+                      </div>
+                      <div className="space-y-4">
+                        {allUsers.map((u) => (
+                          <div key={u.uid} className="flex items-center justify-between p-6 bg-zinc-900/50 rounded-3xl border border-white/5">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-2xl bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden">
+                                {AVATARS[u.activeAvatar as keyof typeof AVATARS]?.icon || <User className="w-6 h-6 text-zinc-600" />}
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-zinc-100 flex items-center gap-2">
+                                  {u.email}
+                                  {u.role === 'admin' && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                                </div>
+                                <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">UID: {u.uid.slice(0, 8)}...</div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-right">
+                                <div className="text-xs font-mono text-amber-500">${u.balance?.toLocaleString()}</div>
+                                <div className="text-xs font-mono text-lime-500">{u.tokens?.toLocaleString()} TK</div>
+                              </div>
+                              <div className="flex gap-2">
+                                <button 
+                                  onClick={() => adjustUserCurrency(u.uid, 1000, 'balance')}
+                                  className="p-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/20 text-amber-500 transition-colors"
+                                  title="Add $1k"
+                                >
+                                  +$1k
+                                </button>
+                                <button 
+                                  onClick={() => adjustUserCurrency(u.uid, -1000, 'balance')}
+                                  className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors"
+                                  title="Sub $1k"
+                                >
+                                  -$1k
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {adminTab === 'system' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8">
+                        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                          <Settings className="w-5 h-5 text-zinc-400" />
+                          Global Controls
+                        </h3>
+                        <div className="space-y-4">
+                          <button 
+                            onClick={() => updateSystemConfig({ maintenanceMode: !systemConfig.maintenanceMode })}
+                            className="flex items-center justify-between w-full p-4 bg-zinc-900/50 hover:bg-zinc-800 rounded-2xl border border-white/5 transition-all group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <AlertTriangle className={`w-5 h-5 ${systemConfig.maintenanceMode ? 'text-red-500' : 'text-zinc-500'}`} />
+                              <span className="font-bold text-zinc-300">Maintenance Mode</span>
+                            </div>
+                            <div className={`w-12 h-6 rounded-full p-1 flex items-center transition-colors ${systemConfig.maintenanceMode ? 'bg-red-500 justify-end' : 'bg-zinc-700 justify-start'}`}>
+                              <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
+                            </div>
+                          </button>
+                          <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5">
+                            <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">Global Multiplier</div>
+                            <div className="flex items-center gap-4">
+                              <input 
+                                type="range" 
+                                min="0.5" 
+                                max="5" 
+                                step="0.1" 
+                                value={systemConfig.globalMultiplier || 1}
+                                onChange={(e) => updateSystemConfig({ globalMultiplier: parseFloat(e.target.value) })}
+                                className="flex-1 accent-amber-500"
+                              />
+                              <span className="font-mono font-bold text-amber-500">{systemConfig.globalMultiplier || 1}x</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8">
+                        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                          <Zap className="w-5 h-5 text-amber-500" />
+                          Global Announcement
+                        </h3>
+                        <div className="space-y-4">
+                          <textarea 
+                            value={systemConfig.announcement || ''}
+                            onChange={(e) => updateSystemConfig({ announcement: e.target.value })}
+                            placeholder="Enter system-wide message..."
+                            className="w-full h-32 bg-zinc-900/50 border border-white/5 rounded-2xl p-4 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 transition-colors resize-none"
+                          />
+                          <button 
+                            onClick={() => updateSystemConfig({ announcement: '' })}
+                            className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-bold rounded-xl border border-white/5 transition-colors"
+                          >
+                            Clear Announcement
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              <div className="p-6 bg-zinc-900/50 border-t border-white/5 text-center">
+                <p className="text-[10px] text-zinc-600 font-mono tracking-widest uppercase">End of Admin Session // Secure Logout Recommended</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Key Verification Modal */}
       <AnimatePresence>
         {showKeyModal && (
@@ -1454,8 +2074,14 @@ export default function App() {
           <AuraPackModal 
             onClose={() => setShowAuraPackModal(false)} 
             onReward={handleAuraPackReward}
+            onWatchAd={() => {
+              watchAdWithCallback(() => {
+                setAuraPackUpgradeTrigger(prev => prev + 1);
+              });
+            }}
             pityTimer={activePackType === 'AVATAR' ? avatarPackPityTimer : auraPackPityTimer}
             packType={activePackType}
+            upgradeTrigger={auraPackUpgradeTrigger}
           />
         )}
       </AnimatePresence>

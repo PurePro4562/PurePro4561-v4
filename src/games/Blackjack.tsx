@@ -15,6 +15,7 @@ interface BlackjackProps {
   themeGradient: string;
   themeColor: string;
   onRecordBet: (amount: number, winnings: number, game: string, type: 'chips' | 'tokens') => void;
+  globalMultiplier?: number;
 }
 
 const getCardValue = (card: Card) => {
@@ -38,7 +39,7 @@ const calculateScore = (hand: Card[]) => {
   return score;
 };
 
-export default function Blackjack({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet }: BlackjackProps) {
+export default function Blackjack({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: BlackjackProps) {
   const [deck, setDeck] = useState<Card[]>([]);
   const [playerHand, setPlayerHand] = useState<Card[]>([]);
   const [dealerHand, setDealerHand] = useState<Card[]>([]);
@@ -168,7 +169,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
     if (msg.includes('win')) {
       const isBlackjack = msg.includes('Blackjack');
       const multiplier = isBlackjack ? 2.5 : 2;
-      winnings = bet * multiplier;
+      winnings = bet * multiplier * globalMultiplier;
       setBalance(b => b + winnings);
       playBlackjackAction(isBlackjack ? 'blackjack' : 'win');
     } else if (msg.includes('Push')) {

@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and currency data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID" },
+        "email": { "type": "string", "format": "email", "description": "User email" },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "User role" },
+        "balance": { "type": "number", "description": "Casino Chips" },
+        "tokens": { "type": "number", "description": "Arcade Tokens" },
+        "ownedThemes": { "type": "array", "items": { "type": "string" }, "description": "Unlocked themes" },
+        "ownedBadges": { "type": "array", "items": { "type": "string" }, "description": "Unlocked badges" },
+        "ownedAvatars": { "type": "array", "items": { "type": "string" }, "description": "Unlocked avatars" },
+        "ownedVFX": { "type": "array", "items": { "type": "string" }, "description": "Unlocked VFX" },
+        "activeAvatar": { "type": "string", "description": "Currently equipped avatar" },
+        "activeVFX": { "type": "string", "description": "Currently equipped VFX" },
+        "activeTheme": { "type": "string", "description": "Currently equipped theme" },
+        "adsWatchedToday": { "type": "number", "description": "Ads watched today" },
+        "adsWatchedWithoutWin": { "type": "number", "description": "Pity counter for slots" },
+        "keyFragments": { "type": "number", "description": "Fragments for Pro Mode" },
+        "isProMode": { "type": "boolean", "description": "Whether Pro Mode is unlocked" }
+      },
+      "required": ["uid", "email", "role", "balance", "tokens"]
+    },
+    "Bet": {
+      "title": "Bet",
+      "description": "Record of a bet placed by a user",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User ID who placed the bet" },
+        "date": { "type": "string", "format": "date-time", "description": "When the bet was placed" },
+        "amount": { "type": "number", "description": "Bet amount" },
+        "winnings": { "type": "number", "description": "Amount won (negative for loss)" },
+        "game": { "type": "string", "description": "Name of the game" },
+        "type": { "type": "string", "enum": ["chips", "tokens"], "description": "Currency used" }
+      },
+      "required": ["uid", "date", "amount", "winnings", "game", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile data"
+    },
+    "/bets/{betId}": {
+      "schema": "Bet",
+      "description": "Bet history records"
+    },
+    "/system/config": {
+      "schema": {
+        "title": "SystemConfig",
+        "type": "object",
+        "properties": {
+          "maintenanceMode": { "type": "boolean" },
+          "announcement": { "type": "string" },
+          "globalMultiplier": { "type": "number" }
+        }
+      },
+      "description": "Global system configuration"
+    }
+  }
+}

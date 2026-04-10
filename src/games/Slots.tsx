@@ -22,9 +22,10 @@ interface SlotsProps {
   onRecordBet: (amount: number, winnings: number, game: string, type: 'chips' | 'tokens') => void;
   adsWatchedWithoutWin: number;
   resetPityTimer: () => void;
+  globalMultiplier?: number;
 }
 
-export default function Slots({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, onWatchAd, adsWatchedToday, adsWatchedWithoutWin, resetPityTimer }: SlotsProps) {
+export default function Slots({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, onWatchAd, adsWatchedToday, adsWatchedWithoutWin, resetPityTimer, globalMultiplier = 1 }: SlotsProps) {
   const [reels, setReels] = useState(['7️⃣', '7️⃣', '7️⃣']);
   const [spinningReels, setSpinningReels] = useState([false, false, false]);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -73,9 +74,9 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
 
     let win = 0;
     if (r1 === r2 && r2 === r3) {
-      win = bet * MULTIPLIERS[r1];
+      win = bet * MULTIPLIERS[r1] * globalMultiplier;
     } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-      win = bet * 2;
+      win = bet * 2 * globalMultiplier;
     }
 
     setTimeout(() => {

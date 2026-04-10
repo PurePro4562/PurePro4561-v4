@@ -95,7 +95,7 @@ export const playBlackjackAction = (action: 'hit' | 'stand' | 'double' | 'win' |
   }
 };
 
-export const playVFXSound = (type: 'shatter' | 'explosion' | 'shimmer') => {
+export const playVFXSound = (type: 'shatter' | 'explosion' | 'shimmer' | 'hiss' | 'slide' | 'thud' | 'chime' | 'spark') => {
   switch (type) {
     case 'shatter':
       for(let i=0; i<5; i++) {
@@ -110,6 +110,45 @@ export const playVFXSound = (type: 'shatter' | 'explosion' | 'shimmer') => {
       for(let i=0; i<10; i++) {
         setTimeout(() => playTone(1500 + i * 100, 'sine', 0.1, 0.03), i * 30);
       }
+      break;
+    case 'hiss':
+      // White noise style hiss
+      const ctx = getCtx();
+      if (!ctx) return;
+      const bufferSize = ctx.sampleRate * 0.5;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.value = 2000;
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.05, ctx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start();
+      break;
+    case 'slide':
+      playTone(200, 'triangle', 0.3, 0.05);
+      setTimeout(() => playTone(400, 'sine', 0.2, 0.03), 100);
+      break;
+    case 'thud':
+      playTone(50, 'sine', 0.5, 0.3);
+      playTone(100, 'triangle', 0.3, 0.1);
+      break;
+    case 'chime':
+      [1200, 1500, 1800].forEach((f, i) => {
+        setTimeout(() => playTone(f, 'sine', 0.6, 0.02), i * 150);
+      });
+      break;
+    case 'spark':
+      playTone(3000 + Math.random() * 500, 'sine', 0.02, 0.01);
       break;
   }
 };
