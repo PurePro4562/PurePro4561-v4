@@ -204,6 +204,7 @@ export default function App() {
   const [adminStats, setAdminStats] = useState<any>(null);
   const [adminTab, setAdminTab] = useState<'stats' | 'users' | 'system'>('stats');
   const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
   const [systemConfig, setSystemConfig] = useState<any>({
     maintenanceMode: false,
     announcement: '',
@@ -509,6 +510,17 @@ export default function App() {
     }
   };
 
+  const toggleUserAds = async (userId: string, currentStatus: boolean) => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, { adsEnabled: !currentStatus });
+      fetchAllUsers(); // Refresh list
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
+    }
+  };
+
   useEffect(() => {
     if (showAdminPanel) {
       fetchAdminStats();
@@ -607,6 +619,11 @@ export default function App() {
   };
 
   const watchAdForKey = () => {
+    if (userProfile?.adsEnabled === false) {
+      const newKey = "PRO-" + Math.floor(1000 + Math.random() * 9000);
+      setGeneratedKey(newKey);
+      return;
+    }
     setShowAdModal(true);
     setAdProgress(0);
     let progress = 0;
@@ -638,6 +655,11 @@ export default function App() {
   };
 
   const watchAdWithCallback = (callback: () => void) => {
+    if (userProfile?.adsEnabled === false) {
+      callback();
+      setAdsWatchedToday(prev => prev + 1);
+      return;
+    }
     setShowAdModal(true);
     setAdProgress(0);
     let progress = 0;
@@ -810,8 +832,8 @@ export default function App() {
           )}
 
           <div className="flex items-center gap-4">
-            {isProMode ? (
-              <div className="hidden sm:flex items-center gap-2 bg-amber-500/10 pl-3 pr-1 py-1 rounded-full border border-amber-500/20 text-amber-400 font-mono text-sm">
+            <div className="hidden sm:flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-amber-500/10 pl-3 pr-1 py-1 rounded-full border border-amber-500/20 text-amber-400 font-mono text-sm">
                 <Coins className="w-4 h-4" /> ${balance.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
@@ -822,8 +844,7 @@ export default function App() {
                   <Video className="w-4 h-4 text-amber-400" />
                 </button>
               </div>
-            ) : (
-              <div className="hidden sm:flex items-center gap-2 bg-zinc-800/50 pl-3 pr-1 py-1 rounded-full border border-white/10 text-zinc-300 font-mono text-sm">
+              <div className="flex items-center gap-2 bg-zinc-800/50 pl-3 pr-1 py-1 rounded-full border border-white/10 text-zinc-300 font-mono text-sm">
                 <Ticket className="w-4 h-4" /> {tokens.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
@@ -842,7 +863,7 @@ export default function App() {
                   <Store className="w-4 h-4 text-zinc-300" />
                 </button>
               </div>
-            )}
+            </div>
             
             {isProMode && (
               <button onClick={() => setShowHistoryModal(true)} className="hidden sm:flex bg-zinc-800/50 hover:bg-zinc-700/50 p-2 rounded-full border border-white/10 transition-colors" title="Bet History">
@@ -1849,21 +1870,38 @@ export default function App() {
                 {adminTab === 'users' && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                     <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8">
-                      <div className="flex items-center justify-between mb-8">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <h3 className="text-lg font-bold text-white flex items-center gap-2">
                           <Users className="w-5 h-5 text-zinc-400" />
                           Registered Users ({allUsers.length})
                         </h3>
-                        <button 
-                          onClick={fetchAllUsers}
-                          className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl border border-white/5 transition-colors"
-                        >
-                          <RefreshCw className="w-4 h-4 text-zinc-400" />
-                        </button>
+                        <div className="flex items-center gap-3 flex-1 max-w-md">
+                          <div className="relative flex-1">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                            <input 
+                              type="text"
+                              placeholder="Search by email or UID..."
+                              value={userSearchQuery}
+                              onChange={(e) => setUserSearchQuery(e.target.value)}
+                              className="w-full bg-zinc-950 border border-white/5 rounded-xl pl-10 pr-4 py-2 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 transition-colors"
+                            />
+                          </div>
+                          <button 
+                            onClick={fetchAllUsers}
+                            className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl border border-white/5 transition-colors"
+                          >
+                            <RefreshCw className="w-4 h-4 text-zinc-400" />
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-4">
-                        {allUsers.map((u) => (
-                          <div key={u.uid} className="flex items-center justify-between p-6 bg-zinc-900/50 rounded-3xl border border-white/5">
+                        {allUsers
+                          .filter(u => 
+                            u.email?.toLowerCase().includes(userSearchQuery.toLowerCase()) || 
+                            u.uid?.toLowerCase().includes(userSearchQuery.toLowerCase())
+                          )
+                          .map((u) => (
+                          <div key={u.uid} className="flex flex-col lg:flex-row lg:items-center justify-between p-6 bg-zinc-900/50 rounded-3xl border border-white/5 gap-6">
                             <div className="flex items-center gap-4">
                               <div className="w-12 h-12 rounded-2xl bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden">
                                 {AVATARS[u.activeAvatar as keyof typeof AVATARS]?.icon || <User className="w-6 h-6 text-zinc-600" />}
@@ -1876,26 +1914,62 @@ export default function App() {
                                 <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">UID: {u.uid.slice(0, 8)}...</div>
                               </div>
                             </div>
-                            <div className="flex items-center gap-6">
-                              <div className="text-right">
+                            
+                            <div className="flex flex-wrap items-center gap-6">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  <Video className={`w-3 h-3 ${u.adsEnabled !== false ? 'text-emerald-500' : 'text-zinc-500'}`} />
+                                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Ads</span>
+                                </div>
+                                <button 
+                                  onClick={() => toggleUserAds(u.uid, u.adsEnabled !== false)}
+                                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${u.adsEnabled !== false ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border border-white/5'}`}
+                                >
+                                  {u.adsEnabled !== false ? 'Enabled' : 'Disabled'}
+                                </button>
+                              </div>
+
+                              <div className="text-right min-w-[100px]">
                                 <div className="text-xs font-mono text-amber-500">${u.balance?.toLocaleString()}</div>
                                 <div className="text-xs font-mono text-lime-500">{u.tokens?.toLocaleString()} TK</div>
                               </div>
-                              <div className="flex gap-2">
-                                <button 
-                                  onClick={() => adjustUserCurrency(u.uid, 1000, 'balance')}
-                                  className="p-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/20 text-amber-500 transition-colors"
-                                  title="Add $1k"
-                                >
-                                  +$1k
-                                </button>
-                                <button 
-                                  onClick={() => adjustUserCurrency(u.uid, -1000, 'balance')}
-                                  className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors"
-                                  title="Sub $1k"
-                                >
-                                  -$1k
-                                </button>
+
+                              <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Chips</span>
+                                  <div className="flex gap-1">
+                                    <button 
+                                      onClick={() => adjustUserCurrency(u.uid, 1000, 'balance')}
+                                      className="p-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/20 text-amber-500 transition-colors text-xs"
+                                    >
+                                      +$1k
+                                    </button>
+                                    <button 
+                                      onClick={() => adjustUserCurrency(u.uid, -1000, 'balance')}
+                                      className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors text-xs"
+                                    >
+                                      -$1k
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Tickets</span>
+                                  <div className="flex gap-1">
+                                    <button 
+                                      onClick={() => adjustUserCurrency(u.uid, 500, 'tokens')}
+                                      className="p-2 bg-lime-500/10 hover:bg-lime-500/20 rounded-xl border border-lime-500/20 text-lime-500 transition-colors text-xs"
+                                    >
+                                      +500
+                                    </button>
+                                    <button 
+                                      onClick={() => adjustUserCurrency(u.uid, -500, 'tokens')}
+                                      className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors text-xs"
+                                    >
+                                      -500
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>

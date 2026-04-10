@@ -20,7 +20,8 @@
         "adsWatchedToday": { "type": "number", "description": "Ads watched today" },
         "adsWatchedWithoutWin": { "type": "number", "description": "Pity counter for slots" },
         "keyFragments": { "type": "number", "description": "Fragments for Pro Mode" },
-        "isProMode": { "type": "boolean", "description": "Whether Pro Mode is unlocked" }
+        "isProMode": { "type": "boolean", "description": "Whether Pro Mode is unlocked" },
+        "adsEnabled": { "type": "boolean", "description": "Whether ads are enabled for the user" }
       },
       "required": ["uid", "email", "role", "balance", "tokens"]
     },

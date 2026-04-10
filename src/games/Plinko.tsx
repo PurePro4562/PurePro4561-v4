@@ -13,8 +13,8 @@ interface PlinkoProps {
   globalMultiplier?: number;
 }
 
-const ROWS = 8;
-const MULTIPLIERS = [5, 2, 1.5, 0.5, 0.2, 0.5, 1.5, 2, 5];
+const ROWS = 12;
+const MULTIPLIERS = [25, 10, 5, 2, 0.5, 0.2, 0.1, 0.2, 0.5, 2, 5, 10, 25];
 
 export default function Plinko({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: PlinkoProps) {
   const [bet, setBet] = useState(100);
@@ -100,11 +100,11 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
 
         <div className="relative bg-zinc-900/50 border border-white/5 rounded-[3rem] p-12 mb-8 shadow-2xl overflow-hidden">
           {/* Pegs */}
-          <div className="flex flex-col gap-8 items-center">
+          <div className="flex flex-col gap-6 items-center">
             {[...Array(ROWS)].map((_, rowIndex) => (
-              <div key={rowIndex} className="flex gap-12">
+              <div key={rowIndex} className="flex gap-8">
                 {[...Array(rowIndex + 3)].map((_, pegIndex) => (
-                  <div key={pegIndex} className="w-2 h-2 rounded-full bg-zinc-700 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
+                  <div key={pegIndex} className="w-1.5 h-1.5 rounded-full bg-zinc-700 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
                 ))}
               </div>
             ))}
@@ -134,7 +134,7 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
                 initial={{ top: '0%', left: '50%' }}
                 animate={{ 
                   top: ['0%', '10%', '30%', '50%', '70%', '90%'],
-                  left: ['50%', '48%', '52%', '45%', '55%', `${10 + ball.resultIndex! * 10}%`]
+                  left: ['50%', '48%', '52%', '45%', '55%', `${(ball.resultIndex! + 0.5) * (100 / MULTIPLIERS.length)}%`]
                 }}
                 transition={{ duration: 2, ease: "linear" }}
                 className="absolute w-4 h-4 rounded-full bg-white shadow-[0_0_15px_white] z-20"
