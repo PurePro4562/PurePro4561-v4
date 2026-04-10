@@ -8,7 +8,6 @@ export type PackType = 'AURA' | 'AVATAR' | 'VFX' | 'GOD';
 interface AuraPackModalProps {
   onClose: () => void;
   onReward: (reward: any) => void;
-  onWatchAd: () => void;
   pityTimer: number;
   packType?: PackType;
   upgradeTrigger?: number;
@@ -57,7 +56,7 @@ const RARITY_COLORS = {
   GODLY: '#f59e0b'
 };
 
-export default function AuraPackModal({ onClose, onReward, onWatchAd, pityTimer, packType = 'AURA', upgradeTrigger = 0 }: AuraPackModalProps) {
+export default function AuraPackModal({ onClose, onReward, pityTimer, packType = 'AURA', upgradeTrigger = 0 }: AuraPackModalProps) {
   const [step, setStep] = useState<'idle' | 'squeezing' | 'breaching' | 'core_glow' | 'revealed'>('idle');
   const [rarity, setRarity] = useState<keyof typeof RARITIES>('COMMON');
   const [reward, setReward] = useState<any>(null);
@@ -482,21 +481,7 @@ export default function AuraPackModal({ onClose, onReward, onWatchAd, pityTimer,
                   COLLECT REWARD
                 </button>
 
-                {rarity === 'COMMON' && reward?.type !== 'fragment' && (
-                  <motion.button
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => { playClick(); onWatchAd(); }}
-                    className="w-full py-4 rounded-2xl bg-zinc-900 border border-purple-500/50 text-purple-400 font-bold text-sm flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(168,85,247,0.2)]"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-                      <Zap className="w-3 h-3 text-white" />
-                    </div>
-                    UPGRADE TO EPIC? (WATCH AD)
-                  </motion.button>
-                )}
+                {/* Removed ad upgrade button */}
               </div>
             </motion.div>
           )}

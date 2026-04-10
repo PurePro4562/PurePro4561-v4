@@ -2300,11 +2300,6 @@ export default function App() {
           <AuraPackModal 
             onClose={() => setShowAuraPackModal(false)} 
             onReward={handleAuraPackReward}
-            onWatchAd={() => {
-              watchAdWithCallback(() => {
-                setAuraPackUpgradeTrigger(prev => prev + 1);
-              });
-            }}
             pityTimer={activePackType === 'AVATAR' ? avatarPackPityTimer : auraPackPityTimer}
             packType={activePackType}
             upgradeTrigger={auraPackUpgradeTrigger}
