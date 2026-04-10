@@ -23,7 +23,7 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
   const [lastWin, setLastWin] = useState<number | null>(null);
 
   const dropBall = () => {
-    if (balance < bet || isDropping) return;
+    if (balance < bet) return;
     
     playClick();
     setBalance(prev => prev - bet);
@@ -39,13 +39,12 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
     }
 
     // Map final position to multiplier index
-    // currentPos will be between -ROWS and ROWS
-    // We want to map it to 0-8
     const finalIndex = Math.floor((currentPos + ROWS) / (ROWS * 2) * (MULTIPLIERS.length - 1));
     const clampedIndex = Math.max(0, Math.min(MULTIPLIERS.length - 1, finalIndex));
 
+    const ballId = Date.now() + Math.random();
     const newBall = {
-      id: Date.now(),
+      id: ballId,
       path,
       active: true,
       resultIndex: clampedIndex
@@ -68,9 +67,12 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
         playLose();
       }
 
-      setIsDropping(false);
+      setBalls(prev => {
+        const remaining = prev.filter(b => b.id !== ballId);
+        if (remaining.length === 0) setIsDropping(false);
+        return remaining;
+      });
       setTimeout(() => setLastWin(null), 2000);
-      setBalls(prev => prev.filter(b => b.id !== newBall.id));
     }, 2000);
   };
 
@@ -167,14 +169,14 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
 
           <button
             onClick={dropBall}
-            disabled={isDropping || balance < bet}
+            disabled={balance < bet}
             className={`w-full py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg ${
-              isDropping || balance < bet 
+              balance < bet 
                 ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed' 
                 : `bg-gradient-to-r ${themeGradient} text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`
             }`}
           >
-            {isDropping ? 'BALL IN PLAY...' : 'DROP BALL'}
+            {isDropping ? 'DROPPING...' : 'DROP BALL'}
             <Zap className="w-6 h-6" />
           </button>
 
