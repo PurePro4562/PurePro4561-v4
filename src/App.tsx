@@ -103,6 +103,14 @@ const AVATARS = {
   avatar_king: { name: 'Crypto King', icon: <Crown className="w-full h-full text-yellow-400" />, rarity: 'LEGENDARY' },
 };
 
+const VFX_EFFECTS = {
+  vfx_none: { name: 'None', rarity: 'COMMON' },
+  vfx_matrix: { name: 'Matrix Rain', rarity: 'EPIC' },
+  vfx_gold_dust: { name: 'Gold Dust', rarity: 'LEGENDARY' },
+  vfx_cyber_glitch: { name: 'Cyber Glitch', rarity: 'EPIC' },
+  vfx_god_rays: { name: 'God Rays', rarity: 'GODLY' },
+};
+
 export default function App() {
   const [isProMode, setIsProMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -135,9 +143,11 @@ export default function App() {
   const [ownedThemes, setOwnedThemes] = useState<string[]>(['default']);
   const [ownedBadges, setOwnedBadges] = useState<string[]>([]);
   const [ownedAvatars, setOwnedAvatars] = useState<string[]>(['avatar_default']);
+  const [ownedVFX, setOwnedVFX] = useState<string[]>(['vfx_none']);
   const [activeAvatar, setActiveAvatar] = useState('avatar_default');
+  const [activeVFX, setActiveVFX] = useState('vfx_none');
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>('default');
-  const [shopTab, setShopTab] = useState<'themes' | 'badges' | 'avatars' | 'exchange'>('themes');
+  const [shopTab, setShopTab] = useState<'themes' | 'badges' | 'avatars' | 'vfx' | 'exchange'>('themes');
   const [rewardMessage, setRewardMessage] = useState('');
   const [adsWatchedToday, setAdsWatchedToday] = useState(0);
   const [adsWatchedWithoutWin, setAdsWatchedWithoutWin] = useState(0);
@@ -145,6 +155,7 @@ export default function App() {
   // Aura Pack State
   const [auraPackPityTimer, setAuraPackPityTimer] = useState(0);
   const [avatarPackPityTimer, setAvatarPackPityTimer] = useState(0);
+  const [vfxPackPityTimer, setVfxPackPityTimer] = useState(0);
   const [activePackType, setActivePackType] = useState<PackType>('AURA');
   const [keyFragments, setKeyFragments] = useState(0);
 
@@ -180,6 +191,9 @@ export default function App() {
     } else if (activePackType === 'AURA') {
       if (reward.rarity === 'LEGENDARY') setAuraPackPityTimer(0);
       else setAuraPackPityTimer(prev => prev + 1);
+    } else if (activePackType === 'VFX') {
+      if (reward.rarity === 'LEGENDARY') setVfxPackPityTimer(0);
+      else setVfxPackPityTimer(prev => prev + 1);
     }
 
     if (reward.type === 'theme') {
@@ -189,6 +203,14 @@ export default function App() {
         setRewardMessage(`Duplicate Aura shattered into 1,500 Tokens!`);
       } else {
         setOwnedThemes(prev => [...prev, reward.id]);
+        setRewardMessage(`Unlocked ${reward.name}!`);
+      }
+    } else if (reward.type === 'vfx') {
+      if (ownedVFX.includes(reward.id)) {
+        setTokens(t => t + 1200);
+        setRewardMessage(`Duplicate VFX shattered into 1,200 Tokens!`);
+      } else {
+        setOwnedVFX(prev => [...prev, reward.id]);
         setRewardMessage(`Unlocked ${reward.name}!`);
       }
     } else if (reward.type === 'avatar') {
@@ -349,8 +371,86 @@ export default function App() {
   const themeColors = currentThemeConfig.colors;
   const themeGlow = currentThemeConfig.glow;
 
+  const VFXOverlay = () => {
+    if (activeVFX === 'vfx_none') return null;
+    
+    return (
+      <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
+        {activeVFX === 'vfx_matrix' && (
+          <div className="absolute inset-0 opacity-20 flex justify-around">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ y: -100 }}
+                animate={{ y: ['0%', '100%'] }}
+                transition={{ duration: Math.random() * 5 + 5, repeat: Infinity, ease: "linear", delay: Math.random() * 5 }}
+                className="text-lime-500 font-mono text-xs whitespace-pre leading-none"
+              >
+                {Array(20).fill(0).map(() => String.fromCharCode(0x30A0 + Math.random() * 96)).join('\n')}
+              </motion.div>
+            ))}
+          </div>
+        )}
+        {activeVFX === 'vfx_gold_dust' && (
+          <div className="absolute inset-0">
+            {[...Array(30)].map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  y: [-20, 1000],
+                  x: Math.random() * 1000,
+                  rotate: 360,
+                  opacity: [0, 0.8, 0]
+                }}
+                transition={{
+                  duration: Math.random() * 10 + 10,
+                  repeat: Infinity,
+                  delay: Math.random() * 10
+                }}
+                className="absolute w-1 h-1 bg-yellow-400 blur-[1px] rounded-full shadow-[0_0_10px_#facc15]"
+                style={{ left: `${Math.random() * 100}%` }}
+              />
+            ))}
+          </div>
+        )}
+        {activeVFX === 'vfx_cyber_glitch' && (
+          <motion.div
+            animate={{
+              opacity: [0, 0.1, 0, 0.05, 0],
+              x: [0, -5, 5, -2, 0],
+              filter: ['blur(0px)', 'blur(2px)', 'blur(0px)']
+            }}
+            transition={{
+              duration: 0.2,
+              repeat: Infinity,
+              repeatDelay: Math.random() * 10 + 5
+            }}
+            className="absolute inset-0 bg-cyan-500/10 mix-blend-overlay"
+          />
+        )}
+        {activeVFX === 'vfx_god_rays' && (
+          <div className="absolute inset-x-0 top-0 h-full flex justify-center opacity-30">
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  opacity: [0.1, 0.3, 0.1],
+                  rotate: [i * 10 - 20, i * 10 - 25, i * 10 - 20]
+                }}
+                transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-[-20%] w-32 h-[150%] bg-gradient-to-b from-white/40 to-transparent blur-3xl origin-top"
+                style={{ left: `${20 + i * 15}%` }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-700">
+      <VFXOverlay />
       <style>{`
         .dynamic-glow-text { text-shadow: 0 0 20px ${themeGlow}; }
         .dynamic-glow-box { box-shadow: 0 0 15px -3px ${themeGlow}; }
@@ -864,6 +964,14 @@ export default function App() {
                 </button>
                 <button 
                   onMouseEnter={playHover}
+                  onClick={() => { playClick(); setShopTab('vfx'); }}
+                  className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'vfx' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
+                  style={shopTab === 'vfx' ? { backgroundColor: themeColor } : {}}
+                >
+                  VFX Packs
+                </button>
+                <button 
+                  onMouseEnter={playHover}
                   onClick={() => { playClick(); setShopTab('exchange'); }}
                   className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${shopTab === 'exchange' ? 'text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'}`}
                   style={shopTab === 'exchange' ? { backgroundColor: themeColor } : {}}
@@ -1089,6 +1197,41 @@ export default function App() {
                       </div>
                     </div>
 
+                    {/* VFX Pack */}
+                    <div className="bg-zinc-950 border border-emerald-500/50 rounded-2xl p-6 flex flex-col relative overflow-hidden shadow-[0_0_15px_rgba(16,185,129,0.2)] md:col-span-2 mb-4">
+                      <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-2 py-1 rounded-bl-lg z-10">VISUALS</div>
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center shadow-inner relative overflow-hidden group">
+                          <Zap className="w-8 h-8 text-emerald-400 relative z-10 group-hover:animate-pulse" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-zinc-100 text-lg">VFX Pack</h4>
+                          <p className="text-xs text-zinc-400">Unlock screen effects, particle trails, and win animations.</p>
+                          <p className="text-sm font-mono text-lime-500 flex items-center gap-1 mt-1">
+                            <Ticket className="w-3 h-3" /> 1,200
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            if (tokens >= 1200) {
+                              playClick();
+                              setTokens(t => t - 1200);
+                              setActivePackType('VFX');
+                              setShowShopModal(false);
+                              setShowAuraPackModal(true);
+                            } else {
+                              playLose();
+                              setRewardMessage('Need 1,200 Tokens!');
+                              setTimeout(() => setRewardMessage(''), 3000);
+                            }
+                          }}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-sm transition-colors hover:scale-105 whitespace-nowrap shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+                        >
+                          BUY PACK
+                        </button>
+                      </div>
+                    </div>
+
                     {Object.entries(AVATARS).map(([id, avatar]) => {
                       const isOwned = ownedAvatars.includes(id);
                       const isActive = activeAvatar === id;
@@ -1126,6 +1269,37 @@ export default function App() {
                     })}
                   </>
                 )}
+
+                {shopTab === 'vfx' && Object.entries(VFX_EFFECTS).map(([id, vfx]) => {
+                  const isOwned = ownedVFX.includes(id);
+                  const isActive = activeVFX === id;
+                  return (
+                    <div key={id} className={`bg-zinc-950 border ${isActive ? 'border-emerald-500/50' : 'border-white/5'} rounded-2xl p-6 flex items-center justify-between transition-colors`}>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center">
+                          <Zap className={`w-6 h-6 ${isActive ? 'text-emerald-400' : 'text-zinc-600'}`} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-zinc-100">{vfx.name}</h4>
+                          <p className="text-sm font-mono text-zinc-500">{vfx.rarity}</p>
+                        </div>
+                      </div>
+                      {isActive ? (
+                        <span className="px-4 py-2 rounded-xl font-bold text-sm border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Active</span>
+                      ) : isOwned ? (
+                        <button 
+                          onMouseEnter={playHover}
+                          onClick={() => { playClick(); setActiveVFX(id); }} 
+                          className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors"
+                        >
+                          Activate
+                        </button>
+                      ) : (
+                        <span className="text-zinc-600 text-xs font-mono">Pack Only</span>
+                      )}
+                    </div>
+                  )
+                })}
 
                 {shopTab === 'exchange' && Object.entries(EXCHANGE).map(([id, item]) => {
                   const isChips = item.currency === 'chips';

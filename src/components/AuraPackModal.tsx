@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation, useMotionValue, useTransform } from 'motion/react';
 import { X, Sparkles, Key, Music, Palette, Shield, User, Zap, Skull, Crown } from 'lucide-react';
-import { playClick, playHover, playCoin, playWin, playSpin } from '../audio';
+import { playClick, playHover, playCoin, playWin, playSpin, playVFXSound } from '../audio';
 
-export type PackType = 'AURA' | 'AVATAR' | 'GOD';
+export type PackType = 'AURA' | 'AVATAR' | 'VFX' | 'GOD';
 
 interface AuraPackModalProps {
   onClose: () => void;
@@ -15,7 +15,7 @@ interface AuraPackModalProps {
 const RARITIES = {
   COMMON: { name: 'Common', color: 'bg-zinc-400', glow: 'shadow-[0_0_30px_rgba(161,161,170,0.8)]', light: 'bg-zinc-400', text: 'text-zinc-400' },
   EPIC: { name: 'Epic', color: 'bg-purple-500', glow: 'shadow-[0_0_40px_rgba(168,85,247,0.8)]', light: 'bg-purple-500', text: 'text-purple-400' },
-  LEGENDARY: { name: 'Legendary', color: 'bg-yellow-400', glow: 'shadow-[0_0_50px_rgba(250,204,21,0.8)]', light: 'bg-yellow-400', text: 'text-yellow-400' },
+  LEGENDARY: { name: 'Legendary', color: 'bg-yellow-400', glow: 'shadow-[0_0_50_rgba(250,204,21,0.8)]', light: 'bg-yellow-400', text: 'text-yellow-400' },
   GODLY: { name: 'Godly', color: 'bg-amber-500', glow: 'shadow-[0_0_60px_rgba(245,158,11,1)]', light: 'bg-amber-500', text: 'text-amber-500' },
 };
 
@@ -34,6 +34,13 @@ const REWARDS = {
     { id: 'avatar_cyberpunk', type: 'avatar', rarity: 'COMMON', name: 'Neon Samurai', icon: <Zap className="w-12 h-12" /> },
     { id: 'avatar_reaper', type: 'avatar', rarity: 'EPIC', name: 'Digital Reaper', icon: <Skull className="w-12 h-12" /> },
     { id: 'avatar_king', type: 'avatar', rarity: 'LEGENDARY', name: 'Crypto King', icon: <Crown className="w-12 h-12" /> },
+    { id: 'key_fragment', type: 'fragment', rarity: 'COMMON', name: 'Key Fragment', icon: <Key className="w-12 h-12" /> },
+  ],
+  VFX: [
+    { id: 'vfx_matrix', type: 'vfx', rarity: 'EPIC', name: 'Matrix Rain', icon: <Zap className="w-12 h-12" /> },
+    { id: 'vfx_gold_dust', type: 'vfx', rarity: 'LEGENDARY', name: 'Gold Dust', icon: <Sparkles className="w-12 h-12" /> },
+    { id: 'vfx_cyber_glitch', type: 'vfx', rarity: 'EPIC', name: 'Cyber Glitch', icon: <Zap className="w-12 h-12" /> },
+    { id: 'vfx_god_rays', type: 'vfx', rarity: 'GODLY', name: 'God Rays', icon: <Sparkles className="w-12 h-12" /> },
     { id: 'key_fragment', type: 'fragment', rarity: 'COMMON', name: 'Key Fragment', icon: <Key className="w-12 h-12" /> },
   ],
   GOD: [
@@ -113,7 +120,8 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
   const handleShatter = () => {
     if (isShattered) return;
     setIsShattered(true);
-    playClick();
+    playVFXSound('shatter');
+    if (rarity === 'GODLY') playVFXSound('explosion');
     setTimeout(() => {
       setStep('revealed');
       onReward({ ...reward, rarity });
@@ -123,6 +131,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
   const packColors = {
     AURA: 'from-purple-600 to-pink-600',
     AVATAR: 'from-blue-600 to-cyan-600',
+    VFX: 'from-emerald-600 to-teal-600',
     GOD: 'from-amber-400 via-orange-500 to-red-600'
   };
 
@@ -180,6 +189,7 @@ export default function AuraPackModal({ onClose, onReward, pityTimer, packType =
               <div className="absolute inset-0 bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[inset_0_0_60px_rgba(255,255,255,0.05)] flex items-center justify-center overflow-hidden">
                 {packType === 'AURA' && <Sparkles className="w-16 h-16 text-zinc-700" />}
                 {packType === 'AVATAR' && <User className="w-16 h-16 text-zinc-700" />}
+                {packType === 'VFX' && <Zap className="w-16 h-16 text-zinc-700" />}
                 {packType === 'GOD' && <Crown className="w-16 h-16 text-amber-500/50 animate-pulse" />}
                 
                 {/* Light Leaks */}

@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Coins, Video, Sparkles } from 'lucide-react';
-import { playCoin, playWin, playLose, playSpin, playClick, playHover } from '../audio';
+import { playCoin, playSlotsWin, playLose, playSpin, playClick, playHover } from '../audio';
 
 const SYMBOLS = ['🍒', '🍋', '🍇', '🔔', '💎', '7️⃣'];
 const MULTIPLIERS: Record<string, number> = { '🍒': 2, '🍋': 3, '🍇': 5, '🔔': 10, '💎': 25, '7️⃣': 50 };
+
+const getRarity = (symbol: string): 'COMMON' | 'EPIC' | 'LEGENDARY' | 'GODLY' => {
+  if (symbol === '7️⃣') return 'GODLY';
+  if (symbol === '💎') return 'LEGENDARY';
+  if (symbol === '🔔' || symbol === '🍇') return 'EPIC';
+  return 'COMMON';
+};
 
 interface SlotsProps {
   balance: number;
@@ -39,10 +46,11 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
     }
   }, [winMsg]);
 
-  const triggerVictoryFeedback = useCallback((amount: number, isFalseWin: boolean) => {
+  const triggerVictoryFeedback = useCallback((amount: number, symbol: string) => {
     setWinAmount(amount);
-    setWinMsg(isFalseWin ? 'CLOSE CALL!' : 'BIG WIN!');
-    playWin();
+    const rarity = getRarity(symbol);
+    setWinMsg(rarity === 'COMMON' ? 'WIN!' : rarity === 'EPIC' ? 'EPIC WIN!' : rarity === 'LEGENDARY' ? 'LEGENDARY!' : 'GODLY JACKPOT!');
+    playSlotsWin(rarity);
   }, []);
 
   const finalizeSpin = useCallback((forcedResult?: string[], ghostJackpot?: boolean) => {
@@ -70,13 +78,11 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
       win = bet * 2;
     }
 
-    // Delay the win/loss feedback so the user can process the reels stopping
     setTimeout(() => {
       if (win > 0) {
         setBalance(b => b + win);
-        const isFalseWin = win <= bet;
-        triggerVictoryFeedback(win, isFalseWin);
-        if (!isFalseWin) {
+        triggerVictoryFeedback(win, r1);
+        if (win > bet) {
           playCoin();
           setTimeout(playCoin, 200);
         }

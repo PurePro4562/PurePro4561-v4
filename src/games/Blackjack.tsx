@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
-import { playCoin, playWin, playLose, playCard, playChip, playClick, playHover } from '../audio';
+import { playCoin, playSlotsWin, playLose, playCard, playChip, playClick, playHover, playBlackjackAction } from '../audio';
 
 const SUITS = ['♠', '♥', '♦', '♣'];
 const VALUES = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
@@ -103,6 +103,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
 
   const hit = () => {
     if (gameState !== 'playing') return;
+    playBlackjackAction('hit');
     const { card, newDeck } = dealCard([...deck], playerHand);
     const newHand = [...playerHand, card];
     setPlayerHand(newHand);
@@ -115,6 +116,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
 
   const stand = () => {
     if (gameState !== 'playing') return;
+    playBlackjackAction('stand');
     setGameState('dealerTurn');
     
     const newDHand = [...dealerHand];
@@ -164,16 +166,17 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
 
     let winnings = 0;
     if (msg.includes('win')) {
-      const multiplier = msg.includes('Blackjack') ? 2.5 : 2;
+      const isBlackjack = msg.includes('Blackjack');
+      const multiplier = isBlackjack ? 2.5 : 2;
       winnings = bet * multiplier;
       setBalance(b => b + winnings);
-      playWin();
+      playBlackjackAction(isBlackjack ? 'blackjack' : 'win');
     } else if (msg.includes('Push')) {
       winnings = bet;
       setBalance(b => b + winnings);
-      playCoin();
+      playBlackjackAction('push');
     } else {
-      playLose();
+      playBlackjackAction('lose');
     }
     onRecordBet(bet, winnings, 'High Roller Blackjack', 'chips');
   };
