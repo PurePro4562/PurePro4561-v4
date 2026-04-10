@@ -2030,7 +2030,7 @@ export default function App() {
                             return 0;
                           })
                           .map((u) => {
-                            const isOnline = Date.now() - (u.lastSeen || 0) < 120000;
+                            const isOnline = Date.now() - (u.lastSeen || 0) < 300000;
                             const hoursPlayed = ((u.totalTimeSpent || 0) / 3600000).toFixed(1);
                             return (
                               <div key={u.uid} className="flex flex-col lg:flex-row lg:items-center justify-between p-6 bg-zinc-900/50 rounded-3xl border border-white/5 gap-6">

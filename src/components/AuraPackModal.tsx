@@ -112,7 +112,15 @@ export default function AuraPackModal({ onClose, onReward, onWatchAd, pityTimer,
   useEffect(() => {
     rollReward();
     const hintTimer = setTimeout(() => setShowHint(true), 3000);
-    return () => clearTimeout(hintTimer);
+    
+    // Disable scrolling
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      clearTimeout(hintTimer);
+      // Re-enable scrolling
+      document.body.style.overflow = 'unset';
+    };
   }, []);
 
   useEffect(() => {
