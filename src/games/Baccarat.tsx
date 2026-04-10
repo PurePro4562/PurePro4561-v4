@@ -199,8 +199,16 @@ export default function Baccarat({ balance, setBalance, onExit, themeGradient, t
                 <Coins className="w-5 h-5 text-amber-500" />
               </div>
               <div>
-                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Current Bet</div>
-                <div className="text-xl font-black text-white font-mono">${betAmount.toLocaleString()}</div>
+                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Current Bet</div>
+                <div className="relative flex items-center">
+                  <span className="absolute left-2 text-sm font-mono font-bold text-zinc-400">$</span>
+                  <input 
+                    type="number" 
+                    value={betAmount || ''} 
+                    onChange={(e) => setBetAmount(Math.max(0, Math.min(balance, Number(e.target.value) || 0)))}
+                    className="w-24 bg-zinc-900/50 border border-white/10 rounded-lg py-1 pl-6 pr-2 text-xl font-black text-white font-mono outline-none focus:border-white/30 transition-colors"
+                  />
+                </div>
               </div>
             </div>
             <div className="flex gap-2">

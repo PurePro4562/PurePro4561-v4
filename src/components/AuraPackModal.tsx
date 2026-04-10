@@ -106,6 +106,7 @@ export default function AuraPackModal({ onClose, onReward, onWatchAd, pityTimer,
     const possibleRewards = REWARDS[packType].filter(r => r.rarity === selectedRarity);
     const selectedReward = possibleRewards[Math.floor(Math.random() * possibleRewards.length)];
     setReward(selectedReward);
+    return selectedReward;
   };
 
   useEffect(() => {
@@ -116,14 +117,14 @@ export default function AuraPackModal({ onClose, onReward, onWatchAd, pityTimer,
 
   useEffect(() => {
     if (upgradeTrigger > 0) {
-      rollReward(true);
+      const newReward = rollReward(true);
       setStep('core_glow');
       setPolishIntensity(0);
       playVFXSound('shimmer');
       
       setTimeout(() => {
         setStep('revealed');
-        onReward({ ...reward, rarity: 'EPIC' });
+        onReward(newReward);
       }, 2000);
     }
   }, [upgradeTrigger]);

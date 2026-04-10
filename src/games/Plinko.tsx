@@ -175,8 +175,13 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
                 <Coins className="w-5 h-5 text-amber-500" />
               </div>
               <div>
-                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Current Bet</div>
-                <div className="text-xl font-black text-white font-mono">{bet.toLocaleString()}</div>
+                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Current Bet</div>
+                <input 
+                  type="number" 
+                  value={bet || ''} 
+                  onChange={(e) => setBet(Math.max(0, Math.min(balance, Number(e.target.value) || 0)))}
+                  className="w-28 bg-zinc-900/50 border border-white/10 rounded-lg py-1 px-2 text-xl font-black text-white font-mono outline-none focus:border-white/30 transition-colors"
+                />
               </div>
             </div>
             <div className="flex gap-2">

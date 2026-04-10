@@ -442,6 +442,22 @@ export default function App() {
     }
   };
 
+  const handleSetBalance = (updater: number | ((prev: number) => number)) => {
+    setBalance(prev => {
+      const newVal = typeof updater === 'function' ? updater(prev) : updater;
+      updateFirestoreProfile({ balance: newVal });
+      return newVal;
+    });
+  };
+
+  const handleSetTokens = (updater: number | ((prev: number) => number)) => {
+    setTokens(prev => {
+      const newVal = typeof updater === 'function' ? updater(prev) : updater;
+      updateFirestoreProfile({ tokens: newVal });
+      return newVal;
+    });
+  };
+
   const recordBet = async (amount: number, winnings: number, game: string, type: 'chips' | 'tokens' = 'chips') => {
     if (!user) return;
     const newBet = {
@@ -454,12 +470,7 @@ export default function App() {
     };
     try {
       await addDoc(collection(db, 'bets'), newBet);
-      // Update balance locally and in Firestore
-      if (type === 'chips') {
-        updateFirestoreProfile({ balance: balance + winnings });
-      } else {
-        updateFirestoreProfile({ tokens: tokens + winnings });
-      }
+      // Balance is now updated directly by the games via handleSetBalance
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'bets');
     }
@@ -516,8 +527,8 @@ export default function App() {
         const currentVal = userSnap.data()[type] || 0;
         await updateDoc(userRef, { [type]: currentVal + amount });
         if (userId === user?.uid) {
-          if (type === 'balance') setBalance(prev => prev + amount);
-          else setTokens(prev => prev + amount);
+          if (type === 'balance') handleSetBalance(prev => prev + amount);
+          else handleSetTokens(prev => prev + amount);
         }
         fetchAllUsers(); // Refresh list
       }
@@ -547,6 +558,7 @@ export default function App() {
   const handleToggleProMode = () => {
     if (isProMode) {
       setIsProMode(false);
+      updateFirestoreProfile({ isProMode: false });
       setActiveGame(null);
       setSearchQuery('');
     } else {
@@ -574,34 +586,34 @@ export default function App() {
     if (reward.type === 'theme') {
       if (ownedThemes.includes(reward.id)) {
         // Duplicate Logic: Shatter into tokens
-        setTokens(t => t + 1500);
+        setTokens(t => { const newT = t + 1500; updateFirestoreProfile({ tokens: newT }); return newT; });
         setRewardMessage(`Duplicate Aura shattered into 1,500 Tokens!`);
       } else {
-        setOwnedThemes(prev => [...prev, reward.id]);
+        setOwnedThemes(prev => { const newT = [...prev, reward.id]; updateFirestoreProfile({ ownedThemes: newT }); return newT; });
         setRewardMessage(`Unlocked ${reward.name}!`);
       }
     } else if (reward.type === 'vfx') {
       if (ownedVFX.includes(reward.id)) {
-        setTokens(t => t + 1200);
+        setTokens(t => { const newT = t + 1200; updateFirestoreProfile({ tokens: newT }); return newT; });
         setRewardMessage(`Duplicate VFX shattered into 1,200 Tokens!`);
       } else {
-        setOwnedVFX(prev => [...prev, reward.id]);
+        setOwnedVFX(prev => { const newV = [...prev, reward.id]; updateFirestoreProfile({ ownedVFX: newV }); return newV; });
         setRewardMessage(`Unlocked ${reward.name}!`);
       }
     } else if (reward.type === 'avatar') {
       if (ownedAvatars.includes(reward.id)) {
-        setTokens(t => t + 1000);
+        setTokens(t => { const newT = t + 1000; updateFirestoreProfile({ tokens: newT }); return newT; });
         setRewardMessage(`Duplicate Avatar shattered into 1,000 Tokens!`);
       } else {
-        setOwnedAvatars(prev => [...prev, reward.id]);
+        setOwnedAvatars(prev => { const newA = [...prev, reward.id]; updateFirestoreProfile({ ownedAvatars: newA }); return newA; });
         setRewardMessage(`Unlocked ${reward.name}!`);
       }
     } else if (reward.type === 'badge') {
       if (ownedBadges.includes(reward.id)) {
-        setTokens(t => t + 1500);
+        setTokens(t => { const newT = t + 1500; updateFirestoreProfile({ tokens: newT }); return newT; });
         setRewardMessage(`Duplicate Badge shattered into 1,500 Tokens!`);
       } else {
-        setOwnedBadges(prev => [...prev, reward.id]);
+        setOwnedBadges(prev => { const newB = [...prev, reward.id]; updateFirestoreProfile({ ownedBadges: newB }); return newB; });
         setRewardMessage(`Unlocked ${reward.name}!`);
       }
     } else if (reward.type === 'sfx') {
@@ -612,9 +624,11 @@ export default function App() {
         const newCount = prev + 1;
         if (newCount >= 5) {
           setIsProMode(true);
+          updateFirestoreProfile({ isProMode: true, keyFragments: 0 });
           setRewardMessage(`5 Fragments Collected! VIP Key Forged!`);
           return 0;
         }
+        updateFirestoreProfile({ keyFragments: newCount });
         setRewardMessage(`Key Fragment Found! (${newCount}/5)`);
         return newCount;
       });
@@ -627,6 +641,7 @@ export default function App() {
     e.preventDefault();
     if (keyInput.toUpperCase() === generatedKey && generatedKey !== '') {
       setIsProMode(true);
+      updateFirestoreProfile({ isProMode: true });
       setShowKeyModal(false);
     } else {
       setKeyError(true);
@@ -708,10 +723,10 @@ export default function App() {
       const reward = Math.floor(baseReward * Math.pow(1.2, adsWatchedToday));
       
       if (isProMode) {
-        setBalance(b => b + reward);
+        handleSetBalance(b => b + reward);
         setRewardMessage(`+${reward.toLocaleString()} Chips Earned!`);
       } else {
-        setTokens(t => t + reward);
+        handleSetTokens(t => t + reward);
         setRewardMessage(`+${reward.toLocaleString()} Tokens Earned!`);
       }
       setAdsWatchedWithoutWin(prev => prev + 1);
@@ -988,7 +1003,7 @@ export default function App() {
         ) : activeGame === 'custom-101' || activeGame === 'custom-202' || activeGame === 'custom-108' ? (
           <Slots 
             balance={balance} 
-            setBalance={setBalance} 
+            setBalance={handleSetBalance} 
             onExit={() => setActiveGame(null)} 
             themeGradient={themeGradient} 
             themeColor={themeColor} 
@@ -1002,7 +1017,7 @@ export default function App() {
         ) : activeGame === 'custom-102' ? (
           <Blackjack 
             balance={balance} 
-            setBalance={setBalance} 
+            setBalance={handleSetBalance} 
             onExit={() => setActiveGame(null)} 
             themeGradient={themeGradient} 
             themeColor={themeColor} 
@@ -1012,7 +1027,7 @@ export default function App() {
         ) : activeGame === 'custom-201' ? (
           <Plinko
             balance={balance}
-            setBalance={setBalance}
+            setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
@@ -1022,7 +1037,7 @@ export default function App() {
         ) : activeGame === 'custom-104' || activeGame === 'custom-203' ? (
           <Roulette
             balance={balance}
-            setBalance={setBalance}
+            setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
@@ -1033,7 +1048,7 @@ export default function App() {
         ) : activeGame === 'custom-103' || activeGame === 'custom-204' || activeGame === 'custom-107' ? (
           <Poker
             balance={balance}
-            setBalance={setBalance}
+            setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
@@ -1044,7 +1059,7 @@ export default function App() {
         ) : activeGame === 'custom-105' ? (
           <Craps
             balance={balance}
-            setBalance={setBalance}
+            setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
@@ -1054,7 +1069,7 @@ export default function App() {
         ) : activeGame === 'custom-106' ? (
           <Baccarat
             balance={balance}
-            setBalance={setBalance}
+            setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
@@ -1473,7 +1488,7 @@ export default function App() {
                       ) : isOwned ? (
                         <button 
                           onMouseEnter={playHover}
-                          onClick={() => { playClick(); setActiveTheme(id as keyof typeof THEMES); }} 
+                          onClick={() => { playClick(); setActiveTheme(id as keyof typeof THEMES); updateFirestoreProfile({ activeTheme: id }); }} 
                           className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors"
                         >
                           Equip
@@ -1484,8 +1499,8 @@ export default function App() {
                           onClick={() => {
                             playClick();
                             if (tokens >= theme.price) {
-                              setTokens(t => t - theme.price);
-                              setOwnedThemes(prev => [...prev, id]);
+                              handleSetTokens(t => t - theme.price);
+                              setOwnedThemes(prev => { const newT = [...prev, id]; updateFirestoreProfile({ ownedThemes: newT }); return newT; });
                               setRewardMessage(`Unlocked ${theme.name}!`);
                               setTimeout(() => setRewardMessage(''), 3000);
                             }
@@ -1526,7 +1541,7 @@ export default function App() {
                           onClick={() => {
                             if (tokens >= 1500) {
                               playClick();
-                              setTokens(t => t - 1500);
+                              handleSetTokens(t => t - 1500);
                               setActivePackType('AURA');
                               setShowShopModal(false);
                               setShowAuraPackModal(true);
@@ -1563,7 +1578,7 @@ export default function App() {
                             if (ownedThemes.includes('godAura')) return;
                             if (balance >= 2500) {
                               playCoin();
-                              setBalance(b => b - 2500);
+                              handleSetBalance(b => b - 2500);
                               setActivePackType('GOD');
                               setShowShopModal(false);
                               setShowAuraPackModal(true);
@@ -1608,9 +1623,9 @@ export default function App() {
                               onClick={() => {
                                 if (canAfford) {
                                   playClick();
-                                  if (isChips) setBalance(b => b - badge.price);
-                                  else setTokens(t => t - badge.price);
-                                  setOwnedBadges(prev => [...prev, id]);
+                                  if (isChips) handleSetBalance(b => b - badge.price);
+                                  else handleSetTokens(t => t - badge.price);
+                                  setOwnedBadges(prev => { const newB = [...prev, id]; updateFirestoreProfile({ ownedBadges: newB }); return newB; });
                                   setRewardMessage(`Unlocked ${badge.name}!`);
                                   setTimeout(() => setRewardMessage(''), 3000);
                                 }
@@ -1653,7 +1668,7 @@ export default function App() {
                           onClick={() => {
                             if (tokens >= 1000) {
                               playClick();
-                              setTokens(t => t - 1000);
+                              handleSetTokens(t => t - 1000);
                               setActivePackType('AVATAR');
                               setShowShopModal(false);
                               setShowAuraPackModal(true);
@@ -1688,7 +1703,7 @@ export default function App() {
                           onClick={() => {
                             if (tokens >= 1200) {
                               playClick();
-                              setTokens(t => t - 1200);
+                              handleSetTokens(t => t - 1200);
                               setActivePackType('VFX');
                               setShowShopModal(false);
                               setShowAuraPackModal(true);
@@ -1729,7 +1744,7 @@ export default function App() {
                           ) : isOwned ? (
                             <button 
                               onMouseEnter={playHover}
-                              onClick={() => { playClick(); setActiveAvatar(id); }} 
+                              onClick={() => { playClick(); setActiveAvatar(id); updateFirestoreProfile({ activeAvatar: id }); }} 
                               className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors"
                             >
                               Equip
@@ -1762,7 +1777,7 @@ export default function App() {
                       ) : isOwned ? (
                         <button 
                           onMouseEnter={playHover}
-                          onClick={() => { playClick(); setActiveVFX(id); }} 
+                          onClick={() => { playClick(); setActiveVFX(id); updateFirestoreProfile({ activeVFX: id }); }} 
                           className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition-colors"
                         >
                           Activate
@@ -1795,11 +1810,11 @@ export default function App() {
                         onClick={() => {
                           if (canAfford) {
                             playClick();
-                            if (isChips) setBalance(b => b - item.price);
-                            else setTokens(t => t - item.price);
+                            if (isChips) handleSetBalance(b => b - item.price);
+                            else handleSetTokens(t => t - item.price);
                             
-                            if (item.rewardCurrency === 'chips') setBalance(b => b + item.reward);
-                            else setTokens(t => t + item.reward);
+                            if (item.rewardCurrency === 'chips') handleSetBalance(b => b + item.reward);
+                            else handleSetTokens(t => t + item.reward);
                           }
                         }}
                         disabled={!canAfford}

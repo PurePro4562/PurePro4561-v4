@@ -312,7 +312,15 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
               <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">-</button>
-                  <div className={`w-24 text-center text-2xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>${bet.toLocaleString()}</div>
+                  <div className="relative flex items-center">
+                    <span className={`absolute left-3 text-xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>$</span>
+                    <input 
+                      type="number" 
+                      value={bet || ''} 
+                      onChange={(e) => setBet(Math.max(0, Math.min(balance, Number(e.target.value) || 0)))}
+                      className="w-32 bg-zinc-900/50 border border-white/10 rounded-lg py-2 pl-8 pr-3 text-xl font-mono font-bold text-white outline-none focus:border-white/30 transition-colors"
+                    />
+                  </div>
                   <button onMouseEnter={playHover} onClick={() => { playClick(); setBet(b => b + 10); }} className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xl">+</button>
                 </div>
 

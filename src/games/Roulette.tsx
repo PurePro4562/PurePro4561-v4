@@ -254,7 +254,13 @@ export default function Roulette({ balance, setBalance, onExit, themeGradient, t
                   <div className="text-xl font-black text-white font-mono">${totalBet.toLocaleString()}</div>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                <input 
+                  type="number" 
+                  value={betAmount || ''} 
+                  onChange={(e) => setBetAmount(Math.max(1, Math.min(balance, Number(e.target.value) || 0)))}
+                  className="w-20 bg-zinc-900/50 border border-white/10 rounded-lg py-1 px-2 text-sm font-bold text-white font-mono outline-none focus:border-white/30 transition-colors"
+                />
                 {[100, 500, 1000, 5000].map(amt => (
                   <button
                     key={amt}

@@ -343,7 +343,16 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
                 >
                   -
                 </button>
-                <span className={`text-2xl font-mono font-bold w-24 text-center text-transparent bg-clip-text bg-gradient-to-b ${themeGradient}`}>${bet.toLocaleString()}</span>
+                <div className="relative flex items-center">
+                  <span className={`absolute left-3 text-xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-b ${themeGradient}`}>$</span>
+                  <input 
+                    type="number" 
+                    value={bet || ''} 
+                    onChange={(e) => setBet(Math.max(0, Math.min(balance, Number(e.target.value) || 0)))}
+                    disabled={isSpinning}
+                    className="w-32 bg-zinc-900/50 border border-white/10 rounded-lg py-2 pl-8 pr-3 text-xl font-mono font-bold text-white outline-none focus:border-white/30 transition-colors"
+                  />
+                </div>
                 <button 
                   onMouseEnter={playHover}
                   onClick={() => { playClick(); setBet(b => b + 10); }} 
