@@ -1213,7 +1213,7 @@ for (let line of lines) {
 
 const games = [];
 const commitHash = 'f269ea64b9e2ff923e59ab3ea7c6b4b57c437af2';
-const baseUrl = \`https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/\${commitHash}/\`;
+const baseUrl = `https://rawcdn.githack.com/GalacticNetwork/3kh0-assets/${commitHash}/`;
 
 const colors = [
   'from-purple-500 to-pink-500',
@@ -1249,4 +1249,4 @@ for (let [dir, files] of Object.entries(gamesMap)) {
 }
 
 fs.writeFileSync('src/externalGames.json', JSON.stringify(games, null, 2));
-console.log(\`Extracted \${games.length} games!\`);
+console.log(`Extracted ${games.length} games!`);

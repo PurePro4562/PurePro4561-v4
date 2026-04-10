@@ -20,6 +20,8 @@ interface SlotsProps {
   themeGradient: string;
   themeColor: string;
   onRecordBet: (amount: number, winnings: number, game: string, type: 'chips' | 'tokens') => void;
+  onWatchAd: () => void;
+  adsWatchedToday: number;
   adsWatchedWithoutWin: number;
   resetPityTimer: () => void;
   globalMultiplier?: number;

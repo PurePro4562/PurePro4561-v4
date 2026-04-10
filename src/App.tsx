@@ -44,7 +44,7 @@ import {
 } from 'lucide-react';
 
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'firebase/auth';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 
@@ -268,6 +268,13 @@ export default function App() {
 
   const gamesSectionRef = useRef<HTMLElement>(null);
 
+  // Handle Redirect Result for Mobile
+  useEffect(() => {
+    getRedirectResult(auth).catch((error) => {
+      console.error('Redirect sign in error:', error);
+    });
+  }, []);
+
   // Fetch System Config
   useEffect(() => {
     const configRef = doc(db, 'system', 'config');
@@ -388,7 +395,12 @@ export default function App() {
 
   const handleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        await signInWithPopup(auth, googleProvider);
+      }
     } catch (error) {
       console.error('Sign in error:', error);
     }
@@ -978,13 +990,10 @@ export default function App() {
             >
               <ArrowLeft className="w-4 h-4" /> Return to Lobby
             </button>
-            {activeGame && ([...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.id === activeGame)?.url) && (
-              <iframe 
-                src={([...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.id === activeGame)?.url)}
-                className="fixed inset-0 w-screen h-screen z-40 border-none bg-black"
-                title="Game"
-              />
-            )}
+            <div className="text-center">
+              <Gamepad2 className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-zinc-500 uppercase tracking-widest">Game Loading...</h3>
+            </div>
           </div>
         )
       ) : (
