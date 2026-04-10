@@ -219,6 +219,7 @@ export default function App() {
   const [adminTab, setAdminTab] = useState<'stats' | 'users' | 'system'>('stats');
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [userSort, setUserSort] = useState<'none' | 'hours' | 'online'>('none');
   const [systemConfig, setSystemConfig] = useState<any>({
     maintenanceMode: false,
     announcement: '',
@@ -336,7 +337,9 @@ export default function App() {
               adsWatchedToday: 0,
               adsWatchedWithoutWin: 0,
               keyFragments: 0,
-              isProMode: false
+              isProMode: false,
+              lastSeen: Date.now(),
+              totalTimeSpent: 0
             };
             await setDoc(userRef, newProfile);
             setUserProfile(newProfile);
@@ -372,6 +375,18 @@ export default function App() {
       setIsProMode(userProfile.isProMode);
     }
   }, [userProfile]);
+
+  // Activity Tracking
+  useEffect(() => {
+    if (!user) return;
+    const interval = setInterval(() => {
+      updateFirestoreProfile({
+        lastSeen: Date.now(),
+        totalTimeSpent: (userProfile?.totalTimeSpent || 0) + 60000
+      });
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [user, userProfile]);
 
   // Real-time listener for user profile
   useEffect(() => {
@@ -1986,6 +2001,15 @@ export default function App() {
                               className="w-full bg-zinc-950 border border-white/5 rounded-xl pl-10 pr-4 py-2 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 transition-colors"
                             />
                           </div>
+                          <select 
+                            value={userSort}
+                            onChange={(e) => setUserSort(e.target.value as any)}
+                            className="bg-zinc-950 border border-white/5 rounded-xl px-4 py-2 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 transition-colors"
+                          >
+                            <option value="none">Sort By</option>
+                            <option value="hours">Hours Played</option>
+                            <option value="online">Online Status</option>
+                          </select>
                           <button 
                             onClick={fetchAllUsers}
                             className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl border border-white/5 transition-colors"
@@ -2000,80 +2024,94 @@ export default function App() {
                             u.email?.toLowerCase().includes(userSearchQuery.toLowerCase()) || 
                             u.uid?.toLowerCase().includes(userSearchQuery.toLowerCase())
                           )
-                          .map((u) => (
-                          <div key={u.uid} className="flex flex-col lg:flex-row lg:items-center justify-between p-6 bg-zinc-900/50 rounded-3xl border border-white/5 gap-6">
-                            <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-2xl bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden">
-                                {AVATARS[u.activeAvatar as keyof typeof AVATARS]?.icon || <User className="w-6 h-6 text-zinc-600" />}
-                              </div>
-                              <div>
-                                <div className="text-sm font-bold text-zinc-100 flex items-center gap-2">
-                                  {u.email}
-                                  {u.role === 'admin' && <ShieldCheck className="w-3 h-3 text-amber-500" />}
-                                </div>
-                                <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">UID: {u.uid.slice(0, 8)}...</div>
-                              </div>
-                            </div>
-                            
-                            <div className="flex flex-wrap items-center gap-6">
-                              <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2">
-                                  <Video className={`w-3 h-3 ${u.adsEnabled !== false ? 'text-emerald-500' : 'text-zinc-500'}`} />
-                                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Ads</span>
-                                </div>
-                                <button 
-                                  onClick={() => toggleUserAds(u.uid, u.adsEnabled !== false)}
-                                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${u.adsEnabled !== false ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border border-white/5'}`}
-                                >
-                                  {u.adsEnabled !== false ? 'Enabled' : 'Disabled'}
-                                </button>
-                              </div>
-
-                              <div className="text-right min-w-[100px]">
-                                <div className="text-xs font-mono text-amber-500">${u.balance?.toLocaleString()}</div>
-                                <div className="text-xs font-mono text-lime-500">{u.tokens?.toLocaleString()} TK</div>
-                              </div>
-
-                              <div className="flex flex-wrap gap-2">
-                                <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Chips</span>
-                                  <div className="flex gap-1">
-                                    <button 
-                                      onClick={() => adjustUserCurrency(u.uid, 1000, 'balance')}
-                                      className="p-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/20 text-amber-500 transition-colors text-xs"
-                                    >
-                                      +$1k
-                                    </button>
-                                    <button 
-                                      onClick={() => adjustUserCurrency(u.uid, -1000, 'balance')}
-                                      className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors text-xs"
-                                    >
-                                      -$1k
-                                    </button>
+                          .sort((a, b) => {
+                            if (userSort === 'hours') return (b.totalTimeSpent || 0) - (a.totalTimeSpent || 0);
+                            if (userSort === 'online') return (b.lastSeen || 0) - (a.lastSeen || 0);
+                            return 0;
+                          })
+                          .map((u) => {
+                            const isOnline = Date.now() - (u.lastSeen || 0) < 120000;
+                            const hoursPlayed = ((u.totalTimeSpent || 0) / 3600000).toFixed(1);
+                            return (
+                              <div key={u.uid} className="flex flex-col lg:flex-row lg:items-center justify-between p-6 bg-zinc-900/50 rounded-3xl border border-white/5 gap-6">
+                                <div className="flex items-center gap-4">
+                                  <div className="w-12 h-12 rounded-2xl bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden relative">
+                                    {AVATARS[u.activeAvatar as keyof typeof AVATARS]?.icon || <User className="w-6 h-6 text-zinc-600" />}
+                                    <div className={`absolute bottom-1 right-1 w-3 h-3 rounded-full border-2 border-zinc-900 ${isOnline ? 'bg-emerald-500' : 'bg-zinc-600'}`} />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm font-bold text-zinc-100 flex items-center gap-2">
+                                      {u.email}
+                                      {u.role === 'admin' && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                                    </div>
+                                    <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">UID: {u.uid.slice(0, 8)}...</div>
                                   </div>
                                 </div>
+                                
+                                <div className="flex flex-wrap items-center gap-6">
+                                  <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Activity</span>
+                                    <div className="text-xs font-mono text-zinc-300">{hoursPlayed} hrs</div>
+                                  </div>
+                                  <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <Video className={`w-3 h-3 ${u.adsEnabled !== false ? 'text-emerald-500' : 'text-zinc-500'}`} />
+                                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Ads</span>
+                                    </div>
+                                    <button 
+                                      onClick={() => toggleUserAds(u.uid, u.adsEnabled !== false)}
+                                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${u.adsEnabled !== false ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-500 border border-white/5'}`}
+                                    >
+                                      {u.adsEnabled !== false ? 'Enabled' : 'Disabled'}
+                                    </button>
+                                  </div>
 
-                                <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Tickets</span>
-                                  <div className="flex gap-1">
-                                    <button 
-                                      onClick={() => adjustUserCurrency(u.uid, 500, 'tokens')}
-                                      className="p-2 bg-lime-500/10 hover:bg-lime-500/20 rounded-xl border border-lime-500/20 text-lime-500 transition-colors text-xs"
-                                    >
-                                      +500
-                                    </button>
-                                    <button 
-                                      onClick={() => adjustUserCurrency(u.uid, -500, 'tokens')}
-                                      className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors text-xs"
-                                    >
-                                      -500
-                                    </button>
+                                  <div className="text-right min-w-[100px]">
+                                    <div className="text-xs font-mono text-amber-500">${u.balance?.toLocaleString()}</div>
+                                    <div className="text-xs font-mono text-lime-500">{u.tokens?.toLocaleString()} TK</div>
+                                  </div>
+
+                                  <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-col gap-1">
+                                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Chips</span>
+                                      <div className="flex gap-1">
+                                        <button 
+                                          onClick={() => adjustUserCurrency(u.uid, 1000, 'balance')}
+                                          className="p-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/20 text-amber-500 transition-colors text-xs"
+                                        >
+                                          +$1k
+                                        </button>
+                                        <button 
+                                          onClick={() => adjustUserCurrency(u.uid, -1000, 'balance')}
+                                          className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors text-xs"
+                                        >
+                                          -$1k
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Tickets</span>
+                                      <div className="flex gap-1">
+                                        <button 
+                                          onClick={() => adjustUserCurrency(u.uid, 500, 'tokens')}
+                                          className="p-2 bg-lime-500/10 hover:bg-lime-500/20 rounded-xl border border-lime-500/20 text-lime-500 transition-colors text-xs"
+                                        >
+                                          +500
+                                        </button>
+                                        <button 
+                                          onClick={() => adjustUserCurrency(u.uid, -500, 'tokens')}
+                                          className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 text-red-500 transition-colors text-xs"
+                                        >
+                                          -500
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                        ))}
+                            );
+                          })}
                       </div>
                     </div>
                   </motion.div>
