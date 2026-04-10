@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Settings } from 'lucide-react';
 import { playCoin, playSlotsWin, playLose, playCard, playChip, playClick, playHover, playBlackjackAction } from '../audio';
 
 const SUITS = ['♠', '♥', '♦', '♣'];
@@ -39,6 +39,13 @@ const calculateScore = (hand: Card[]) => {
   return score;
 };
 
+const CARD_BACKS = [
+  { id: 'classic', name: 'Classic Red', color: 'bg-red-600', pattern: 'radial-gradient(circle, #ffffff33 1px, transparent 1px)' },
+  { id: 'cyber', name: 'Cyber Blue', color: 'bg-cyan-600', pattern: 'linear-gradient(45deg, #000000 25%, transparent 25%, transparent 75%, #000000 75%, #000000), linear-gradient(45deg, #000000 25%, transparent 25%, transparent 75%, #000000 75%, #000000)' },
+  { id: 'gold', name: 'Royal Gold', color: 'bg-amber-500', pattern: 'repeating-conic-gradient(#00000011 0% 25%, transparent 0% 50%) 50% / 20px 20px' },
+  { id: 'void', name: 'Void Black', color: 'bg-zinc-950', pattern: 'repeating-linear-gradient(45deg, #ffffff05, #ffffff05 10px, transparent 10px, transparent 20px)' },
+];
+
 export default function Blackjack({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: BlackjackProps) {
   const [deck, setDeck] = useState<Card[]>([]);
   const [playerHand, setPlayerHand] = useState<Card[]>([]);
@@ -46,6 +53,8 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
   const [gameState, setGameState] = useState<'betting' | 'playing' | 'dealerTurn' | 'gameOver'>('betting');
   const [bet, setBet] = useState(100);
   const [message, setMessage] = useState('');
+  const [cardBack, setCardBack] = useState(CARD_BACKS[0]);
+  const [showSettings, setShowSettings] = useState(false);
 
   const createDeck = () => {
     const newDeck: Card[] = [];
@@ -201,8 +210,10 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
           </>
         )}
         {card.hidden && (
-          <div className="w-full h-full border-2 border-white/10 rounded-lg flex items-center justify-center bg-zinc-900">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full opacity-20" style={{ backgroundColor: themeColor }} />
+          <div className={`w-full h-full border-2 border-white/20 rounded-lg flex items-center justify-center ${cardBack.color} relative overflow-hidden`} style={{ backgroundImage: cardBack.pattern, backgroundSize: cardBack.id === 'cyber' ? '10px 10px' : 'auto' }}>
+            <div className="w-10 h-10 rounded-full border-4 border-white/10 flex items-center justify-center">
+              <div className="w-4 h-4 rounded-full bg-white/20" />
+            </div>
           </div>
         )}
       </motion.div>
@@ -214,14 +225,46 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto"
+      className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-5xl mx-auto relative"
     >
       <div className="w-full flex justify-between items-center mb-4">
         <button onMouseEnter={playHover} onClick={() => { playClick(); onExit(); }} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
           <ArrowLeft className="w-5 h-5" style={{ color: themeColor }} /> 
           <span className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Leave Table</span>
         </button>
+
+        <button 
+          onClick={() => setShowSettings(!showSettings)}
+          className="p-2 rounded-xl bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white transition-colors"
+        >
+          <Settings className="w-5 h-5" />
+        </button>
       </div>
+
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-20 right-6 z-[100] bg-zinc-900 border border-white/10 rounded-2xl p-4 shadow-2xl w-64"
+          >
+            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Card Back Design</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {CARD_BACKS.map(back => (
+                <button
+                  key={back.id}
+                  onClick={() => { playClick(); setCardBack(back); }}
+                  className={`p-2 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${cardBack.id === back.id ? 'border-amber-500 bg-amber-500/10' : 'border-white/5 bg-zinc-950/50 hover:border-white/20'}`}
+                >
+                  <div className={`w-full h-12 rounded-lg ${back.color}`} style={{ backgroundImage: back.pattern, backgroundSize: back.id === 'cyber' ? '5px 5px' : 'auto' }} />
+                  <span className="text-[10px] font-bold text-zinc-400">{back.name}</span>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="bg-zinc-900/80 border-4 rounded-[3rem] p-4 sm:p-8 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] relative w-full min-h-[500px] sm:min-h-[600px] flex flex-col justify-between overflow-hidden" style={{ borderColor: `${themeColor}4d` }}>
         

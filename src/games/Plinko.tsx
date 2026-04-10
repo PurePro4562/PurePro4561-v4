@@ -29,32 +29,58 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
     setBalance(prev => prev - bet);
     setIsDropping(true);
 
-    // Generate path
+    // Advanced Path Generation with "Fake-out" Logic
     const path = [];
     let currentPos = 0;
-    for (let i = 0; i < ROWS; i++) {
-      const direction = Math.random() > 0.5 ? 1 : -1;
-      currentPos += direction;
-      path.push(currentPos);
+    const isFakeOut = Math.random() < 0.3; // 30% chance of a fake-out
+    const fakeDirection = Math.random() > 0.5 ? 1 : -1;
+    
+    // Determine final result first to maintain house edge
+    // Middle indices are 4-8 (0.5, 0.2, 0.1, 0.2, 0.5)
+    const rand = Math.random();
+    let finalIndex;
+    if (rand < 0.7) {
+      // 70% chance of landing in the middle (0.1x to 0.5x)
+      finalIndex = 4 + Math.floor(Math.random() * 5);
+    } else if (rand < 0.95) {
+      // 25% chance of landing in the mid-range (2x)
+      finalIndex = Math.random() > 0.5 ? 3 : 9;
+    } else {
+      // 5% chance of landing in the high-range (5x to 25x)
+      const highIndices = [0, 1, 2, 10, 11, 12];
+      finalIndex = highIndices[Math.floor(Math.random() * highIndices.length)];
     }
 
-    // Map final position to multiplier index
-    const finalIndex = Math.floor((currentPos + ROWS) / (ROWS * 2) * (MULTIPLIERS.length - 1));
-    const clampedIndex = Math.max(0, Math.min(MULTIPLIERS.length - 1, finalIndex));
+    // Target position based on index
+    const targetPos = (finalIndex * 2) - ROWS;
+
+    for (let i = 0; i < ROWS; i++) {
+      if (isFakeOut && i < ROWS * 0.7) {
+        // First 70% of the way, head towards the edge
+        const move = Math.random() < 0.8 ? fakeDirection : -fakeDirection;
+        currentPos += move;
+      } else {
+        // Head towards the actual target
+        if (currentPos < targetPos) currentPos++;
+        else if (currentPos > targetPos) currentPos--;
+        else currentPos += Math.random() > 0.5 ? 1 : -1;
+      }
+      path.push(currentPos);
+    }
 
     const ballId = Date.now() + Math.random();
     const newBall = {
       id: ballId,
       path,
       active: true,
-      resultIndex: clampedIndex
+      resultIndex: finalIndex
     };
 
     setBalls(prev => [...prev, newBall]);
 
     // Calculate win after animation
     setTimeout(() => {
-      const multiplier = MULTIPLIERS[clampedIndex] * globalMultiplier;
+      const multiplier = MULTIPLIERS[finalIndex] * globalMultiplier;
       const winnings = Math.floor(bet * multiplier);
       
       setBalance(prev => prev + winnings);
@@ -126,15 +152,14 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
             ))}
           </div>
 
-          {/* Active Balls */}
           <AnimatePresence>
             {balls.map(ball => (
               <motion.div
                 key={ball.id}
                 initial={{ top: '0%', left: '50%' }}
                 animate={{ 
-                  top: ['0%', '10%', '30%', '50%', '70%', '90%'],
-                  left: ['50%', '48%', '52%', '45%', '55%', `${(ball.resultIndex! + 0.5) * (100 / MULTIPLIERS.length)}%`]
+                  top: ['0%', ...ball.path.map((_, i) => `${((i + 1) / ROWS) * 90}%`)],
+                  left: ['50%', ...ball.path.map(pos => `${50 + (pos / ROWS) * 45}%`)]
                 }}
                 transition={{ duration: 2, ease: "linear" }}
                 className="absolute w-4 h-4 rounded-full bg-white shadow-[0_0_15px_white] z-20"
@@ -176,7 +201,7 @@ export default function Plinko({ balance, setBalance, onExit, themeGradient, the
                 : `bg-gradient-to-r ${themeGradient} text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`
             }`}
           >
-            {isDropping ? 'DROPPING...' : 'DROP BALL'}
+            DROP BALL
             <Zap className="w-6 h-6" />
           </button>
 

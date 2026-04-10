@@ -51,9 +51,15 @@ import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
 import Plinko from './games/Plinko';
+import Roulette from './games/Roulette';
+import Poker from './games/Poker';
+import Craps from './games/Craps';
+import Baccarat from './games/Baccarat';
 import GameImage from './components/GameImage';
 import AuraPackModal, { PackType } from './components/AuraPackModal';
 import { playClick, playHover, playCoin, playLose } from './audio';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 const STANDARD_GAMES = [
   { id: 'custom-101', title: 'Neon Slots', category: 'Slots', icon: Coins, color: 'from-amber-400 to-red-500', players: '4.2k', status: 'HOT' },
@@ -196,6 +202,16 @@ const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
 };
 
 export default function App() {
+  const path = window.location.pathname;
+
+  if (path === '/privacy') {
+    return <PrivacyPolicy />;
+  }
+
+  if (path === '/tos') {
+    return <TermsOfService />;
+  }
+
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
@@ -969,7 +985,7 @@ export default function App() {
               </button>
             </motion.div>
           </div>
-        ) : activeGame === 'custom-101' || activeGame === 'custom-202' ? (
+        ) : activeGame === 'custom-101' || activeGame === 'custom-202' || activeGame === 'custom-108' ? (
           <Slots 
             balance={balance} 
             setBalance={setBalance} 
@@ -981,7 +997,7 @@ export default function App() {
             adsWatchedToday={adsWatchedToday}
             adsWatchedWithoutWin={adsWatchedWithoutWin}
             resetPityTimer={() => setAdsWatchedWithoutWin(0)}
-            globalMultiplier={systemConfig.globalMultiplier * (activeGame === 'custom-202' ? 2 : 1)}
+            globalMultiplier={systemConfig.globalMultiplier * (activeGame === 'custom-202' ? 2 : activeGame === 'custom-108' ? 1.5 : 1)}
           />
         ) : activeGame === 'custom-102' ? (
           <Blackjack 
@@ -995,6 +1011,48 @@ export default function App() {
           />
         ) : activeGame === 'custom-201' ? (
           <Plinko
+            balance={balance}
+            setBalance={setBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={systemConfig.globalMultiplier}
+          />
+        ) : activeGame === 'custom-104' || activeGame === 'custom-203' ? (
+          <Roulette
+            balance={balance}
+            setBalance={setBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={systemConfig.globalMultiplier}
+            isVIP={activeGame === 'custom-203'}
+          />
+        ) : activeGame === 'custom-103' || activeGame === 'custom-204' || activeGame === 'custom-107' ? (
+          <Poker
+            balance={balance}
+            setBalance={setBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={systemConfig.globalMultiplier}
+            isHighStakes={activeGame === 'custom-204' || activeGame === 'custom-107'}
+          />
+        ) : activeGame === 'custom-105' ? (
+          <Craps
+            balance={balance}
+            setBalance={setBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={systemConfig.globalMultiplier}
+          />
+        ) : activeGame === 'custom-106' ? (
+          <Baccarat
             balance={balance}
             setBalance={setBalance}
             onExit={() => setActiveGame(null)}
@@ -1018,238 +1076,252 @@ export default function App() {
           </div>
         )
       ) : (
-        <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
-          <section className="py-16 md:py-24 flex flex-col items-center text-center">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ type: 'spring', bounce: 0.5 }}
-                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border ${isProMode ? 'border-amber-500/30 text-amber-400' : 'border-white/20 text-zinc-300'} text-xs font-mono mb-8`}
+        <>
+          <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
+            <section className="py-16 md:py-24 flex flex-col items-center text-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ type: 'spring', bounce: 0.5 }}
+                  className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border ${isProMode ? 'border-amber-500/30 text-amber-400' : 'border-white/20 text-zinc-300'} text-xs font-mono mb-8`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${isProMode ? 'bg-amber-500' : 'bg-zinc-300'} animate-pulse`} />
+                  {isProMode ? 'RESTRICTED ACCESS GRANTED' : 'SYSTEM ONLINE // V2.0.4'}
+                </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-5xl md:text-7xl font-bold tracking-tighter mb-6"
               >
-                <span className={`w-2 h-2 rounded-full ${isProMode ? 'bg-amber-500' : 'bg-zinc-300'} animate-pulse`} />
-                {isProMode ? 'RESTRICTED ACCESS GRANTED' : 'SYSTEM ONLINE // V2.0.4'}
-              </motion.div>
+                All Your Favorite Games <br className="hidden md:block" />
+                <motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} dynamic-glow-text`}>
+                  In One Place
+                </motion.span>
+              </motion.h1>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-5xl md:text-7xl font-bold tracking-tighter mb-6"
-            >
-              All Your Favorite Games <br className="hidden md:block" />
-              <motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} dynamic-glow-text`}>
-                In One Place
-              </motion.span>
-            </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-zinc-400 text-lg md:text-xl max-w-2xl font-light mb-10"
+              >
+                {isProMode 
+                  ? "Welcome to the high roller's club. Premium stakes, exclusive tables, and maximum payouts await."
+                  : "Access the ultimate collection of web-based experiences. Minimal latency, maximum performance. Initialize your session now."}
+              </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-zinc-400 text-lg md:text-xl max-w-2xl font-light mb-10"
-            >
-              {isProMode 
-                ? "Welcome to the high roller's club. Premium stakes, exclusive tables, and maximum payouts await."
-                : "Access the ultimate collection of web-based experiences. Minimal latency, maximum performance. Initialize your session now."}
-            </motion.p>
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={scrollToGames}
+                className={`px-8 py-4 rounded-2xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold flex items-center gap-2 dynamic-glow-box-hover transition-all`}
+              >
+                <Play className="w-5 h-5 fill-current" />
+                {isProMode ? 'ENTER CASINO' : 'START PLAYING'}
+              </motion.button>
+            </section>
 
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={scrollToGames}
-              className={`px-8 py-4 rounded-2xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold flex items-center gap-2 dynamic-glow-box-hover transition-all`}
-            >
-              <Play className="w-5 h-5 fill-current" />
-              {isProMode ? 'ENTER CASINO' : 'START PLAYING'}
-            </motion.button>
-          </section>
-
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="md:hidden mb-8 bg-zinc-900/50 border border-white/10 rounded-2xl px-4 py-3 flex items-center focus-within:border-white/30 focus-within:dynamic-glow-box transition-all"
-          >
-            <Search className="w-5 h-5 text-zinc-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search games..."
-              className="bg-transparent border-none outline-none text-base ml-3 w-full text-zinc-200 placeholder:text-zinc-500 font-mono"
-            />
-          </motion.div>
-
-          <section ref={gamesSectionRef} className="py-12 scroll-mt-24">
             <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center justify-between mb-8"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              className="md:hidden mb-8 bg-zinc-900/50 border border-white/10 rounded-2xl px-4 py-3 flex items-center focus-within:border-white/30 focus-within:dynamic-glow-box transition-all"
             >
-              <h2 className="text-2xl font-semibold flex items-center gap-3">
-                {isProMode ? <ShieldAlert className="w-6 h-6 text-amber-500" /> : <Terminal className="w-6 h-6 text-zinc-300" />}
-                {isProMode ? 'High_Stakes_Lobby' : 'Featured_Executables'}
-              </h2>
-              <span className="text-zinc-500 font-mono text-sm">{totalFilteredGames} MODULES</span>
+              <Search className="w-5 h-5 text-zinc-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search games..."
+                className="bg-transparent border-none outline-none text-base ml-3 w-full text-zinc-200 placeholder:text-zinc-500 font-mono"
+              />
             </motion.div>
 
-            {displayedGames.length === 0 ? (
+            <section ref={gamesSectionRef} className="py-12 scroll-mt-24">
               <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                className="py-20 flex flex-col items-center justify-center text-zinc-500 bg-zinc-900/20 rounded-3xl border border-white/5 border-dashed"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="flex items-center justify-between mb-8"
               >
-                <Ghost className="w-12 h-12 mb-4 opacity-50" />
-                <p className="font-mono">NO EXECUTABLES FOUND FOR "{searchQuery}"</p>
-                <button onClick={() => { playClick(); setSearchQuery(''); }} className="mt-4 text-sm text-zinc-400 hover:text-zinc-200 underline underline-offset-4">
-                  Clear Search
-                </button>
+                <h2 className="text-2xl font-semibold flex items-center gap-3">
+                  {isProMode ? <ShieldAlert className="w-6 h-6 text-amber-500" /> : <Terminal className="w-6 h-6 text-zinc-300" />}
+                  {isProMode ? 'High_Stakes_Lobby' : 'Featured_Executables'}
+                </h2>
+                <span className="text-zinc-500 font-mono text-sm">{totalFilteredGames} MODULES</span>
               </motion.div>
-            ) : (
-              <>
-                <motion.div
-                  key={isProMode ? 'adult-grid' : 'standard-grid'}
-                  variants={{
-                    hidden: { opacity: 0 },
-                    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-                  }}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, margin: "-50px" }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+
+              {displayedGames.length === 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                  className="py-20 flex flex-col items-center justify-center text-zinc-500 bg-zinc-900/20 rounded-3xl border border-white/5 border-dashed"
                 >
-                {displayedGames.length > 0 ? (
-                  displayedGames.map((game) => (
-                    <motion.div
-                      key={game.id}
-                      variants={{
-                        hidden: { opacity: 0, y: 30, scale: 0.9 },
-                        show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
-                      }}
-                      whileHover={{ y: -8, scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onMouseEnter={playHover}
-                      onClick={() => { playClick(); handlePlayGame(game.id); }}
-                      className={`group relative bg-zinc-900/40 backdrop-blur-sm border rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors dynamic-glow-box-hover ${launchingGame === game.id ? 'border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'border-white/5 hover:border-white/20'}`}
-                    >
-                      <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-
-                      <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
-                        <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                          
-                          <motion.div
-                            whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
-                            transition={{ type: 'spring', stiffness: 300 }}
-                            className={`w-full h-full flex items-center justify-center transition-all duration-500 ${launchingGame === game.id ? 'scale-110 blur-sm opacity-40' : ''}`}
-                          >
-                            <GameImage 
-                              src={game.image} 
-                              alt={game.title} 
-                              icon={game.icon}
-                              className="w-full h-full"
-                            />
-                          </motion.div>
-                          
-                          <AnimatePresence>
-                            {launchingGame === game.id && (
-                              <motion.div 
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-zinc-950/40 backdrop-blur-[2px]"
-                              >
-                                <motion.div
-                                  initial={{ scale: 0.8, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-                                  className="flex flex-col items-center"
-                                >
-                                  <Loader2 className="w-10 h-10 text-white animate-spin mb-4 drop-shadow-lg" />
-                                  <div className="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden backdrop-blur-md border border-white/10">
-                                    <motion.div 
-                                      initial={{ width: "0%" }}
-                                      animate={{ width: "100%" }}
-                                      transition={{ duration: 1, ease: "easeInOut" }}
-                                      className="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-                                    />
-                                  </div>
-                                  <span className="text-[10px] font-mono text-white/80 mt-2 tracking-widest uppercase">Initializing</span>
-                                </motion.div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
-                          <p className="text-zinc-500 text-sm">{game.category}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
-                            {game.status}
-                          </span>
-                          <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
-                            {game.players}
-                          </span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))
-                ) : (
-                  <motion.div 
-                    key="no-results"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="col-span-full py-20 flex flex-col items-center justify-center text-center"
-                  >
-                    <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-white/5">
-                      <Search className="w-10 h-10 text-zinc-700" />
-                    </div>
-                    <h3 className="text-xl font-bold text-zinc-300">No matches found</h3>
-                    <p className="text-zinc-500 mt-2">Try searching for something else or clear the filter.</p>
-                    <button 
-                      onClick={() => setSearchQuery('')}
-                      onMouseEnter={playHover}
-                      className="mt-6 px-6 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-colors"
-                    >
-                      Clear Search
-                    </button>
-                  </motion.div>
-                )}
-              </motion.div>
-              
-              {displayedGames.length > 0 && visibleCount < totalFilteredGames && (
-                <div className="mt-12 flex justify-center">
-                  <button
-                    onClick={() => setVisibleCount(prev => prev + 24)}
-                    onMouseEnter={playHover}
-                    className="px-8 py-3 rounded-xl bg-zinc-900 border border-white/10 hover:border-white/20 text-zinc-300 font-bold transition-all hover:bg-zinc-800"
-                  >
-                    Load More Games
+                  <Ghost className="w-12 h-12 mb-4 opacity-50" />
+                  <p className="font-mono">NO EXECUTABLES FOUND FOR "{searchQuery}"</p>
+                  <button onClick={() => { playClick(); setSearchQuery(''); }} className="mt-4 text-sm text-zinc-400 hover:text-zinc-200 underline underline-offset-4">
+                    Clear Search
                   </button>
-                </div>
-              )}
-              </>
-            )}
-          </section>
-        </main>
-      )}
+                </motion.div>
+              ) : (
+                <>
+                  <motion.div
+                    key={isProMode ? 'adult-grid' : 'standard-grid'}
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+                    }}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: "-50px" }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                  >
+                  {displayedGames.length > 0 ? (
+                    displayedGames.map((game) => (
+                      <motion.div
+                        key={game.id}
+                        variants={{
+                          hidden: { opacity: 0, y: 30, scale: 0.9 },
+                          show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
+                        }}
+                        whileHover={{ y: -8, scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        onMouseEnter={playHover}
+                        onClick={() => { playClick(); handlePlayGame(game.id); }}
+                        className={`group relative bg-zinc-900/40 backdrop-blur-sm border rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors dynamic-glow-box-hover ${launchingGame === game.id ? 'border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'border-white/5 hover:border-white/20'}`}
+                      >
+                        <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
 
-      <footer className="border-t border-white/5 py-8 mt-auto bg-zinc-950/50">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-zinc-500 text-sm font-mono">
-          <p>&copy; 2026 PurePro4561. All rights reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <motion.a whileHover={{ y: -2, color: '#fff' }} href="#" className="transition-colors">STATUS</motion.a>
-            <motion.a whileHover={{ y: -2, color: '#fff' }} href="#" className="transition-colors">TERMS</motion.a>
-            <motion.a whileHover={{ y: -2, color: '#fff' }} href="#" className="transition-colors">PRIVACY</motion.a>
-          </div>
-        </div>
-      </footer>
+                        <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
+                          <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            
+                            <motion.div
+                              whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
+                              transition={{ type: 'spring', stiffness: 300 }}
+                              className={`w-full h-full flex items-center justify-center transition-all duration-500 ${launchingGame === game.id ? 'scale-110 blur-sm opacity-40' : ''}`}
+                            >
+                              <GameImage 
+                                src={game.image} 
+                                alt={game.title} 
+                                icon={game.icon}
+                                className="w-full h-full"
+                              />
+                            </motion.div>
+                            
+                            <AnimatePresence>
+                              {launchingGame === game.id && (
+                                <motion.div 
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-zinc-950/40 backdrop-blur-[2px]"
+                                >
+                                  <motion.div
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                                    className="flex flex-col items-center"
+                                  >
+                                    <Loader2 className="w-10 h-10 text-white animate-spin mb-4 drop-shadow-lg" />
+                                    <div className="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden backdrop-blur-md border border-white/10">
+                                      <motion.div 
+                                        initial={{ width: "0%" }}
+                                        animate={{ width: "100%" }}
+                                        transition={{ duration: 1, ease: "easeInOut" }}
+                                        className="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                                      />
+                                    </div>
+                                    <span className="text-[10px] font-mono text-white/80 mt-2 tracking-widest uppercase">Initializing</span>
+                                  </motion.div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
+                            <p className="text-zinc-500 text-sm">{game.category}</p>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
+                              {game.status}
+                            </span>
+                            <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
+                              {game.players}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.div 
+                      key="no-results"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="col-span-full py-20 flex flex-col items-center justify-center text-center"
+                    >
+                      <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-white/5">
+                        <Search className="w-10 h-10 text-zinc-700" />
+                      </div>
+                      <h3 className="text-xl font-bold text-zinc-300">No matches found</h3>
+                      <p className="text-zinc-500 mt-2">Try searching for something else or clear the filter.</p>
+                      <button 
+                        onClick={() => setSearchQuery('')}
+                        onMouseEnter={playHover}
+                        className="mt-6 px-6 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-colors"
+                      >
+                        Clear Search
+                      </button>
+                    </motion.div>
+                  )}
+                  </motion.div>
+                
+                  {displayedGames.length > 0 && visibleCount < totalFilteredGames && (
+                    <div className="mt-12 flex justify-center">
+                      <button
+                        onClick={() => setVisibleCount(prev => prev + 24)}
+                        onMouseEnter={playHover}
+                        className="px-8 py-3 rounded-xl bg-zinc-900 border border-white/10 hover:border-white/20 text-zinc-300 font-bold transition-all hover:bg-zinc-800"
+                      >
+                        Load More Games
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+          </main>
+
+          <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-white/5 w-full">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+              <div className="flex flex-col items-center md:items-start">
+                <div className="flex items-center gap-2 mb-4">
+                  <Gamepad2 className={`w-6 h-6 text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`} />
+                  <span className="text-xl font-black text-white tracking-tighter uppercase">PUREPRO CASINO</span>
+                </div>
+                <p className="text-zinc-500 text-sm font-mono max-w-xs text-center md:text-left">
+                  The ultimate high-stakes digital playground. Play responsibly.
+                </p>
+              </div>
+              
+              <div className="flex gap-8">
+                <a href="/privacy" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Privacy Policy</a>
+                <a href="/tos" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Terms of Service</a>
+              </div>
+
+              <div className="text-zinc-600 text-[10px] font-mono uppercase tracking-[0.2em]">
+                © 2026 PUREPRO DIGITAL // ALL RIGHTS RESERVED
+              </div>
+            </div>
+          </footer>
+        </>
+      )}
 
       {/* Reward Toast */}
       <AnimatePresence>
