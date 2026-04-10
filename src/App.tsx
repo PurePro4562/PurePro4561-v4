@@ -202,15 +202,13 @@ const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
 };
 
 export default function App() {
-  const path = window.location.pathname;
+  const [hash, setHash] = useState(window.location.hash);
 
-  if (path === '/privacy') {
-    return <PrivacyPolicy />;
-  }
-
-  if (path === '/tos') {
-    return <TermsOfService />;
-  }
+  useEffect(() => {
+    const handleHashChange = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -252,7 +250,35 @@ export default function App() {
   const [showShopModal, setShowShopModal] = useState(false);
   const [showAuraPackModal, setShowAuraPackModal] = useState(false);
   const [auraPackUpgradeTrigger, setAuraPackUpgradeTrigger] = useState(0);
-  
+
+  // Handle Redirect Result for Mobile
+  useEffect(() => {
+    getRedirectResult(auth).catch((error) => {
+      console.error('Redirect sign in error:', error);
+    });
+  }, []);
+
+
+  // Fetch System Config
+  useEffect(() => {
+    const configRef = doc(db, 'system', 'config');
+    const unsubscribe = onSnapshot(configRef, (doc) => {
+      if (doc.exists()) {
+        setSystemConfig(doc.data());
+      } else {
+        // Initialize config if it doesn't exist
+        setDoc(configRef, {
+          maintenanceMode: false,
+          announcement: 'Welcome to PurePro4561! Good luck!',
+          globalMultiplier: 1
+        });
+      }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'system/config');
+    });
+    return () => unsubscribe();
+  }, []);
+
   // Currencies & Customization
   const [balance, setBalance] = useState(1000); // Casino Chips
   const [tokens, setTokens] = useState(250); // Arcade Tokens
@@ -284,33 +310,6 @@ export default function App() {
   const [activeGame, setActiveGame] = useState<string | number | null>(null);
 
   const gamesSectionRef = useRef<HTMLElement>(null);
-
-  // Handle Redirect Result for Mobile
-  useEffect(() => {
-    getRedirectResult(auth).catch((error) => {
-      console.error('Redirect sign in error:', error);
-    });
-  }, []);
-
-  // Fetch System Config
-  useEffect(() => {
-    const configRef = doc(db, 'system', 'config');
-    const unsubscribe = onSnapshot(configRef, (doc) => {
-      if (doc.exists()) {
-        setSystemConfig(doc.data());
-      } else {
-        // Initialize config if it doesn't exist
-        setDoc(configRef, {
-          maintenanceMode: false,
-          announcement: 'Welcome to PurePro4561! Good luck!',
-          globalMultiplier: 1
-        });
-      }
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'system/config');
-    });
-    return () => unsubscribe();
-  }, []);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
@@ -470,7 +469,13 @@ export default function App() {
     };
     try {
       await addDoc(collection(db, 'bets'), newBet);
-      // Balance is now updated directly by the games via handleSetBalance
+      // Award tokens if playing with chips and winning
+      if (type === 'chips' && winnings > 0) {
+        const tokenReward = Math.floor(winnings / 100); // 1% of winnings
+        if (tokenReward > 0) {
+          handleSetTokens(t => t + tokenReward);
+        }
+      }
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'bets');
     }
@@ -771,6 +776,14 @@ export default function App() {
   const themeColor = currentThemeConfig.primary;
   const themeColors = currentThemeConfig.colors;
   const themeGlow = currentThemeConfig.glow;
+
+  if (hash === '#/privacy') {
+    return <PrivacyPolicy />;
+  }
+
+  if (hash === '#/tos') {
+    return <TermsOfService />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-700">
@@ -1326,8 +1339,8 @@ export default function App() {
               </div>
               
               <div className="flex gap-8">
-                <a href="/privacy" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Privacy Policy</a>
-                <a href="/tos" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Terms of Service</a>
+                <a href="#/privacy" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Privacy Policy</a>
+                <a href="#/tos" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Terms of Service</a>
               </div>
 
               <div className="text-zinc-600 text-[10px] font-mono uppercase tracking-[0.2em]">

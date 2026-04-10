@@ -474,7 +474,7 @@ export default function AuraPackModal({ onClose, onReward, onWatchAd, pityTimer,
                   COLLECT REWARD
                 </button>
 
-                {rarity === 'COMMON' && (
+                {rarity === 'COMMON' && reward?.type !== 'fragment' && (
                   <motion.button
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

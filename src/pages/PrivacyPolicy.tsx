@@ -5,7 +5,7 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans p-6 md:p-12">
       <div className="max-w-3xl mx-auto">
-        <a href="/" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors mb-8">
+        <a href="#" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" /> Back to Casino
         </a>
         
