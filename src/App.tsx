@@ -50,24 +50,12 @@ import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, 
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
+import Plinko from './games/Plinko';
 import GameImage from './components/GameImage';
 import AuraPackModal, { PackType } from './components/AuraPackModal';
 import { playClick, playHover, playCoin, playLose } from './audio';
-import externalGames from './externalGames.json';
 
 const STANDARD_GAMES = [
-  ...externalGames,
-  { id: 'custom-1', title: 'Cyber Strike', category: 'FPS', icon: Crosshair, color: 'from-lime-400 to-cyan-400', players: '1.2k', status: 'ONLINE' },
-  { id: 'custom-2', title: 'Neon Drift', category: 'Racing', icon: Car, color: 'from-cyan-400 to-blue-500', players: '850', status: 'ONLINE' },
-  { id: 'custom-3', title: 'Logic Grid', category: 'Puzzle', icon: Puzzle, color: 'from-lime-500 to-emerald-500', players: '3.4k', status: 'UPDATE' },
-  { id: 'custom-4', title: 'Stellar Void', category: 'Space', icon: Rocket, color: 'from-cyan-300 to-lime-300', players: '5.1k', status: 'ONLINE' },
-  { id: 'custom-5', title: 'Blade Runner', category: 'RPG', icon: Swords, color: 'from-lime-600 to-cyan-600', players: '920', status: 'BETA' },
-  { id: 'custom-6', title: 'Phantom Protocol', category: 'Stealth', icon: Ghost, color: 'from-cyan-500 to-teal-500', players: '410', status: 'ONLINE' },
-  { id: 'custom-7', title: 'Terminal Hack', category: 'Strategy', icon: Terminal, color: 'from-lime-400 to-cyan-400', players: '2.8k', status: 'EVENT' },
-  { id: 'custom-8', title: 'Arcade Classic', category: 'Retro', icon: Gamepad2, color: 'from-teal-400 to-lime-400', players: '1.1k', status: 'ONLINE' },
-];
-
-const ADULT_GAMES = [
   { id: 'custom-101', title: 'Neon Slots', category: 'Slots', icon: Coins, color: 'from-amber-400 to-red-500', players: '4.2k', status: 'HOT' },
   { id: 'custom-102', title: 'High Roller Blackjack', category: 'Cards', icon: Spade, color: 'from-red-500 to-rose-600', players: '2.1k', status: 'ONLINE' },
   { id: 'custom-103', title: 'Cyber Poker', category: 'Cards', icon: Club, color: 'from-amber-500 to-orange-600', players: '5.5k', status: 'TOURNAMENT' },
@@ -76,6 +64,13 @@ const ADULT_GAMES = [
   { id: 'custom-106', title: 'Baccarat Royale', category: 'Cards', icon: Diamond, color: 'from-red-400 to-rose-500', players: '620', status: 'VIP ONLY' },
   { id: 'custom-107', title: 'Hearts of Fire', category: 'Cards', icon: Heart, color: 'from-rose-500 to-red-600', players: '1.1k', status: 'ONLINE' },
   { id: 'custom-108', title: 'Jackpot Terminal', category: 'Slots', icon: Terminal, color: 'from-amber-300 to-red-500', players: '8.9k', status: 'MEGA DROP' },
+];
+
+const ADULT_GAMES = [
+  { id: 'custom-201', title: 'Cyber Plinko', category: 'Premium', icon: Sparkles, color: 'from-yellow-400 to-amber-600', players: '12.5k', status: 'PREMIUM' },
+  { id: 'custom-202', title: 'Godly Slots', category: 'Premium', icon: Crown, color: 'from-amber-300 via-orange-500 to-red-600', players: '8.1k', status: 'GODLY' },
+  { id: 'custom-203', title: 'VIP Roulette', category: 'Premium', icon: Crosshair, color: 'from-purple-600 to-pink-600', players: '3.2k', status: 'VIP' },
+  { id: 'custom-204', title: 'High Stakes Poker', category: 'Premium', icon: Club, color: 'from-emerald-500 to-teal-700', players: '1.5k', status: 'HIGH STAKES' },
 ];
 
 const THEMES = {
@@ -941,7 +936,7 @@ export default function App() {
               </button>
             </motion.div>
           </div>
-        ) : activeGame === 'custom-101' ? (
+        ) : activeGame === 'custom-101' || activeGame === 'custom-202' ? (
           <Slots 
             balance={balance} 
             setBalance={setBalance} 
@@ -953,7 +948,7 @@ export default function App() {
             adsWatchedToday={adsWatchedToday}
             adsWatchedWithoutWin={adsWatchedWithoutWin}
             resetPityTimer={() => setAdsWatchedWithoutWin(0)}
-            globalMultiplier={systemConfig.globalMultiplier}
+            globalMultiplier={systemConfig.globalMultiplier * (activeGame === 'custom-202' ? 2 : 1)}
           />
         ) : activeGame === 'custom-102' ? (
           <Blackjack 
@@ -963,6 +958,16 @@ export default function App() {
             themeGradient={themeGradient} 
             themeColor={themeColor} 
             onRecordBet={recordBet} 
+            globalMultiplier={systemConfig.globalMultiplier}
+          />
+        ) : activeGame === 'custom-201' ? (
+          <Plinko
+            balance={balance}
+            setBalance={setBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
             globalMultiplier={systemConfig.globalMultiplier}
           />
         ) : (
