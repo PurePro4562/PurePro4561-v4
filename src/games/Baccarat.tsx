@@ -4,6 +4,8 @@ import { ArrowLeft, Coins, Sparkles, Zap, Diamond } from 'lucide-react';
 import { playCoin, playClick, playHover, playLose } from '../audio';
 
 interface BaccaratProps {
+  gameId: string;
+  title: string;
   balance: number;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
@@ -24,7 +26,7 @@ interface Card {
 const SUITS: Suit[] = ['spades', 'hearts', 'diamonds', 'clubs'];
 const VALUES: Value[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
-export default function Baccarat({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: BaccaratProps) {
+export default function Baccarat({ gameId, title, balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: BaccaratProps) {
   const [betAmount, setBetAmount] = useState(100);
   const [betOn, setBetOn] = useState<'player' | 'banker' | 'tie' | null>(null);
   const [isDealing, setIsDealing] = useState(false);
@@ -104,7 +106,7 @@ export default function Baccarat({ balance, setBalance, onExit, themeGradient, t
         playLose();
       }
 
-      onRecordBet(betAmount, winnings, 'Baccarat Royale', 'chips');
+      onRecordBet(betAmount, winnings, title, 'chips');
       setTimeout(() => setLastWin(null), 3000);
     }, 2000);
   };

@@ -40,13 +40,30 @@ import {
   Users,
   TrendingUp,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  Megaphone,
+  Trophy,
+  Target,
+  Flame,
+  Gift,
+  Star,
+  Tag,
+  Activity,
+  Settings2,
+  Trash2,
+  MessageSquare,
+  UserPlus,
+  UserMinus,
+  Check,
+  Ban,
+  MessageCircle
 } from 'lucide-react';
 
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from './firebase';
+import { BAD_WORDS } from './constants';
 import { signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'firebase/auth';
 import type { User as FirebaseUser } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, where, orderBy, limit, getDocs, writeBatch } from 'firebase/firestore';
 
 import Slots from './games/Slots';
 import Blackjack from './games/Blackjack';
@@ -57,9 +74,14 @@ import Craps from './games/Craps';
 import Baccarat from './games/Baccarat';
 import GameImage from './components/GameImage';
 import AuraPackModal, { PackType } from './components/AuraPackModal';
+import ChatModal from './components/ChatModal';
 import { playClick, playHover, playCoin, playLose } from './audio';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+
+import { GoogleGenAI, Type } from "@google/genai";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const STANDARD_GAMES = [
   { id: 'custom-101', title: 'Neon Slots', category: 'Slots', icon: Coins, color: 'from-amber-400 to-red-500', players: '4.2k', status: 'HOT' },
@@ -122,6 +144,8 @@ const VFX_EFFECTS = {
   vfx_gold_dust: { name: 'Gold Dust', rarity: 'LEGENDARY' },
   vfx_cyber_glitch: { name: 'Cyber Glitch', rarity: 'EPIC' },
   vfx_god_rays: { name: 'God Rays', rarity: 'GODLY' },
+  vfx_casino_glitter: { name: 'Casino Glitter', rarity: 'LEGENDARY' },
+  vfx_heartbeat: { name: 'Heartbeat Pulse', rarity: 'EPIC' },
 };
 
 const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
@@ -143,6 +167,44 @@ const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
             </motion.div>
           ))}
         </div>
+      )}
+      {activeVFX === 'vfx_casino_glitter' && (
+        <div className="absolute inset-0">
+          {[...Array(50)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                y: [-20, 1000],
+                x: [Math.random() * 1000, Math.random() * 1000 + 50],
+                scale: [1, 1.5, 1],
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                duration: 4 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 5
+              }}
+              className="absolute text-xl font-bold"
+              style={{ left: `${Math.random() * 100}%`, color: ['#fbbf24', '#f59e0b', '#fff'][Math.floor(Math.random() * 3)] }}
+            >
+              {['✨', '💎', '🎰', '💰', '7'][Math.floor(Math.random() * 5)]}
+            </motion.div>
+          ))}
+        </div>
+      )}
+      {activeVFX === 'vfx_heartbeat' && (
+        <motion.div
+          animate={{
+            scale: [1, 1.05, 1],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{
+            duration: 0.8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute inset-0 bg-red-600/10 shadow-[inset_0_0_100px_rgba(220,38,38,0.2)]"
+        />
       )}
       {activeVFX === 'vfx_gold_dust' && (
         <div className="absolute inset-0">
@@ -202,6 +264,14 @@ const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
 };
 
 export default function App() {
+  const [showNicknameModal, setShowNicknameModal] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
+  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
+
+  const [gameSettings, setGameSettings] = useState<Record<string, any>>({});
+  const [gameStats, setGameStats] = useState<Record<string, any>>({});
+
   const [hash, setHash] = useState(window.location.hash);
 
   useEffect(() => {
@@ -216,10 +286,11 @@ export default function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [adminStats, setAdminStats] = useState<any>(null);
-  const [adminTab, setAdminTab] = useState<'stats' | 'users' | 'system'>('stats');
+  const [adminTab, setAdminTab] = useState<'stats' | 'economy' | 'users' | 'promos' | 'live' | 'system'>('stats');
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [userSort, setUserSort] = useState<'none' | 'hours' | 'online'>('none');
+  const [newNickname, setNewNickname] = useState('');
   const [systemConfig, setSystemConfig] = useState<any>({
     maintenanceMode: false,
     announcement: '',
@@ -227,17 +298,7 @@ export default function App() {
   });
 
   const [isProMode, setIsProMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(24);
-
-  React.useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-      setVisibleCount(24); // Reset visible count on new search
-    }, 300);
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
   
   // Modals & Verification
   const [showKeyModal, setShowKeyModal] = useState(false);
@@ -310,6 +371,39 @@ export default function App() {
   const [launchingGame, setLaunchingGame] = useState<string | number | null>(null);
   const [activeGame, setActiveGame] = useState<string | number | null>(null);
 
+  // New Engagement States
+  const [xp, setXp] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [loginStreak, setLoginStreak] = useState(0);
+  const [showDailyModal, setShowDailyModal] = useState(false);
+  const [dailyReward, setDailyReward] = useState(0);
+  const [showQuestsModal, setShowQuestsModal] = useState(false);
+  const [quests, setQuests] = useState<any[]>([]);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
+  const [globalWins, setGlobalWins] = useState<any[]>([]);
+  const [showPromoModal, setShowPromoModal] = useState(false);
+  const [promoInput, setPromoInput] = useState('');
+
+  // Admin states
+  const [promoCodes, setPromoCodes] = useState<any[]>([]);
+  const [newPromoCode, setNewPromoCode] = useState('');
+  const [newPromoRewardType, setNewPromoRewardType] = useState<string>('balance');
+  const [newPromoRewardAmount, setNewPromoRewardAmount] = useState(1000);
+  const [newPromoDuration, setNewPromoDuration] = useState<number>(60);
+  const [newPromoPackType, setNewPromoPackType] = useState<string>('AVATAR');
+  const [liveBetsFeed, setLiveBetsFeed] = useState<any[]>([]);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showChat, setShowChat] = useState<{isOpen: boolean, friendId: string, chatName: string}>({isOpen: false, friendId: '', chatName: ''});
+  const [friends, setFriends] = useState<any[]>([]);
+  const [friendRequests, setFriendRequests] = useState<any[]>([]);
+  const [userSearchResults, setUserSearchResults] = useState<any[]>([]);
+  const [isSearchingUsers, setIsSearchingUsers] = useState(false);
+  const [socialTab, setSocialTab] = useState<'friends' | 'requests' | 'search'>('friends');
+  const [socialSearchQuery, setSocialSearchQuery] = useState('');
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+
   const gamesSectionRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -324,7 +418,10 @@ export default function App() {
             const newProfile = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
+              nickname: firebaseUser.email?.split('@')[0] || 'User',
+              nicknameLower: (firebaseUser.email?.split('@')[0] || 'user').toLowerCase(),
               role: firebaseUser.email === 'purepro4561@gmail.com' ? 'admin' : 'user',
+              username: firebaseUser.email?.split('@')[0] || 'User',
               balance: 1000,
               tokens: 250,
               ownedThemes: ['default'],
@@ -339,14 +436,80 @@ export default function App() {
               keyFragments: 0,
               isProMode: false,
               lastSeen: Date.now(),
-              totalTimeSpent: 0
+              totalTimeSpent: 0,
+              xp: 0,
+              level: 1,
+              loginStreak: 1,
+              lastLoginDate: new Date().toDateString(),
             };
             await setDoc(userRef, newProfile);
             setUserProfile(newProfile);
+            setShowDailyModal(true);
+            setDailyReward(500); // 1st day reward
           } else {
-            setUserProfile(userSnap.data());
+            const data = userSnap.data();
+            if (data.isSuspended) {
+              setRewardMessage('Account Suspended. Contact support.');
+              auth.signOut();
+              return;
+            }
+
+            const today = new Date().toDateString();
+            
+            // Daily Login Logic
+            let currentStreak = data.loginStreak || 0;
+            let showDaily = false;
+            let reward = 0;
+            
+            if (data.lastLoginDate !== today) {
+              const lastLogin = new Date(data.lastLoginDate || 0);
+              const yesterday = new Date();
+              yesterday.setDate(yesterday.getDate() - 1);
+              
+              if (lastLogin.toDateString() === yesterday.toDateString()) {
+                currentStreak += 1;
+              } else {
+                currentStreak = 1;
+              }
+              
+              showDaily = true;
+              reward = currentStreak * 500; // 500 linearly increasing
+              
+              const newQuests = [
+                { id: `q-${Date.now()}-1`, title: 'Play 50 Hands', desc: 'Play any card game 50 times.', target: 50, progress: 0, rewardType: 'keyFragments', rewardAmount: 1, completed: false },
+                { id: `q-${Date.now()}-2`, title: 'High Roller', desc: 'Wager $10,000 total today.', target: 10000, progress: 0, rewardType: 'balance', rewardAmount: 5000, completed: false }
+              ];
+
+              const updates = {
+                loginStreak: currentStreak,
+                lastLoginDate: today,
+                balance: (data.balance || 0) + reward,
+                quests: newQuests
+              };
+              await updateDoc(userRef, updates);
+              
+              Object.assign(data, updates);
+              setShowDailyModal(true);
+              setDailyReward(reward);
+              setQuests(newQuests);
+            } else {
+               setQuests(data.quests || []);
+            }
+
+            if (!data.nicknameLower) {
+              const lower = (data.nickname || data.email?.split('@')[0] || 'user').toLowerCase();
+              await updateDoc(userRef, { nicknameLower: lower });
+              data.nicknameLower = lower;
+            }
+
+            if (!data.nickname) {
+              setShowNicknameModal(true);
+            }
+
+            setUserProfile(data);
           }
         } catch (error) {
+
           handleFirestoreError(error, OperationType.GET, `users/${firebaseUser.uid}`);
         }
       } else {
@@ -373,6 +536,9 @@ export default function App() {
       setAdsWatchedWithoutWin(userProfile.adsWatchedWithoutWin);
       setKeyFragments(userProfile.keyFragments);
       setIsProMode(userProfile.isProMode);
+      setXp(userProfile.xp || 0);
+      setLevel(userProfile.level || 1);
+      setLoginStreak(userProfile.loginStreak || 0);
     }
   }, [userProfile]);
 
@@ -391,9 +557,27 @@ export default function App() {
   // Real-time listener for user profile
   useEffect(() => {
     if (user) {
-      const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (doc) => {
-        if (doc.exists()) {
-          setUserProfile(doc.data());
+      const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setUserProfile(data);
+          if (!data.nickname && !showNicknameModal) {
+            setShowNicknameModal(true);
+          }
+          // Sync to public profiles for search index
+          if (data.nickname) {
+            const lastSync = data.lastProfileSync || 0;
+            if (Date.now() - lastSync > 3600000) { // Every hour sync
+              setDoc(doc(db, 'profiles', user.uid), {
+                uid: user.uid,
+                nickname: data.nickname,
+                nicknameLower: data.nicknameLower || data.nickname.toLowerCase(),
+                timestamp: Date.now()
+              }, { merge: true }).then(() => {
+                updateDoc(doc(db, 'users', user.uid), { lastProfileSync: Date.now() });
+              });
+            }
+          }
         }
       }, (error) => {
         handleFirestoreError(error, OperationType.GET, `users/${user.uid}`);
@@ -401,6 +585,21 @@ export default function App() {
       return () => unsubscribe();
     }
   }, [user]);
+
+  // Real-time listener for settings & stats
+  useEffect(() => {
+    const unsubSettings = onSnapshot(collection(db, 'game_settings'), (snap) => {
+      const settings: Record<string, any> = {};
+      snap.docs.forEach(doc => { settings[doc.id] = doc.data(); });
+      setGameSettings(settings);
+    });
+    const unsubStats = onSnapshot(collection(db, 'game_stats'), (snap) => {
+      const stats: Record<string, any> = {};
+      snap.docs.forEach(doc => { stats[doc.id] = doc.data(); });
+      setGameStats(stats);
+    });
+    return () => { unsubSettings(); unsubStats(); };
+  }, []);
 
   // Real-time listener for bet history
   useEffect(() => {
@@ -423,6 +622,216 @@ export default function App() {
       return () => unsubscribe();
     }
   }, [user]);
+
+  // Real-time listener for global big wins
+  useEffect(() => {
+    const qWins = query(
+      collection(db, 'bets'),
+      where('winnings', '>=', 1000), // Consider anything >= 1000 a big win to broadcast
+      orderBy('winnings', 'desc'),
+      limit(5)
+    );
+    const unsubscribeWins = onSnapshot(qWins, (snapshot) => {
+      const wins = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as any[];
+      setGlobalWins(wins);
+    }, (error) => {
+      console.log('Skipping global wins index error, wait for DB build', error);
+      // Wait for it, error can be ignored if index is building
+    });
+    return () => unsubscribeWins();
+  }, []);
+
+  // Real-time listener for friends and requests
+  useEffect(() => {
+    if (user) {
+      const unsubRequests = onSnapshot(query(
+        collection(db, 'friend_requests'),
+        where('toUid', '==', user.uid),
+        where('status', '==', 'pending')
+      ), (snap) => {
+        setFriendRequests(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }, (err) => handleFirestoreError(err, OperationType.GET, 'friend_requests'));
+
+      const unsubFriends = onSnapshot(collection(db, 'users', user.uid, 'friends'), (snap) => {
+        setFriends(snap.docs.map(doc => ({ id: doc.id, ...doc.data(), uid: doc.id })));
+      }, (err) => handleFirestoreError(err, OperationType.GET, 'friends'));
+
+      const unsubNotifications = onSnapshot(query(
+        collection(db, 'notifications'),
+        where('toUid', '==', user.uid),
+        orderBy('timestamp', 'desc'),
+        limit(20)
+      ), (snap) => {
+        const notices = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
+        setNotifications(notices);
+        setUnreadNotificationsCount(notices.filter((n: any) => !n.read).length);
+        
+        // Find latest unread message notification and show toast
+        const latest = notices[0];
+        if (latest && !latest.read && Date.now() - latest.timestamp < 5000) {
+          if (latest.type === 'message' && (!showChat.isOpen || showChat.friendId !== latest.fromUid)) {
+            setRewardMessage(`New DM from ${latest.fromName}`);
+            setTimeout(() => setRewardMessage(''), 4000);
+          } else if (latest.type === 'friend_accepted') {
+            setRewardMessage(`${latest.fromName} accepted your friend request!`);
+            setTimeout(() => setRewardMessage(''), 4000);
+          }
+        }
+      }, (err) => console.log('Notice listener skip', err));
+
+      return () => { unsubRequests(); unsubFriends(); unsubNotifications(); };
+    }
+  }, [user, showChat.isOpen]);
+
+  const markNotificationsRead = async () => {
+    if (!user || unreadNotificationsCount === 0) return;
+    const batch = writeBatch(db);
+    notifications.filter(n => !n.read).forEach(n => {
+      batch.update(doc(db, 'notifications', n.id), { read: true });
+    });
+    await batch.commit();
+  };
+
+  const sendFriendRequest = async (targetUser: any) => {
+    if (!user || targetUser.uid === user.uid) return;
+    try {
+      const friendSnap = await getDoc(doc(db, 'users', user.uid, 'friends', targetUser.uid));
+      if (friendSnap.exists()) {
+        setRewardMessage('Already friends!');
+        setTimeout(() => setRewardMessage(''), 3000);
+        return;
+      }
+
+      const q = query(
+        collection(db, 'friend_requests'),
+        where('fromUid', '==', user.uid),
+        where('toUid', '==', targetUser.uid),
+        where('status', '==', 'pending')
+      );
+      const qSnap = await getDocs(q);
+      if (!qSnap.empty) {
+        setRewardMessage('Request already sent!');
+        setTimeout(() => setRewardMessage(''), 3000);
+        return;
+      }
+
+      await addDoc(collection(db, 'friend_requests'), {
+        fromUid: user.uid,
+        fromName: userProfile?.nickname || user.email?.split('@')[0],
+        fromEmail: user.email || '',
+        toUid: targetUser.uid,
+        toEmail: targetUser.email || '',
+        status: 'pending',
+        timestamp: Date.now()
+      });
+      setRewardMessage('Friend request sent!');
+      setTimeout(() => setRewardMessage(''), 3000);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'friend_requests');
+    }
+  };
+
+  const acceptFriendRequest = async (request: any) => {
+    try {
+      const batch = writeBatch(db);
+      
+      // 1. Update request status
+      batch.update(doc(db, 'friend_requests', request.id), { status: 'accepted' });
+      
+      // We use the data already present in the request to avoid unauthorized getDoc on users collection
+      // 2. Add to recipient's friends (User B's list)
+      batch.set(doc(db, 'users', user!.uid, 'friends', request.fromUid), {
+        uid: request.fromUid,
+        nickname: request.fromName,
+        email: request.fromEmail || '',
+        timestamp: Date.now()
+      });
+
+      // 3. Add to sender's friends (User A's list)
+      batch.set(doc(db, 'users', request.fromUid, 'friends', user!.uid), {
+        uid: user!.uid,
+        nickname: userProfile?.nickname || user!.email?.split('@')[0],
+        email: user!.email || '',
+        timestamp: Date.now()
+      });
+
+      // 4. Notify the person who sent the request
+      const noticeRef = doc(collection(db, 'notifications'));
+      batch.set(noticeRef, {
+        toUid: request.fromUid,
+        fromUid: user!.uid,
+        fromName: userProfile?.nickname || user!.email?.split('@')[0],
+        type: 'friend_accepted',
+        text: 'Accepted your friend request!',
+        read: false,
+        timestamp: Date.now()
+      });
+
+      await batch.commit();
+
+      setRewardMessage('Accepted friend request!');
+      setTimeout(() => setRewardMessage(''), 3000);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'friendship');
+    }
+  };
+
+  const declineFriendRequest = async (requestId: string) => {
+    try {
+      await updateDoc(doc(db, 'friend_requests', requestId), { status: 'declined' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'friend_requests');
+    }
+  };
+
+  const searchUsersSocial = async () => {
+    if (!socialSearchQuery.trim()) return;
+    setIsSearchingUsers(true);
+    const search = socialSearchQuery.trim();
+    const searchLower = search.toLowerCase();
+    try {
+      // 1. Try lowercase search
+      const qNickLower = query(
+        collection(db, 'profiles'),
+        where('nicknameLower', '>=', searchLower),
+        where('nicknameLower', '<=', searchLower + '\uf8ff'),
+        limit(5)
+      );
+      
+      // 2. Try regular case search (for unindexed users)
+      const qNickNormal = query(
+        collection(db, 'profiles'),
+        where('nickname', '>=', search),
+        where('nickname', '<=', search + '\uf8ff'),
+        limit(5)
+      );
+      
+      const [snapLower, snapNormal] = await Promise.all([
+        getDocs(qNickLower), 
+        getDocs(qNickNormal)
+      ]);
+      
+      const resultsMap = new Map();
+      [...snapLower.docs, ...snapNormal.docs].forEach(d => {
+        resultsMap.set(d.id, { uid: d.id, ...d.data() });
+      });
+      
+      setUserSearchResults(Array.from(resultsMap.values())
+        .filter(u => u.uid !== user?.uid)
+        .map(u => ({
+          ...u,
+          nickname: u.nickname
+        }))
+      );
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearchingUsers(false);
+    }
+  };
 
   const handleSignIn = async () => {
     try {
@@ -474,8 +883,11 @@ export default function App() {
 
   const recordBet = async (amount: number, winnings: number, game: string, type: 'chips' | 'tokens' = 'chips') => {
     if (!user) return;
+    
+    const playerName = user.email ? user.email.split('@')[0] : 'Guest';
     const newBet = {
       uid: user.uid,
+      playerName, // Helpful for global ticker
       date: new Date().toISOString(),
       amount,
       winnings,
@@ -484,6 +896,73 @@ export default function App() {
     };
     try {
       await addDoc(collection(db, 'bets'), newBet);
+
+      // Update Game Stats
+      const statRef = doc(db, 'game_stats', game); // using 'game' title as ID for now or find gameId
+      const gameObj = [...STANDARD_GAMES, ...ADULT_GAMES].find(g => g.title === game);
+      const gameId = gameObj?.id || 'unknown';
+      const accurateStatRef = doc(db, 'game_stats', gameId);
+      
+      const currentStat = gameStats[gameId] || { totalBets: 0, totalWins: 0, netProfit: 0 };
+      await setDoc(accurateStatRef, {
+        totalBets: (currentStat.totalBets || 0) + amount,
+        totalWins: (currentStat.totalWins || 0) + (winnings > 0 ? winnings : 0),
+        netProfit: (currentStat.netProfit || 0) + (amount - winnings)
+      }, { merge: true });
+      
+      // Calculate XP
+      const xpGained = Math.floor(amount / 10);
+      const newXp = xp + xpGained;
+      const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
+      
+      const xpUpdates: any = { xp: newXp };
+      if (newLevel > level) {
+        xpUpdates.level = newLevel;
+        setRewardMessage(`Level Up! You are now Level ${newLevel}!`);
+      }
+      
+      // Update Quests
+      if (quests && quests.length > 0) {
+        const updatedQuests = quests.map(q => {
+          if (q.completed) return q;
+          let newProgress = q.progress;
+          if (q.title === 'Play 50 Hands') newProgress += 1;
+          if (q.title === 'High Roller' && type === 'chips') newProgress += amount;
+          
+          if (newProgress >= q.target && !q.completed) {
+            // Quest completed
+            if (q.rewardType === 'balance') {
+               handleSetBalance(b => b + q.rewardAmount);
+            } else if (q.rewardType === 'keyFragments') {
+               const newFrags = keyFragments + q.rewardAmount;
+               setKeyFragments(newFrags);
+               xpUpdates.keyFragments = newFrags;
+            }
+            setRewardMessage(`Quest Completed: ${q.title}!`);
+            return { ...q, progress: newProgress, completed: true };
+          }
+          return { ...q, progress: newProgress };
+        });
+        setQuests(updatedQuests);
+        xpUpdates.quests = updatedQuests;
+      }
+
+      // Update public leaderboard entry
+      try {
+        await setDoc(doc(db, 'leaderboard', user.uid), {
+           uid: user.uid,
+           email: user.email,
+           xp: newXp,
+           level: Math.max(level, newLevel)
+        });
+      } catch (err) {
+        console.log('Failed to update leaderboard', err);
+      }
+
+      updateFirestoreProfile(xpUpdates);
+      setXp(newXp);
+      setLevel(Math.max(level, newLevel)); // Ensure UI updates
+
       // Award tokens if playing with chips and winning
       if (type === 'chips' && winnings > 0) {
         const tokenReward = Math.floor(winnings / 100); // 1% of winnings
@@ -496,6 +975,243 @@ export default function App() {
     }
   };
 
+  const fetchLeaderboards = async () => {
+    try {
+      const q = query(
+        collection(db, 'leaderboard'),
+        orderBy('xp', 'desc'),
+        limit(20)
+      );
+      const snap = await getDocs(q);
+      const topUsers = snap.docs.map(doc => doc.data() as any);
+      setLeaderboardData(topUsers);
+    } catch (error) {
+      console.log('Skipping leaderboard error, wait for DB index', error);
+      // Fallback: Fetch all from leaderboard and sort client side if index is missing
+      try {
+        const snap = await getDocs(collection(db, 'leaderboard'));
+        let topUsers = snap.docs.map(doc => doc.data());
+        topUsers.sort((a,b) => (b.xp || 0) - (a.xp || 0));
+        setLeaderboardData(topUsers.slice(0, 20));
+      } catch (err) {
+        handleFirestoreError(err, OperationType.LIST, 'leaderboard');
+      }
+    }
+  };
+
+  const handleRedeemPromo = async () => {
+    if (!promoInput.trim() || !user) return;
+    try {
+      const code = promoInput.toUpperCase().trim();
+      const codeRef = doc(db, 'promo_codes', code);
+      const codeSnap = await getDoc(codeRef);
+
+      const redeemedPromos = userProfile?.redeemedPromos || [];
+
+      if (codeSnap.exists()) {
+        const promoData = codeSnap.data();
+        if (!promoData.active) {
+          setRewardMessage('Promo code expired or inactive.');
+        } else if (redeemedPromos.includes(code)) {
+          setRewardMessage('Promo code already redeemed!');
+        } else {
+          const type = promoData.rewardType;
+          const updates: any = { redeemedPromos: [...redeemedPromos, code] };
+          
+          if (type === 'balance' || type === 'tokens') {
+            const amount = promoData.rewardAmount || 0;
+            updates[type] = (userProfile[type] || 0) + amount;
+            if (type === 'tokens') setTokens(t => t + amount);
+            else setBalance(b => b + amount);
+            setRewardMessage(`Redeemed ${code}! +${amount.toLocaleString()} ${type === 'tokens' ? 'Tokens' : 'Chips'}!`);
+          } else if (type === 'multiplier' || type === 'no_ads' || type === 'pro_access') {
+             const duration = promoData.duration || 60;
+             const endTime = Date.now() + duration * 60000;
+             updates[type + 'EndsAt'] = endTime;
+             if (type === 'multiplier') updates.multiplierFactor = promoData.rewardAmount || 2;
+             setRewardMessage(`Redeemed ${code}! You received ${type.replace('_', ' ')} for ${duration} mins!`);
+             if (type === 'pro_access') setIsProMode(true);
+          } else if (type === 'free_pack') {
+             const amount = promoData.rewardAmount || 1;
+             updates[`freePacks_${promoData.packType}`] = (userProfile[`freePacks_${promoData.packType}`] || 0) + amount;
+             setRewardMessage(`Redeemed ${code}! +${amount} Free ${promoData.packType} Pack(s)!`);
+          }
+          
+          updateFirestoreProfile(updates);
+          setPromoInput('');
+          setShowPromoModal(false);
+
+          // Update uses counter
+          await updateDoc(codeRef, { 
+            uses: (promoData.uses || 0) + 1 
+          });
+        }
+      } else if (code === 'LAUNCH2026') { // Fallback for the hardcoded one if it doesn't exist in DB
+        if (redeemedPromos.includes('LAUNCH2026')) {
+          setRewardMessage('Promo code already redeemed!');
+        } else {
+          updateFirestoreProfile({
+            redeemedPromos: [...redeemedPromos, 'LAUNCH2026'],
+            balance: (userProfile.balance || 0) + 5000,
+            tokens: (userProfile.tokens || 0) + 1000,
+          });
+          setBalance(b => b + 5000);
+          setTokens(t => t + 1000);
+          setRewardMessage('Redeemed LAUNCH2026! +5,000 Chips & +1,000 Tokens!');
+          setPromoInput('');
+          setShowPromoModal(false);
+        }
+      } else {
+        setRewardMessage('Invalid promo code.');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    setTimeout(() => setRewardMessage(''), 4000);
+  };
+
+  const handleRegisterNickname = async () => {
+    if (!nicknameInput.trim() || nicknameInput.length < 3) {
+      setNicknameError('Nickname must be at least 3 characters.');
+      return;
+    }
+    setIsCheckingNickname(true);
+    setNicknameError('');
+    try {
+      // 1. Check uniqueness
+      const isOwner = user?.email === 'purepro4561@gmail.com';
+      const nickRef = doc(db, 'nicknames', nicknameInput.toLowerCase().trim());
+      if (!isOwner) {
+        const nickSnap = await getDoc(nickRef);
+        if (nickSnap.exists()) {
+          setNicknameError('This nickname is already taken.');
+          setIsCheckingNickname(false);
+          return;
+        }
+      }
+
+      // 2. Filter locally
+      const isBad = BAD_WORDS.some(word => nicknameInput.toLowerCase().includes(word));
+      if (isBad) {
+        setNicknameError('Nickname contains inappropriate content.');
+        setIsCheckingNickname(false);
+        return;
+      }
+
+      // 3. Register
+      const lower = nicknameInput.toLowerCase().trim();
+      const nick = nicknameInput.trim();
+      await setDoc(nickRef, { uid: user?.uid });
+      await updateFirestoreProfile({ 
+        nickname: nick,
+        nicknameLower: lower
+      });
+
+      // Update public profile for search
+      await setDoc(doc(db, 'profiles', user!.uid), {
+        uid: user!.uid,
+        nickname: nick,
+        nicknameLower: lower,
+        timestamp: Date.now()
+      }, { merge: true });
+
+      setShowNicknameModal(false);
+    } catch (error) {
+      setNicknameError('Error validating nickname. Try again.');
+      console.error(error);
+    }
+    setIsCheckingNickname(false);
+  };
+
+  const handleUpdateNickname = async (targetUid?: any, targetNickname?: string) => {
+    // Defensive check to avoid React event objects being passed as UIDs
+    const uid = (typeof targetUid === 'string' ? targetUid : null) || user?.uid;
+    const nickname = (targetNickname || newNickname || '').trim();
+
+    if (!nickname.trim() || nickname.length < 3) {
+      setRewardMessage('Nickname must be at least 3 characters.');
+      setTimeout(() => setRewardMessage(''), 3000);
+      return;
+    }
+    const isBad = BAD_WORDS.some(word => nickname.toLowerCase().includes(word));
+    if (isBad) {
+      setRewardMessage('Nickname contains inappropriate content.');
+      setTimeout(() => setRewardMessage(''), 3000);
+      return;
+    }
+    try {
+      const isOwner = user?.email === 'purepro4561@gmail.com';
+      const isAdmin = userProfile?.role === 'admin';
+      
+      // Check if nickname is taken
+      const nickRef = doc(db, 'nicknames', nickname.toLowerCase().trim());
+      const nickSnap = await getDoc(nickRef);
+      
+      if (nickSnap.exists() && nickSnap.data().uid !== uid) {
+        setRewardMessage('This nickname is already taken.');
+        setTimeout(() => setRewardMessage(''), 3000);
+        return;
+      }
+      
+      await setDoc(nickRef, { uid: uid });
+      const lower = nickname.toLowerCase().trim();
+      const nickTrimmed = nickname.trim();
+      await updateDoc(doc(db, 'users', uid!), { 
+        nickname: nickTrimmed,
+        nicknameLower: lower
+      });
+
+      // Update public profile for search
+      await setDoc(doc(db, 'profiles', uid), {
+        uid: uid,
+        nickname: nickTrimmed,
+        nicknameLower: lower,
+        timestamp: Date.now()
+      }, { merge: true });
+
+      if (uid === user?.uid) {
+        setNewNickname(nickTrimmed);
+        setUserProfile(prev => prev ? { ...prev, nickname: nickTrimmed, nicknameLower: lower } : null);
+        setRewardMessage('Nickname updated successfully!');
+        setTimeout(() => setRewardMessage(''), 3000);
+      }
+      
+      if (!targetUid) setNewNickname('');
+      setRewardMessage('Nickname updated!');
+      setTimeout(() => setRewardMessage(''), 3000);
+    } catch (error) {
+      console.error(error);
+      setRewardMessage('Error updating nickname.');
+      setTimeout(() => setRewardMessage(''), 3000);
+    }
+  };
+
+
+  const deletePromoCodeFromDB = async (codeId: string) => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      const { deleteDoc } = await import('firebase/firestore');
+      await deleteDoc(doc(db, 'promo_codes', codeId));
+      fetchPromoCodes();
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `promo_codes/${codeId}`);
+    }
+  };
+
+  const autoAdjustOdds = async (gameId: string) => {
+    if (userProfile?.role !== 'admin') return;
+    const stats = gameStats[gameId];
+    if (!stats || stats.netProfit >= 0) return;
+
+    // We are losing money! Adjust riggedness.
+    const currentRiggedness = gameSettings[gameId]?.riggedness || 1.0;
+    const newRiggedness = Number((currentRiggedness + 0.1).toFixed(2));
+    
+    await setDoc(doc(db, 'game_settings', gameId), { riggedness: newRiggedness }, { merge: true });
+    setRewardMessage(`Auto-Adjusted ${gameId} riggedness to ${newRiggedness}`);
+    setTimeout(() => setRewardMessage(''), 3000);
+  };
+
   const fetchAdminStats = async () => {
     if (!userProfile || userProfile.role !== 'admin') return;
     try {
@@ -505,14 +1221,30 @@ export default function App() {
       const totalUsers = usersSnap.size;
       const totalBets = betsSnap.size;
       let totalVolume = 0;
+      let totalPayout = 0;
+      
+      const gameStats: Record<string, { bets: number, volume: number, payout: number }> = {};
+
       betsSnap.forEach(doc => {
-        totalVolume += doc.data().amount;
+        const data = doc.data();
+        totalVolume += data.amount || 0;
+        totalPayout += data.winnings || 0;
+        
+        const game = data.game || 'Unknown';
+        if (!gameStats[game]) {
+          gameStats[game] = { bets: 0, volume: 0, payout: 0 };
+        }
+        gameStats[game].bets += 1;
+        gameStats[game].volume += (data.amount || 0);
+        gameStats[game].payout += (data.winnings || 0);
       });
 
       setAdminStats({
         totalUsers,
         totalBets,
-        totalVolume
+        totalVolume,
+        totalPayout,
+        gameStats
       });
     } catch (error) {
       handleFirestoreError(error, OperationType.LIST, 'admin_stats');
@@ -522,8 +1254,8 @@ export default function App() {
   const fetchAllUsers = async () => {
     if (userProfile?.role !== 'admin') return;
     try {
-      const usersSnap = await getDocs(collection(db, 'users'));
-      setAllUsers(usersSnap.docs.map(doc => doc.data()));
+      const usersSnap = await getDocs(query(collection(db, 'users'), limit(200)));
+      setAllUsers(usersSnap.docs.map(doc => ({ uid: doc.id, ...doc.data() })));
     } catch (error) {
       handleFirestoreError(error, OperationType.GET, 'admin/users');
     }
@@ -568,10 +1300,85 @@ export default function App() {
     }
   };
 
+  const toggleUserSuspend = async (userId: string, currentStatus: boolean) => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, { isSuspended: !currentStatus });
+      fetchAllUsers(); // Refresh list
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
+    }
+  };
+
+  const fetchPromoCodes = async () => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      const promosSnap = await getDocs(collection(db, 'promo_codes'));
+      setPromoCodes(promosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'promo_codes');
+    }
+  };
+
+  const createPromoCode = async () => {
+    if (userProfile?.role !== 'admin' || !newPromoCode.trim()) return;
+    try {
+      const data: any = {
+        code: newPromoCode.toUpperCase(),
+        rewardType: newPromoRewardType,
+        rewardAmount: newPromoRewardAmount,
+        active: true,
+        createdBy: user?.uid,
+        createdAt: new Date().toISOString()
+      };
+      if (['multiplier', 'no_ads', 'pro_access'].includes(newPromoRewardType)) {
+        data.duration = newPromoDuration;
+      }
+      if (newPromoRewardType === 'free_pack') {
+        data.packType = newPromoPackType;
+      }
+      await setDoc(doc(db, 'promo_codes', newPromoCode.toUpperCase()), data);
+      setNewPromoCode('');
+      fetchPromoCodes();
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'promo_codes');
+    }
+  };
+
+  const deletePromoCode = async (codeId: string) => {
+    if (userProfile?.role !== 'admin') return;
+    try {
+      // We will perform a soft delete or hard delete. For this case we'll just toggle active status.
+      const promoRef = doc(db, 'promo_codes', codeId);
+      const promoSnap = await getDoc(promoRef);
+      if (promoSnap.exists()) {
+        await updateDoc(promoRef, { active: !promoSnap.data().active });
+        fetchPromoCodes();
+      }
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `promo_codes/${codeId}`);
+    }
+  };
+
   useEffect(() => {
     if (showAdminPanel) {
       fetchAdminStats();
       if (adminTab === 'users') fetchAllUsers();
+      if (adminTab === 'promos') fetchPromoCodes();
+    }
+  }, [showAdminPanel, adminTab]);
+
+  useEffect(() => {
+    if (showAdminPanel && adminTab === 'live') {
+      const currentQuery = query(collection(db, 'bets'), orderBy('date', 'desc'), limit(50));
+      const unsubscribe = onSnapshot(currentQuery, (snapshot) => {
+        const bets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setLiveBetsFeed(bets);
+      }, (error) => {
+        console.log('Skipping live bets error, wait for DB index', error);
+      });
+      return () => unsubscribe();
     }
   }, [showAdminPanel, adminTab]);
 
@@ -580,13 +1387,11 @@ export default function App() {
       setIsProMode(false);
       updateFirestoreProfile({ isProMode: false });
       setActiveGame(null);
-      setSearchQuery('');
     } else {
       setKeyInput('');
       setKeyError(false);
       setGeneratedKey('');
       setShowKeyModal(true);
-      setSearchQuery('');
     }
   };
 
@@ -670,7 +1475,7 @@ export default function App() {
   };
 
   const watchAdForKey = () => {
-    if (userProfile?.adsEnabled === false) {
+    if (userProfile?.adsEnabled === false || (userProfile?.noAdsEndsAt && userProfile.noAdsEndsAt > Date.now())) {
       const newKey = "PRO-" + Math.floor(1000 + Math.random() * 9000);
       setGeneratedKey(newKey);
       return;
@@ -706,7 +1511,7 @@ export default function App() {
   };
 
   const watchAdWithCallback = (callback: () => void) => {
-    if (userProfile?.adsEnabled === false) {
+    if (userProfile?.adsEnabled === false || (userProfile?.noAdsEndsAt && userProfile.noAdsEndsAt > Date.now())) {
       callback();
       setAdsWatchedToday(prev => prev + 1);
       return;
@@ -764,33 +1569,20 @@ export default function App() {
   }, [isProMode]);
   
   const displayedGames = useMemo(() => {
-    const query = debouncedSearchQuery.trim().toLowerCase();
-    
-    let filtered = activeGames;
-    if (query !== '') {
-      filtered = activeGames.filter(g => 
-        g.title.toLowerCase().includes(query) || 
-        g.category.toLowerCase().includes(query)
-      );
-    }
-    
-    return filtered.slice(0, visibleCount);
-  }, [debouncedSearchQuery, activeGames, visibleCount]);
+    return activeGames.slice(0, visibleCount);
+  }, [activeGames, visibleCount]);
 
   const totalFilteredGames = useMemo(() => {
-    const query = debouncedSearchQuery.trim().toLowerCase();
-    if (query === '') return activeGames.length;
-    return activeGames.filter(g => 
-      g.title.toLowerCase().includes(query) || 
-      g.category.toLowerCase().includes(query)
-    ).length;
-  }, [debouncedSearchQuery, activeGames]);
+    return activeGames.length;
+  }, [activeGames]);
 
   const currentThemeConfig = THEMES[activeTheme];
   const themeGradient = currentThemeConfig.gradient;
   const themeColor = currentThemeConfig.primary;
   const themeColors = currentThemeConfig.colors;
   const themeGlow = currentThemeConfig.glow;
+
+  const activeMultiplier = (systemConfig.globalMultiplier || 1) * (userProfile?.multiplierEndsAt && userProfile.multiplierEndsAt > Date.now() ? (userProfile.multiplierFactor || 2) : 1);
 
   if (hash === '#/privacy') {
     return <PrivacyPolicy />;
@@ -844,7 +1636,7 @@ export default function App() {
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         className="sticky top-0 z-40 backdrop-blur-xl bg-zinc-950/80 border-b border-white/5"
       >
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <motion.div 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -857,47 +1649,20 @@ export default function App() {
             >
               <Terminal className="w-5 h-5 text-zinc-950" />
             </motion.div>
-            <span className="font-bold text-xl tracking-tight hidden sm:flex items-center gap-2">
+            <span className="font-bold text-xl tracking-tight hidden md:flex items-center gap-2">
               PurePro<motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>4561</motion.span>
               {ownedBadges.map(b => <span key={b} className="text-lg" title={BADGES[b as keyof typeof BADGES].name}>{BADGES[b as keyof typeof BADGES].icon}</span>)}
             </span>
           </motion.div>
 
-          {!activeGame && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="hidden md:flex items-center bg-zinc-900/50 border border-white/10 rounded-full px-4 py-2 w-96 focus-within:border-white/30 focus-within:dynamic-glow-box transition-all"
-            >
-              <Search className="w-4 h-4 text-zinc-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search games, genres..."
-                className="bg-transparent border-none outline-none text-sm ml-3 w-full text-zinc-200 placeholder:text-zinc-500 font-mono"
-              />
-              {searchQuery && (
-                <motion.button 
-                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  onMouseEnter={playHover}
-                  onClick={() => setSearchQuery('')}
-                  className="text-zinc-500 hover:text-zinc-300"
-                >
-                  <X className="w-4 h-4" />
-                </motion.button>
-              )}
-            </motion.div>
-          )}
-
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-4">
+          <div className="flex flex-1 items-center justify-end gap-2 sm:gap-4 ml-4">
+            <div className="hidden sm:flex items-center gap-2 lg:gap-4">
               <div className="flex items-center gap-2 bg-amber-500/10 pl-3 pr-1 py-1 rounded-full border border-amber-500/20 text-amber-400 font-mono text-sm">
                 <Coins className="w-4 h-4" /> ${balance.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
                   onClick={watchAd} 
-                  className="ml-2 bg-amber-500/20 hover:bg-amber-500/40 p-1.5 rounded-full transition-colors" 
+                  className="ml-2 bg-amber-500/20 hover:bg-amber-500/40 p-1.5 rounded-full transition-colors hidden lg:block" 
                   title="Watch Ad for Chips"
                 >
                   <Video className="w-4 h-4 text-amber-400" />
@@ -908,7 +1673,7 @@ export default function App() {
                 <button 
                   onMouseEnter={playHover}
                   onClick={watchAd} 
-                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors" 
+                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors hidden lg:block" 
                   title="Watch Ad for Tokens"
                 >
                   <Video className="w-4 h-4 text-lime-400" />
@@ -916,7 +1681,7 @@ export default function App() {
                 <button 
                   onMouseEnter={playHover}
                   onClick={() => setShowShopModal(true)} 
-                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors" 
+                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors hidden lg:block" 
                   title="Open Shop"
                 >
                   <Store className="w-4 h-4 text-zinc-300" />
@@ -925,16 +1690,16 @@ export default function App() {
             </div>
             
             {isProMode && (
-              <button onClick={() => setShowHistoryModal(true)} className="hidden sm:flex bg-zinc-800/50 hover:bg-zinc-700/50 p-2 rounded-full border border-white/10 transition-colors" title="Bet History">
+              <button onClick={() => setShowHistoryModal(true)} className="hidden sm:flex bg-zinc-800/50 hover:bg-zinc-700/50 p-2 rounded-full border border-white/10 transition-colors shrink-0" title="Bet History">
                 <History className="w-4 h-4 text-amber-400" style={{ color: themeColor }} />
               </button>
             )}
             
             <motion.div 
-              className="flex items-center gap-2 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-white/5"
+              className="flex items-center gap-2 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-white/5 shrink-0"
               whileHover={{ scale: 1.05 }}
             >
-              <span className={`text-xs font-mono font-bold ${isProMode ? 'text-amber-500' : 'text-zinc-500'}`}>PRO</span>
+              <span className={`hidden sm:inline text-xs font-mono font-bold ${isProMode ? 'text-amber-500' : 'text-zinc-500'}`}>PRO</span>
               <button 
                 onMouseEnter={playHover}
                 onClick={handleToggleProMode} 
@@ -946,36 +1711,96 @@ export default function App() {
 
             {/* Active Avatar */}
             {user ? (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                 {userProfile?.role === 'admin' && (
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowAdminPanel(true)}
-                    className="p-2 bg-zinc-900 border border-amber-500/30 rounded-full text-amber-500 hover:bg-amber-500/10 transition-colors"
+                    className="p-1.5 sm:p-2 bg-zinc-900 border border-amber-500/30 rounded-full text-amber-500 hover:bg-amber-500/10 transition-colors"
                     title="Admin Panel"
                   >
-                    <ShieldCheck className="w-5 h-5" />
+                    <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.button>
                 )}
+                
+                <div className="hidden lg:flex items-center gap-2">
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => { setShowLeaderboard(true); fetchLeaderboards(); }}
+                    className="p-2 bg-zinc-900 border border-white/10 rounded-full hover:bg-white/5 transition-colors" 
+                    title="Leaderboard"
+                  >
+                    <Trophy className="w-4 h-4 text-yellow-400" />
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => setShowQuestsModal(true)}
+                    className="p-2 bg-zinc-900 border border-white/10 rounded-full hover:bg-white/5 transition-colors" 
+                    title="Daily Quests"
+                  >
+                    <Target className="w-4 h-4 text-emerald-400" />
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => setShowPromoModal(true)}
+                    className="p-2 bg-zinc-900 border border-white/10 rounded-full hover:bg-white/5 transition-colors" 
+                    title="Promo Codes"
+                  >
+                    <Tag className="w-4 h-4 text-cyan-400" />
+                  </motion.button>
+                </div>
+
+                <div className="hidden xl:flex flex-col items-end mr-2">
+                  <div className="text-[10px] font-bold text-white flex items-center gap-1 mb-0.5">
+                    {userProfile?.nickname || user?.email?.split('@')[0]}
+                    {(userProfile?.role === 'admin' || user?.email === 'purepro4561@gmail.com') && <ShieldCheck className="w-2.5 h-2.5 text-amber-500" />}
+                  </div>
+                  <div className="font-mono text-[10px] sm:text-xs text-zinc-400 leading-none">Level {level}</div>
+                  <div className="w-16 sm:w-24 h-1 sm:h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-white/10 mt-1" title={`${xp} XP`}>
+                     <div 
+                      className={`h-full bg-gradient-to-r ${themeGradient}`} 
+                      style={{ width: `${((xp - Math.pow(level - 1, 2) * 100) / (Math.pow(level, 2) * 100 - Math.pow(level - 1, 2) * 100)) * 100}%` }} 
+                     />
+                  </div>
+                </div>
+
                 <motion.div 
                   whileHover={{ scale: 1.1 }}
                   onClick={() => setShowShopModal(true)}
-                  className="w-10 h-10 rounded-full bg-zinc-900 border border-white/10 p-1.5 cursor-pointer flex items-center justify-center relative group"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-zinc-900 border border-white/10 p-1 cursor-pointer flex items-center justify-center relative group shrink-0"
                 >
-                  <div className="w-full h-full">
+                  <div className="w-full h-full flex items-center justify-center">
                     {AVATARS[activeAvatar as keyof typeof AVATARS].icon}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-lime-500 rounded-full border-2 border-zinc-950" />
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-lime-500 rounded-full border-2 border-zinc-950" />
                 </motion.div>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
+                  onClick={() => { setShowSettingsModal(true); markNotificationsRead(); }}
+                  className="p-1.5 sm:p-2 bg-zinc-900 border border-white/10 rounded-full text-zinc-400 hover:text-white transition-colors shrink-0 relative"
+                  title="Account Settings"
+                >
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {(friendRequests.length + unreadNotificationsCount) > 0 && (
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-zinc-950 shadow-lg"
+                    >
+                      {friendRequests.length + unreadNotificationsCount}
+                    </motion.div>
+                  )}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={handleSignOut}
-                  className="p-2 bg-zinc-900 border border-white/10 rounded-full text-zinc-400 hover:text-red-400 transition-colors"
+                  className="p-1.5 sm:p-2 bg-zinc-900 border border-white/10 rounded-full text-zinc-400 hover:text-red-400 transition-colors shrink-0"
                   title="Sign Out"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
               </div>
             ) : (
@@ -983,15 +1808,11 @@ export default function App() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleSignIn}
-                className={`px-6 py-2 rounded-xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold text-sm flex items-center gap-2 shadow-lg`}
+                className={`px-4 py-2 sm:px-6 sm:py-2 rounded-xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold text-sm flex items-center gap-2 shadow-lg shrink-0`}
               >
                 <User className="w-4 h-4" /> Sign In
               </motion.button>
             )}
-
-            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="md:hidden p-2 text-zinc-400 hover:text-zinc-100">
-              <Menu className="w-6 h-6" />
-            </motion.button>
           </div>
         </div>
       </motion.nav>
@@ -1030,6 +1851,8 @@ export default function App() {
           </div>
         ) : activeGame === 'custom-101' || activeGame === 'custom-202' || activeGame === 'custom-108' ? (
           <Slots 
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || ADULT_GAMES.find(g => g.id === activeGame)?.title || "Slots"}
             balance={balance} 
             setBalance={handleSetBalance} 
             onExit={() => setActiveGame(null)} 
@@ -1040,69 +1863,80 @@ export default function App() {
             adsWatchedToday={adsWatchedToday}
             adsWatchedWithoutWin={adsWatchedWithoutWin}
             resetPityTimer={() => setAdsWatchedWithoutWin(0)}
-            globalMultiplier={systemConfig.globalMultiplier * (activeGame === 'custom-202' ? 2 : activeGame === 'custom-108' ? 1.5 : 1)}
+            globalMultiplier={activeMultiplier * (activeGame === 'custom-202' ? 2 : activeGame === 'custom-108' ? 1.5 : 1)}
+            riggedness={(gameSettings[activeGame as string]?.riggedness || 1.0) * (userProfile?.luckFactor || 1.0)}
           />
         ) : activeGame === 'custom-102' ? (
           <Blackjack 
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || "Blackjack"}
             balance={balance} 
             setBalance={handleSetBalance} 
             onExit={() => setActiveGame(null)} 
             themeGradient={themeGradient} 
             themeColor={themeColor} 
             onRecordBet={recordBet} 
-            globalMultiplier={systemConfig.globalMultiplier}
+            globalMultiplier={activeMultiplier}
           />
         ) : activeGame === 'custom-201' ? (
           <Plinko
+            gameId={activeGame}
+            title={ADULT_GAMES.find(g => g.id === activeGame)?.title || "Plinko"}
             balance={balance}
             setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
             onRecordBet={recordBet}
-            globalMultiplier={systemConfig.globalMultiplier}
+            globalMultiplier={activeMultiplier}
           />
         ) : activeGame === 'custom-104' || activeGame === 'custom-203' ? (
           <Roulette
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || ADULT_GAMES.find(g => g.id === activeGame)?.title || "Roulette"}
             balance={balance}
             setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
             onRecordBet={recordBet}
-            globalMultiplier={systemConfig.globalMultiplier}
-            isVIP={activeGame === 'custom-203'}
+            globalMultiplier={activeMultiplier}
           />
         ) : activeGame === 'custom-103' || activeGame === 'custom-204' || activeGame === 'custom-107' ? (
           <Poker
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || ADULT_GAMES.find(g => g.id === activeGame)?.title || "Poker"}
             balance={balance}
             setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
             onRecordBet={recordBet}
-            globalMultiplier={systemConfig.globalMultiplier}
-            isHighStakes={activeGame === 'custom-204' || activeGame === 'custom-107'}
+            globalMultiplier={activeMultiplier}
           />
         ) : activeGame === 'custom-105' ? (
           <Craps
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || "Craps"}
             balance={balance}
             setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
             onRecordBet={recordBet}
-            globalMultiplier={systemConfig.globalMultiplier}
+            globalMultiplier={activeMultiplier}
           />
         ) : activeGame === 'custom-106' ? (
           <Baccarat
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || "Baccarat"}
             balance={balance}
             setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
             themeGradient={themeGradient}
             themeColor={themeColor}
             onRecordBet={recordBet}
-            globalMultiplier={systemConfig.globalMultiplier}
+            globalMultiplier={activeMultiplier}
           />
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full">
@@ -1169,20 +2003,6 @@ export default function App() {
               </motion.button>
             </section>
 
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="md:hidden mb-8 bg-zinc-900/50 border border-white/10 rounded-2xl px-4 py-3 flex items-center focus-within:border-white/30 focus-within:dynamic-glow-box transition-all"
-            >
-              <Search className="w-5 h-5 text-zinc-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search games..."
-                className="bg-transparent border-none outline-none text-base ml-3 w-full text-zinc-200 placeholder:text-zinc-500 font-mono"
-              />
-            </motion.div>
-
             <section ref={gamesSectionRef} className="py-12 scroll-mt-24">
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -1197,34 +2017,22 @@ export default function App() {
                 <span className="text-zinc-500 font-mono text-sm">{totalFilteredGames} MODULES</span>
               </motion.div>
 
-              {displayedGames.length === 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                  className="py-20 flex flex-col items-center justify-center text-zinc-500 bg-zinc-900/20 rounded-3xl border border-white/5 border-dashed"
+              <>
+                <motion.div
+                  key={isProMode ? 'adult-grid' : 'standard-grid'}
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+                  }}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "-50px" }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
                 >
-                  <Ghost className="w-12 h-12 mb-4 opacity-50" />
-                  <p className="font-mono">NO EXECUTABLES FOUND FOR "{searchQuery}"</p>
-                  <button onClick={() => { playClick(); setSearchQuery(''); }} className="mt-4 text-sm text-zinc-400 hover:text-zinc-200 underline underline-offset-4">
-                    Clear Search
-                  </button>
-                </motion.div>
-              ) : (
-                <>
-                  <motion.div
-                    key={isProMode ? 'adult-grid' : 'standard-grid'}
-                    variants={{
-                      hidden: { opacity: 0 },
-                      show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-                    }}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, margin: "-50px" }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-                  >
-                  {displayedGames.length > 0 ? (
-                    displayedGames.map((game) => (
-                      <motion.div
-                        key={game.id}
+                {displayedGames.length > 0 && (
+                  displayedGames.map((game) => (
+                    <motion.div
+                      key={game.id}
                         variants={{
                           hidden: { opacity: 0, y: 30, scale: 0.9 },
                           show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
@@ -1302,26 +2110,6 @@ export default function App() {
                         </div>
                       </motion.div>
                     ))
-                  ) : (
-                    <motion.div 
-                      key="no-results"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="col-span-full py-20 flex flex-col items-center justify-center text-center"
-                    >
-                      <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-4 border border-white/5">
-                        <Search className="w-10 h-10 text-zinc-700" />
-                      </div>
-                      <h3 className="text-xl font-bold text-zinc-300">No matches found</h3>
-                      <p className="text-zinc-500 mt-2">Try searching for something else or clear the filter.</p>
-                      <button 
-                        onClick={() => setSearchQuery('')}
-                        onMouseEnter={playHover}
-                        className="mt-6 px-6 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition-colors"
-                      >
-                        Clear Search
-                      </button>
-                    </motion.div>
                   )}
                   </motion.div>
                 
@@ -1337,7 +2125,6 @@ export default function App() {
                     </div>
                   )}
                 </>
-              )}
             </section>
           </main>
 
@@ -1373,7 +2160,7 @@ export default function App() {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 text-zinc-950 px-6 py-3 rounded-full font-bold flex items-center gap-2"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[1000] text-zinc-950 px-6 py-3 rounded-full font-bold flex items-center gap-2"
             style={{ backgroundColor: themeColor, boxShadow: `0 0 30px ${themeColor}80` }}
           >
             <Ticket className="w-5 h-5" />
@@ -1414,6 +2201,224 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Daily Login Modal */}
+      <AnimatePresence>
+        {showDailyModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-zinc-900 border border-amber-500/30 rounded-3xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-amber-500/20 blur-[50px] rounded-full" />
+              <Gift className="w-16 h-16 text-amber-400 mx-auto mb-4 relative z-10" />
+              <h3 className="text-2xl font-bold text-white mb-2 relative z-10">Daily Reward!</h3>
+              <p className="text-zinc-400 mb-6 relative z-10">You are on a <span className="font-bold text-white">{loginStreak}</span> day login streak!</p>
+              
+              <div className="bg-zinc-950 border border-white/10 rounded-2xl p-4 mb-6 relative z-10">
+                <p className="text-xs text-zinc-500 font-mono mb-2 uppercase">Reward</p>
+                <div className="flex items-center justify-center gap-2 text-3xl font-bold text-amber-500">
+                   <Coins className="w-8 h-8" /> {dailyReward.toLocaleString()}
+                </div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowDailyModal(false)}
+                className="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black flex items-center justify-center gap-2 relative z-10"
+              >
+                Claim Chips
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Nickname Selection Modal */}
+      <AnimatePresence>
+        {showNicknameModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-zinc-950/95 backdrop-blur-xl p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-zinc-900 border border-white/10 rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/10 blur-[60px] rounded-full" />
+              <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-500/10 blur-[60px] rounded-full" />
+              
+              <div className="relative z-10">
+                <div className="w-20 h-20 bg-zinc-950 border border-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                  <Sparkles className="w-10 h-10 text-amber-500" />
+                </div>
+                
+                <h3 className="text-3xl font-black text-white mb-2 tracking-tight text-center">Welcome, Player!</h3>
+                <p className="text-zinc-500 text-sm mb-8 text-center px-4 leading-relaxed">
+                  Before you start winning, choose a unique identity. This will be visible to others in the future.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="relative">
+                    <input 
+                      type="text"
+                      placeholder="Enter unique nickname..."
+                      value={nicknameInput}
+                      onChange={(e) => setNicknameInput(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                      className="w-full bg-zinc-950 border border-white/10 rounded-2xl px-6 py-4 text-white font-mono placeholder:text-zinc-700 outline-none focus:border-amber-500/50 transition-colors shadow-inner"
+                      maxLength={16}
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-mono text-zinc-600">
+                      {nicknameInput.length}/16
+                    </div>
+                  </div>
+
+                  {nicknameError && (
+                    <motion.p 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="text-red-500 text-xs font-bold px-2 bg-red-500/5 py-2 rounded-lg border border-red-500/20"
+                    >
+                      {nicknameError}
+                    </motion.p>
+                  )}
+
+                  <button 
+                    disabled={nicknameInput.length < 3 || isCheckingNickname}
+                    onClick={handleRegisterNickname}
+                    className={`w-full py-4 rounded-2xl font-black text-lg tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg ${
+                      nicknameInput.length < 3 || isCheckingNickname
+                        ? 'bg-zinc-800 text-zinc-600' 
+                        : 'bg-gradient-to-r from-amber-500 to-orange-500 text-zinc-950 hover:scale-[1.02] active:scale-[0.98]'
+                    }`}
+                  >
+                    {isCheckingNickname ? (
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        SET IDENTITY
+                        <Zap className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                  <p className="text-[10px] text-zinc-600 text-center font-mono leading-tight">
+                    By confirming, you agree to our community standards. 
+                    Nicknames are filtered for safety.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Leaderboard Modal */}
+      <AnimatePresence>
+        {showLeaderboard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-4"
+          >
+             <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              className="bg-zinc-900 border rounded-3xl p-8 max-w-2xl w-full flex flex-col max-h-[80vh] shadow-2xl relative overflow-hidden"
+              style={{ borderColor: `${themeColor}33` }}
+            >
+              <button onClick={() => setShowLeaderboard(false)} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300">
+                <X className="w-6 h-6" />
+              </button>
+              <h3 className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} mb-6 flex items-center gap-3`}>
+                <Trophy style={{ color: themeColor }} className="w-8 h-8"/> Hall of Fame
+              </h3>
+
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                {leaderboardData.length > 0 ? leaderboardData.map((lbUser, idx) => (
+                   <div key={idx} className="flex items-center justify-between p-4 mb-2 bg-zinc-950 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-8 h-8 flex items-center justify-center font-bold font-mono rounded-full ${idx === 0 ? 'bg-yellow-500 text-black' : idx === 1 ? 'bg-zinc-300 text-black' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-zinc-800 text-zinc-400'}`}>
+                          {idx + 1}
+                        </div>
+                        <div>
+                          <div className="font-bold text-zinc-100 flex items-center gap-2">
+                             {lbUser.email?.split('@')[0] || 'Unknown'}
+                             {idx === 0 && <Crown className="w-4 h-4 text-yellow-500" />}
+                          </div>
+                          <div className="text-xs font-mono text-zinc-500">Level {lbUser.level || 1}</div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-zinc-300 font-bold font-mono">{Number(lbUser.xp || 0).toLocaleString()} XP</div>
+                      </div>
+                   </div>
+                )) : (
+                  <div className="text-center text-zinc-500 py-10">Loading ranks...</div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Promo Codes Modal */}
+      <AnimatePresence>
+        {showPromoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-4"
+          >
+             <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              className="bg-zinc-900 border rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center"
+              style={{ borderColor: `${themeColor}33` }}
+            >
+              <button onClick={() => setShowPromoModal(false)} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300">
+                <X className="w-6 h-6" />
+              </button>
+              <Tag className="w-16 h-16 mx-auto mb-4" style={{ color: themeColor }} />
+              <h3 className="text-2xl font-bold text-white mb-2">Redeem Promo Code</h3>
+              <p className="text-zinc-400 mb-6 text-sm">Enter a valid promo code to receive free chips, tokens, or exclusive auras.</p>
+              
+              <input 
+                type="text" 
+                value={promoInput}
+                onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                placeholder="ENTER CODE (e.g. LAUNCH2026)"
+                className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-4 mb-4 text-center text-white font-mono uppercase tracking-widest focus-within:border-white/30 focus-within:dynamic-glow-box transition-all"
+              />
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleRedeemPromo}
+                className="w-full px-6 py-4 rounded-xl font-black text-zinc-950"
+                style={{ background: `linear-gradient(to right, ${themeColor}, #ffffff)` }}
+              >
+                Redeem Code
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Shop Modal */}
       <AnimatePresence>
         {showShopModal && (
@@ -1441,14 +2446,30 @@ export default function App() {
                   </h3>
                   <p className="text-zinc-400 mt-2">Spend your tokens and chips on custom themes, badges, or exchange currency.</p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center gap-2">
-                  <div className="flex items-center gap-2 bg-zinc-950 px-4 py-2 rounded-xl border border-white/10">
-                    <Ticket className="w-5 h-5 text-lime-400" />
-                    <span className="text-xl font-mono font-bold text-zinc-100">{tokens.toLocaleString()}</span>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Trophy className="w-3 h-3 text-yellow-500" />
+                      <span className="text-xs font-bold text-zinc-400">LEVEL {level}</span>
+                    </div>
+                    <div className="w-32 h-2 bg-zinc-950 rounded-full overflow-hidden border border-white/10 relative">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${((xp - Math.pow(level - 1, 2) * 100) / (Math.pow(level, 2) * 100 - Math.pow(level - 1, 2) * 100)) * 100}%` }}
+                        className={`h-full bg-gradient-to-r ${themeGradient}`}
+                      />
+                    </div>
+                    <span className="text-[10px] text-zinc-500 mt-1 font-mono uppercase tracking-widest">{xp} / {Math.pow(level, 2) * 100} XP</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-zinc-950 px-4 py-2 rounded-xl border border-white/10">
-                    <Coins className="w-5 h-5 text-amber-400" />
-                    <span className="text-xl font-mono font-bold text-zinc-100">{balance.toLocaleString()}</span>
+                  <div className="flex flex-col sm:flex-row items-center gap-2">
+                    <div className="flex items-center gap-2 bg-zinc-950 px-4 py-2 rounded-xl border border-white/10">
+                      <Ticket className="w-5 h-5 text-lime-400" />
+                      <span className="text-xl font-mono font-bold text-zinc-100">{tokens.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-zinc-950 px-4 py-2 rounded-xl border border-white/10">
+                      <Coins className="w-5 h-5 text-amber-400" />
+                      <span className="text-xl font-mono font-bold text-zinc-100">{balance.toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1902,10 +2923,28 @@ export default function App() {
                     Overview
                   </button>
                   <button 
+                    onClick={() => setAdminTab('economy')}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'economy' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                  >
+                    Economy & Odds
+                  </button>
+                  <button 
                     onClick={() => setAdminTab('users')}
                     className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'users' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
                   >
                     User Management
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('promos')}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'promos' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                  >
+                    Promo Codes
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab('live')}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${adminTab === 'live' ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                  >
+                    Live Bets Feed
                   </button>
                   <button 
                     onClick={() => setAdminTab('system')}
@@ -1917,7 +2956,7 @@ export default function App() {
 
                 {adminTab === 'stats' && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                       <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
                         <div className="flex items-center gap-3 text-zinc-400 mb-2">
                           <Users className="w-4 h-4" />
@@ -1939,7 +2978,52 @@ export default function App() {
                         </div>
                         <div className="text-3xl font-bold text-amber-500">${adminStats?.totalVolume?.toLocaleString() || '...'}</div>
                       </div>
+                      <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
+                        <div className="flex items-center gap-3 text-zinc-400 mb-2">
+                          <Coins className="w-4 h-4" />
+                          <span className="text-xs font-bold uppercase tracking-widest">Total Payout</span>
+                        </div>
+                        <div className="text-3xl font-bold text-emerald-500">${adminStats?.totalPayout?.toLocaleString() || '...'}</div>
+                      </div>
                     </div>
+
+                    {adminStats?.gameStats && Object.keys(adminStats.gameStats).length > 0 && (
+                      <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 mb-8">
+                        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                          <Activity className="w-5 h-5 text-zinc-400" />
+                          Game Economy (RTP)
+                        </h3>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-white/10 text-xs uppercase tracking-widest text-zinc-500 font-bold whitespace-nowrap">
+                                <th className="pb-4 pr-8">Game</th>
+                                <th className="pb-4 pr-8 text-right">Bets Played</th>
+                                <th className="pb-4 pr-8 text-right">Volume In</th>
+                                <th className="pb-4 pr-8 text-right">Payout Out</th>
+                                <th className="pb-4 text-right px-4">RTP %</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(adminStats.gameStats as Record<string, {bets: number, volume: number, payout: number}>).map(([game, stats]) => {
+                                const rtp = stats.volume > 0 ? (stats.payout / stats.volume) * 100 : 0;
+                                return (
+                                  <tr key={game} className="border-b border-white/5 hover:bg-white/5 transition-colors whitespace-nowrap">
+                                    <td className="py-4 pr-8 font-bold text-white whitespace-nowrap">{game}</td>
+                                    <td className="py-4 pr-8 text-right text-zinc-400 font-mono whitespace-nowrap">{stats.bets.toLocaleString()}</td>
+                                    <td className="py-4 pr-8 text-right text-amber-500 font-mono whitespace-nowrap">${stats.volume.toLocaleString()}</td>
+                                    <td className="py-4 pr-8 text-right text-emerald-500 font-mono whitespace-nowrap">${stats.payout.toLocaleString()}</td>
+                                    <td className={`py-4 text-right font-bold font-mono whitespace-nowrap px-4 ${rtp > 100 ? 'text-red-500' : 'text-zinc-300'}`}>
+                                      {rtp.toFixed(2)}%
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 mb-8">
                       <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
@@ -1947,6 +3031,20 @@ export default function App() {
                         Quick Actions (My Account)
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-6 bg-zinc-900/50 rounded-2xl border border-white/5">
+                          <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest block mb-2">Change Nickname</span>
+                          <div className="flex gap-2">
+                            <input 
+                              type="text"
+                              placeholder="New nickname..."
+                              value={newNickname}
+                              onChange={(e) => setNewNickname(e.target.value)}
+                              className="flex-1 bg-zinc-950 border border-white/5 rounded-xl px-4 py-2 text-sm text-zinc-200"
+                            />
+                            <button onClick={() => handleUpdateNickname()} className="bg-amber-500 text-zinc-950 px-4 py-2 rounded-xl text-sm font-bold">Save</button>
+                          </div>
+                        </div>
+
                         <button 
                           onClick={() => adjustUserCurrency(user?.uid || '', 10000, 'balance')}
                           className="flex items-center justify-between p-6 bg-zinc-900/50 hover:bg-zinc-800 rounded-2xl border border-white/5 transition-all group"
@@ -1982,6 +3080,73 @@ export default function App() {
                   </motion.div>
                 )}
 
+                {adminTab === 'economy' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 mb-8">
+                      <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <Settings2 className="w-5 h-5 text-zinc-400" />
+                        Adjust Game Payouts & Riggedness
+                      </h3>
+                      {Object.keys(gameStats).length === 0 && (
+                        <p className="text-zinc-500 font-mono text-sm">No game statistics available to adjust.</p>
+                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {Object.entries(gameStats).map(([gameId, val]) => {
+                          const stats = val as { totalBets: number; totalWins: number; netProfit: number };
+                          const settings = (gameSettings[gameId] as { riggedness?: number }) || { riggedness: 1.0 };
+                          const riggedness = settings.riggedness ?? 1.0;
+                          const rtp = stats.totalBets > 0 ? (stats.totalWins / stats.totalBets) * 100 : 0;
+                          return (
+                            <div key={gameId} className="p-6 bg-zinc-950/50 rounded-2xl border border-white/5 flex flex-col gap-4">
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <h4 className="font-bold text-zinc-100">{gameId}</h4>
+                                  <p className={`text-xs font-mono font-bold ${rtp > 95 ? 'text-red-500' : 'text-emerald-500'}`}>
+                                    Current RTP: {rtp.toFixed(2)}%
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-[10px] text-zinc-500 uppercase font-mono">Net Profit</p>
+                                  <p className={`font-mono font-bold ${stats.netProfit >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                    ${(stats.netProfit || 0).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                {(['riggedness', 'winMultiplier', 'ghostJackpotProb'] as const).map((param) => (
+                                  <div key={param} className="space-y-1">
+                                    <div className="flex justify-between text-xs font-bold text-zinc-400">
+                                      <span className="capitalize">{param.replace(/([A-Z])/g, ' $1')}</span>
+                                      <span>{settings[param] ?? (param === 'riggedness' ? 1.0 : param === 'winMultiplier' ? 1.0 : 0.1)}x</span>
+                                    </div>
+                                    <input 
+                                      type="range" min="0.1" max="3.0" step="0.1"
+                                      value={settings[param] ?? (param === 'riggedness' ? 1.0 : param === 'winMultiplier' ? 1.0 : 0.1)}
+                                      onChange={async (e) => {
+                                        const val = parseFloat(e.target.value);
+                                        await setDoc(doc(db, 'game_settings', gameId), { [param]: val }, { merge: true });
+                                      }}
+                                      className="w-full accent-amber-500"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+
+                              <button 
+                                onClick={() => autoAdjustOdds(gameId)}
+                                className={`w-full py-3 rounded-xl font-bold text-xs uppercase transition-all flex items-center justify-center gap-2 ${stats.netProfit < 0 ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'}`}
+                              >
+                                {stats.netProfit < 0 ? <><Zap className="w-3 h-3" /> Auto-Fix Profitability</> : 'Economy Stable'}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
                 {adminTab === 'users' && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                     <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8">
@@ -1995,12 +3160,38 @@ export default function App() {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                             <input 
                               type="text"
-                              placeholder="Search by email or UID..."
+                              placeholder="Search by email, nickname or UID..."
                               value={userSearchQuery}
                               onChange={(e) => setUserSearchQuery(e.target.value)}
+                              onKeyDown={async (e) => {
+                                if (e.key === 'Enter' && userSearchQuery.trim()) {
+                                  // Server side search for admin
+                                  const term = userSearchQuery.trim().toLowerCase();
+                                  const qEmail = query(collection(db, 'users'), where('email', '>=', term), where('email', '<=', term + '\uf8ff'), limit(10));
+                                  const qNick = query(collection(db, 'users'), where('nicknameLower', '>=', term), where('nicknameLower', '<=', term + '\uf8ff'), limit(10));
+                                  const [s1, s2] = await Promise.all([getDocs(qEmail), getDocs(qNick)]);
+                                  const results = Array.from(new Map([...s1.docs, ...s2.docs].map(d => [d.id, { uid: d.id, ...d.data() }])).values());
+                                  setAllUsers(results as any[]);
+                                }
+                              }}
                               className="w-full bg-zinc-950 border border-white/5 rounded-xl pl-10 pr-4 py-2 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 transition-colors"
                             />
                           </div>
+                          <button 
+                            onClick={async () => {
+                              if (!userSearchQuery.trim()) return;
+                              const term = userSearchQuery.trim().toLowerCase();
+                              const qEmail = query(collection(db, 'users'), where('email', '>=', term), where('email', '<=', term + '\uf8ff'), limit(10));
+                              const qNick = query(collection(db, 'users'), where('nicknameLower', '>=', term), where('nicknameLower', '<=', term + '\uf8ff'), limit(10));
+                              const [s1, s2] = await Promise.all([getDocs(qEmail), getDocs(qNick)]);
+                              const results = Array.from(new Map([...s1.docs, ...s2.docs].map(d => [d.id, { uid: d.id, ...d.data() }])).values());
+                              setAllUsers(results as any[]);
+                            }}
+                            className="p-2 bg-amber-500 text-zinc-950 rounded-xl"
+                            title="Server Search"
+                          >
+                            <Search className="w-4 h-4" />
+                          </button>
                           <select 
                             value={userSort}
                             onChange={(e) => setUserSort(e.target.value as any)}
@@ -2022,7 +3213,8 @@ export default function App() {
                         {allUsers
                           .filter(u => 
                             u.email?.toLowerCase().includes(userSearchQuery.toLowerCase()) || 
-                            u.uid?.toLowerCase().includes(userSearchQuery.toLowerCase())
+                            u.uid?.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+                            u.nickname?.toLowerCase().includes(userSearchQuery.toLowerCase())
                           )
                           .sort((a, b) => {
                             if (userSort === 'hours') return (b.totalTimeSpent || 0) - (a.totalTimeSpent || 0);
@@ -2041,18 +3233,69 @@ export default function App() {
                                   </div>
                                   <div>
                                     <div className="text-sm font-bold text-zinc-100 flex items-center gap-2">
-                                      {u.email}
+                                      {u.nickname || u.email}
                                       {u.role === 'admin' && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                                      {u.email === 'purepro4561@gmail.com' && <div className="text-[10px] bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded-full font-mono uppercase">Dev/Owner</div>}
                                     </div>
-                                    <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">UID: {u.uid.slice(0, 8)}...</div>
+                                    <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{u.email}</div>
+                                    <div className="flex items-center gap-2 mt-2">
+                                      <input 
+                                        type="text"
+                                        placeholder="Force name..."
+                                        className="bg-black/40 border border-white/5 rounded-lg px-2 py-1 text-[10px] w-24 outline-none focus:border-amber-500/30 text-zinc-300"
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') {
+                                            handleUpdateNickname(u.uid, (e.target as HTMLInputElement).value);
+                                            (e.target as HTMLInputElement).value = '';
+                                          }
+                                        }}
+                                      />
+                                      <span className="text-[9px] text-zinc-600 font-mono">⏎ to save</span>
+                                    </div>
                                   </div>
                                 </div>
                                 
                                 <div className="flex flex-wrap items-center gap-6">
+                                  <button 
+                                    onClick={() => setShowChat({ isOpen: true, friendId: u.uid, chatName: u.nickname || u.email })}
+                                    className="p-2 bg-zinc-800 hover:bg-emerald-500/20 rounded-xl border border-white/5 transition-colors group/chat"
+                                    title="Chat with User"
+                                  >
+                                    <MessageSquare className="w-4 h-4 text-zinc-500 group-hover/chat:text-emerald-500" />
+                                  </button>
+                                  
+                                  <div className="flex flex-col gap-1 min-w-[120px]">
+                                    <div className="flex justify-between items-center bg-zinc-800/50 rounded-lg px-2 py-0.5">
+                                      <span className="text-[9px] font-bold text-zinc-500 uppercase">Luck</span>
+                                      <span className="text-[9px] font-mono font-bold text-amber-500">{(u.luckFactor || 1.0).toFixed(1)}x</span>
+                                    </div>
+                                    <input 
+                                      type="range" min="0.1" max="3.0" step="0.1"
+                                      value={u.luckFactor || 1.0}
+                                      onChange={async (e) => {
+                                        const val = parseFloat(e.target.value);
+                                        await updateDoc(doc(db, 'users', u.uid), { luckFactor: val });
+                                      }}
+                                      className="w-full accent-amber-500 h-1"
+                                    />
+                                  </div>
                                   <div className="flex flex-col gap-1">
                                     <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Activity</span>
                                     <div className="text-xs font-mono text-zinc-300">{hoursPlayed} hrs</div>
                                   </div>
+                                  <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <AlertTriangle className={`w-3 h-3 ${u.isSuspended ? 'text-red-500' : 'text-zinc-500'}`} />
+                                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Status</span>
+                                    </div>
+                                    <button 
+                                      onClick={() => toggleUserSuspend(u.uid, u.isSuspended)}
+                                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${u.isSuspended ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}
+                                    >
+                                      {u.isSuspended ? 'Suspended' : 'Active'}
+                                    </button>
+                                  </div>
+
                                   <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2">
                                       <Video className={`w-3 h-3 ${u.adsEnabled !== false ? 'text-emerald-500' : 'text-zinc-500'}`} />
@@ -2112,6 +3355,194 @@ export default function App() {
                               </div>
                             );
                           })}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {adminTab === 'promos' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 mb-8">
+                      <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <Tag className="w-5 h-5 text-amber-500" />
+                        Create Promo Code
+                      </h3>
+                      <div className="flex flex-col md:flex-row gap-4 items-end">
+                        <div className="flex-1 w-full relative">
+                          <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Promo Code</span>
+                          <input 
+                            type="text" 
+                            placeholder="e.g. VIP2026"
+                            value={newPromoCode}
+                            onChange={(e) => setNewPromoCode(e.target.value.toUpperCase())}
+                            className="w-full bg-zinc-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 uppercase font-mono"
+                          />
+                        </div>
+                        <div className="w-full md:w-auto relative">
+                          <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Reward Type</span>
+                          <select 
+                            value={newPromoRewardType}
+                            onChange={(e) => setNewPromoRewardType(e.target.value)}
+                            className="w-full md:w-32 bg-zinc-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50"
+                          >
+                            <option value="balance">Chips</option>
+                            <option value="tokens">Tokens</option>
+                            <option value="multiplier">Multiplier</option>
+                            <option value="no_ads">No Ads</option>
+                            <option value="pro_access">PRO Access</option>
+                            <option value="free_pack">Free Pack</option>
+                          </select>
+                        </div>
+                        {['balance', 'tokens'].includes(newPromoRewardType) && (
+                          <div className="w-full md:w-32 relative">
+                            <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Amount</span>
+                            <input 
+                              type="number"
+                              value={newPromoRewardAmount}
+                              onChange={(e) => setNewPromoRewardAmount(parseInt(e.target.value))}
+                              className="w-full bg-zinc-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 font-mono"
+                            />
+                          </div>
+                        )}
+                        {['multiplier', 'no_ads', 'pro_access'].includes(newPromoRewardType) && (
+                          <div className="w-full md:w-32 relative">
+                            <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Mins</span>
+                            <input 
+                              type="number"
+                              value={newPromoDuration}
+                              onChange={(e) => setNewPromoDuration(parseInt(e.target.value))}
+                              placeholder="Minutes"
+                              className="w-full bg-zinc-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 font-mono"
+                            />
+                          </div>
+                        )}
+                        {newPromoRewardType === 'free_pack' && (
+                          <>
+                            <div className="w-full md:w-32 relative">
+                              <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Pack Type</span>
+                              <select 
+                                value={newPromoPackType}
+                                onChange={(e) => setNewPromoPackType(e.target.value)}
+                                className="w-full bg-zinc-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50"
+                              >
+                                <option value="AVATAR">Avatar</option>
+                                <option value="AURA">Aura</option>
+                                <option value="VFX">VFX</option>
+                              </select>
+                            </div>
+                            <div className="w-full md:w-32 relative">
+                              <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Quantity</span>
+                              <input 
+                                type="number"
+                                value={newPromoRewardAmount}
+                                onChange={(e) => setNewPromoRewardAmount(parseInt(e.target.value))}
+                                className="w-full bg-zinc-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-200 focus:outline-none focus:border-amber-500/50 font-mono"
+                              />
+                            </div>
+                          </>
+                        )}
+                        <button 
+                          onClick={createPromoCode}
+                          className="w-full md:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded-xl transition-colors"
+                        >
+                          Create
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8">
+                      <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <Tag className="w-5 h-5 text-zinc-400" />
+                        Active Promo Codes
+                      </h3>
+                      <div className="space-y-4">
+                        {promoCodes.length > 0 ? (
+                          promoCodes.map((promo) => (
+                            <div key={promo.id} className={`flex items-center justify-between p-4 bg-zinc-950/50 rounded-2xl border ${promo.active ? 'border-amber-500/20' : 'border-white/5 opacity-50'}`}>
+                              <div>
+                                <h4 className="text-xl font-bold font-mono text-zinc-100">{promo.code}</h4>
+                                <p className="text-sm text-zinc-500">
+                                  Rewards {promo.rewardAmount.toLocaleString()} {promo.rewardType}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button 
+                                  onClick={() => deletePromoCode(promo.id)}
+                                  className={`px-4 py-2 hover:bg-white/5 transition-colors text-sm font-bold rounded-lg ${promo.active ? 'text-red-500' : 'text-emerald-500'}`}
+                                >
+                                  {promo.active ? 'Deactivate' : 'Activate'}
+                                </button>
+                                <button 
+                                  onClick={() => deletePromoCodeFromDB(promo.id)}
+                                  className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-zinc-500 font-mono">No promo codes found.</div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {adminTab === 'live' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 max-h-[80vh] flex flex-col">
+                      <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                          <Activity className="w-5 h-5 text-amber-500 animate-pulse" />
+                          Live Action Feed
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Real-time
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+                        {liveBetsFeed.length > 0 ? (
+                          <AnimatePresence initial={false}>
+                            {liveBetsFeed.map((bet) => (
+                              <motion.div 
+                                key={bet.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="flex items-center justify-between p-4 bg-zinc-950/50 rounded-2xl border border-white/5"
+                              >
+                                <div className="flex items-center gap-4">
+                                  <div className={`w-2 h-2 rounded-full ${bet.winnings > 0 ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                                  <div className="flex flex-col">
+                                    <div className="text-sm font-bold text-zinc-100">{bet.game}</div>
+                                    <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
+                                      Player: {bet.playerName || 'Guest'}
+                                      {(bet.userRole === 'admin' || bet.playerEmail === 'purepro4561@gmail.com') && <ShieldCheck className="w-2.5 h-2.5 text-amber-500" />}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-8">
+                                  <div className="text-right">
+                                    <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Bet Amount</div>
+                                    <div className="text-sm font-mono text-zinc-300">
+                                      {bet.type === 'chips' ? '$' : ''}{bet.amount?.toLocaleString()} {bet.type === 'tokens' ? 'TK' : ''}
+                                    </div>
+                                  </div>
+                                  <div className="text-right min-w-[80px]">
+                                    <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Payout</div>
+                                    <div className={`text-sm font-mono font-bold ${bet.winnings > 0 ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                                      {bet.winnings > 0 ? '+' : ''}{bet.type === 'chips' ? '$' : ''}{bet.winnings?.toLocaleString() || 0}
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                        ) : (
+                          <div className="text-center py-12 text-zinc-500 font-mono">Waiting for action...</div>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -2368,6 +3799,424 @@ export default function App() {
                     ))}
                   </div>
                 )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Leaderboard Modal */}
+      <AnimatePresence>
+        {showLeaderboard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[160] flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              className="bg-zinc-900 border rounded-3xl p-8 max-w-2xl w-full shadow-2xl relative flex flex-col max-h-[80vh]"
+              style={{ borderColor: `${themeColor}33` }}
+            >
+              <button 
+                onClick={() => setShowLeaderboard(false)}
+                className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${themeColor}20` }}>
+                  <Trophy className="w-6 h-6" style={{ color: themeColor }} />
+                </div>
+                <h3 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>Global Leaderboard</h3>
+              </div>
+
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-2">
+                {leaderboardData.length === 0 ? (
+                  <div className="text-center py-12 text-zinc-500 font-mono">Loading top players...</div>
+                ) : (
+                  leaderboardData.map((lbUser, idx) => (
+                    <div key={idx} className={`bg-zinc-950/50 border ${user?.uid === lbUser.uid ? `border-[${themeColor}]` : 'border-white/5'} rounded-xl p-4 flex items-center justify-between`}>
+                      <div className="flex items-center gap-4">
+                        <div className="text-zinc-500 font-black text-xl w-6">#{idx + 1}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-zinc-100 font-bold">{lbUser.nickname || (lbUser.email ? lbUser.email.split('@')[0] : 'Guest')}</div>
+                          {(lbUser.role === 'admin' || lbUser.email === 'purepro4561@gmail.com') && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-zinc-500 text-[10px] font-mono uppercase">Level</p>
+                        <p className={`font-mono font-bold text-amber-500`}>{lbUser.level || 1}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Promo Code Modal */}
+      <AnimatePresence>
+        {showPromoModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[160] flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              className="bg-zinc-900 border rounded-3xl p-8 max-w-sm w-full shadow-2xl relative text-center"
+              style={{ borderColor: `${themeColor}33` }}
+            >
+              <button 
+                onClick={() => setShowPromoModal(false)}
+                className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <Tag className="w-12 h-12 mx-auto mb-4" style={{ color: themeColor }} />
+              <h3 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} mb-2`}>Redeem Code</h3>
+              <p className="text-zinc-400 mb-6 text-sm">Enter a promo code to receive free chips, tokens, or exclusive auras!</p>
+
+              <input
+                type="text"
+                value={promoInput}
+                onChange={(e) => setPromoInput(e.target.value)}
+                placeholder="Enter Code"
+                className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-center text-xl font-mono text-white mb-4 outline-none uppercase"
+              />
+              
+              <button
+                onClick={handleRedeemPromo}
+                className="w-full py-3 rounded-xl text-zinc-950 font-bold shadow-lg transition-all"
+                style={{ background: `linear-gradient(to right, ${themeColors[0]}, ${themeColors[1]})` }}
+              >
+                Redeem
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Daily Login Modal */}
+      <AnimatePresence>
+        {showDailyModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-zinc-950/90 backdrop-blur-md p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 40, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.8, y: -40, opacity: 0 }}
+              className="bg-zinc-900 border rounded-3xl p-8 max-w-md w-full shadow-2xl relative text-center overflow-hidden"
+              style={{ borderColor: `${themeColor}33` }}
+            >
+              <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+                <div className="absolute inset-0 bg-gradient-to-b from-amber-500/20 to-transparent" />
+              </div>
+              
+              <Gift className="w-16 h-16 mx-auto mb-4 text-amber-500 animate-bounce" />
+              <h3 className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 mb-2`}>
+                DAILY REWARD
+              </h3>
+              <p className="text-zinc-300 font-mono mb-2 text-lg">Day {loginStreak} Streak!</p>
+              
+              <div className="bg-zinc-950 border border-amber-500/30 rounded-2xl py-6 px-4 my-6">
+                <div className="text-4xl font-black text-lime-400 font-mono tracking-tighter">
+                  +{dailyReward.toLocaleString()}
+                </div>
+                <div className="text-zinc-500 text-sm mt-1 uppercase tracking-widest font-bold">Chips Added</div>
+              </div>
+
+              <div className="flex justify-between w-full gap-2 mb-6 text-xs text-zinc-500">
+                {[1,2,3,4,5,6,7].map((day) => (
+                  <div key={day} className={`flex flex-col items-center p-2 rounded-lg ${day <= loginStreak ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-950 border border-white/5'}`}>
+                    <span className="font-bold">D{day}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setShowDailyModal(false)}
+                className="w-full py-4 rounded-xl text-zinc-950 font-black text-lg bg-gradient-to-r from-amber-400 to-amber-600 shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                CLAIM REWARD
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Quests Modal */}
+      <AnimatePresence>
+        {showChat.isOpen && (
+          <ChatModal 
+            isOpen={showChat.isOpen} 
+            onClose={() => setShowChat({...showChat, isOpen: false})} 
+            friendId={showChat.friendId}
+            chatName={showChat.chatName}
+            senderName={userProfile?.nickname || user?.email?.split('@')[0] || 'Friend'}
+            themeColor={themeColor}
+            themeGradient={themeGradient}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showQuestsModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950/80 backdrop-blur-md p-4"
+          >
+             <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              className="bg-zinc-900 border rounded-3xl p-8 max-w-2xl w-full flex flex-col max-h-[80vh] shadow-2xl relative overflow-hidden"
+              style={{ borderColor: `${themeColor}33` }}
+            >
+              <button onClick={() => setShowQuestsModal(false)} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300">
+                <X className="w-6 h-6" />
+              </button>
+              <h3 className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} mb-2 flex items-center gap-3`}>
+                <Target style={{ color: themeColor }} className="w-8 h-8"/> Daily Quests
+              </h3>
+              <p className="text-zinc-400 mb-6 text-sm">Complete these tasks to earn bonus Key Fragments and Chips.</p>
+
+              <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
+                {quests.length > 0 ? quests.map((q) => (
+                  <div key={q.id} className={`bg-zinc-950 border border-white/10 rounded-2xl p-4 flex items-center justify-between transition-opacity ${q.completed ? 'opacity-50 grayscale' : ''}`}>
+                     <div className="flex items-center gap-4">
+                       <div className={`w-12 h-12 rounded-xl border flex items-center justify-center ${q.rewardType === 'balance' ? 'bg-amber-500/10 border-amber-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
+                          {q.rewardType === 'balance' ? <Coins className="w-6 h-6 text-amber-500" /> : <Gamepad2 className="w-6 h-6 text-emerald-500" />}
+                       </div>
+                       <div>
+                         <div className="font-bold text-white text-lg">{q.title}</div>
+                         <div className="text-sm text-zinc-400">{q.desc}</div>
+                       </div>
+                     </div>
+                     <div className="text-right flex flex-col items-end gap-2">
+                       {q.completed ? (
+                         <div className="flex items-center gap-2">
+                           <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                           <div className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Completed</div>
+                         </div>
+                       ) : (
+                         <>
+                           <div className="flex items-center gap-2">
+                             <div className="text-xs font-mono text-zinc-500">{q.progress}/{q.target}</div>
+                             <div className="w-20 h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+                                <div className="h-full bg-emerald-500 transition-all" style={{ width: `${Math.min(100, Math.max(0, (q.progress / q.target) * 100))}%` }} />
+                             </div>
+                           </div>
+                           <span className={`text-xs font-bold px-2 py-1 rounded-md border ${q.rewardType === 'balance' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
+                             Reward: {q.rewardAmount} {q.rewardType === 'balance' ? 'Chips' : 'Key Frags'}
+                           </span>
+                         </>
+                       )}
+                     </div>
+                  </div>
+                )) : (
+                   <div className="text-center text-zinc-500 py-10 font-mono">No quests available today.</div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Settings Modal */}
+      <AnimatePresence>
+        {showSettingsModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-zinc-950 border border-white/10 rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                  <Settings className="text-zinc-400" /> Account Settings
+                </h2>
+                <button onClick={() => setShowSettingsModal(false)} className="text-zinc-500 hover:text-white">
+                  <X />
+                </button>
+              </div>
+
+              <div className="space-y-8">
+                {/* Profile Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                    <User className="w-3 h-3" /> Profile
+                  </h3>
+                  <div className="p-6 bg-zinc-900 rounded-2xl border border-white/5 space-y-4">
+                    <div>
+                      <label className="text-xs font-bold text-zinc-400 block mb-2 uppercase">Your Nickname</label>
+                      <div className="flex gap-2">
+                        <input 
+                          type="text"
+                          placeholder="Change nickname..."
+                          value={newNickname}
+                          onChange={(e) => setNewNickname(e.target.value)}
+                          className="flex-1 bg-zinc-950 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-zinc-200 outline-none focus:border-amber-500/50 transition-colors"
+                        />
+                        <button 
+                          onClick={() => handleUpdateNickname()} 
+                          className="bg-amber-500 hover:bg-amber-400 text-zinc-950 px-6 py-2 rounded-xl text-sm font-bold transition-all"
+                        >
+                          Save
+                        </button>
+                      </div>
+                      {rewardMessage && <p className="mt-2 text-xs font-bold text-amber-500">{rewardMessage}</p>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Social Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                    <Users className="w-3 h-3" /> Community & Friends
+                  </h3>
+                  
+                  <div className="flex gap-2 p-1 bg-zinc-900 rounded-xl border border-white/5">
+                    {(['friends', 'requests', 'search'] as const).map(tab => (
+                      <button
+                        key={tab}
+                        onClick={() => setSocialTab(tab)}
+                        className={`flex-1 py-1.5 text-[10px] font-bold uppercase rounded-lg transition-all ${socialTab === tab ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                      >
+                        {tab} {tab === 'requests' && friendRequests.length > 0 && `(${friendRequests.length})`}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="p-4 bg-zinc-900 rounded-2xl border border-white/5 min-h-[200px] flex flex-col">
+                    {socialTab === 'friends' && (
+                      <div className="space-y-2">
+                        {friends.length === 0 ? (
+                          <div className="text-center py-10 text-zinc-600 text-[11px] font-mono tracking-wider uppercase">Your friends list is empty.</div>
+                        ) : (
+                          friends.map(f => (
+                            <div key={f.uid} className="flex items-center justify-between p-3 bg-zinc-950/50 rounded-xl border border-white/5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center border border-white/10">
+                                  <User className="w-4 h-4 text-zinc-500" />
+                                </div>
+                                <div>
+                                  <div className="text-xs font-bold text-white">{f.nickname}</div>
+                                  <div className="text-[10px] text-zinc-500 font-mono">{f.email?.slice(0, 15)}...</div>
+                                </div>
+                              </div>
+                              <button 
+                                onClick={() => {
+                                  setShowChat({ isOpen: true, friendId: f.uid, chatName: f.nickname });
+                                  setShowSettingsModal(false);
+                                }}
+                                className="p-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 rounded-lg transition-all"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+
+                    {socialTab === 'requests' && (
+                      <div className="space-y-2">
+                        {friendRequests.length === 0 ? (
+                          <div className="text-center py-10 text-zinc-600 text-[11px] font-mono tracking-wider uppercase">No pending requests.</div>
+                        ) : (
+                          friendRequests.map(req => (
+                            <div key={req.id} className="flex items-center justify-between p-3 bg-zinc-950/50 rounded-xl border border-white/5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center border border-white/10">
+                                  <UserPlus className="w-4 h-4 text-emerald-500" />
+                                </div>
+                                <div>
+                                  <div className="text-xs font-bold text-white">{req.fromName}</div>
+                                  <div className="text-[10px] text-zinc-500 font-mono">Wants to be friends</div>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <button onClick={() => acceptFriendRequest(req)} className="p-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-lg transition-all">
+                                  <Check className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => declineFriendRequest(req.id)} className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg transition-all">
+                                  <Ban className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+
+                    {socialTab === 'search' && (
+                      <div className="space-y-4">
+                        <div className="flex gap-2">
+                          <input 
+                            type="text"
+                            placeholder="Search by nickname..."
+                            value={socialSearchQuery}
+                            onChange={(e) => setSocialSearchQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && searchUsersSocial()}
+                            className="flex-1 bg-zinc-950 border border-white/5 rounded-xl px-4 py-2 text-xs text-zinc-200 outline-none focus:border-amber-500/50 transition-colors"
+                          />
+                          <button 
+                            onClick={searchUsersSocial}
+                            className="bg-zinc-800 hover:bg-zinc-700 p-2 rounded-xl border border-white/5 text-zinc-400 transition-all"
+                          >
+                            <Search className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+                          {isSearchingUsers ? (
+                            <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 text-amber-500 animate-spin" /></div>
+                          ) : userSearchResults.length === 0 && socialSearchQuery.trim() !== '' ? (
+                            <div className="text-center py-6 text-zinc-600 text-[10px] font-mono uppercase">No users found.</div>
+                          ) : (
+                            userSearchResults.map(u => (
+                              <div key={u.uid} className="flex items-center justify-between p-3 bg-zinc-950/50 rounded-xl border border-white/5">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center border border-white/10">
+                                    <User className="w-4 h-4 text-zinc-500" />
+                                  </div>
+                                  <div className="text-xs font-bold text-white">{u.nickname || u.email?.split('@')[0]}</div>
+                                </div>
+                                <button 
+                                  onClick={() => sendFriendRequest(u)}
+                                  className="p-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-lg transition-all flex items-center gap-1 text-[10px] font-bold uppercase"
+                                >
+                                  <UserPlus className="w-3.5 h-3.5" /> Add
+                                </button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </motion.div>
           </motion.div>

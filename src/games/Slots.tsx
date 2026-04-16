@@ -14,6 +14,8 @@ const getRarity = (symbol: string): 'COMMON' | 'EPIC' | 'LEGENDARY' | 'GODLY' =>
 };
 
 interface SlotsProps {
+  gameId: string;
+  title: string;
   balance: number;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
@@ -25,20 +27,43 @@ interface SlotsProps {
   adsWatchedWithoutWin: number;
   resetPityTimer: () => void;
   globalMultiplier?: number;
+  riggedness: number;
 }
 
-export default function Slots({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, onWatchAd, adsWatchedToday, adsWatchedWithoutWin, resetPityTimer, globalMultiplier = 1 }: SlotsProps) {
-  const [reels, setReels] = useState(['7️⃣', '7️⃣', '7️⃣']);
+const GAME_CONFIGS: Record<string, { symbols: string[], multipliers: Record<string, number>, minBet: number }> = {
+  'custom-101': {
+    symbols: ['🍒', '🍋', '🍇', '🔔', '💎', '7️⃣'],
+    multipliers: { '🍒': 2, '🍋': 3, '🍇': 5, '🔔': 10, '💎': 25, '7️⃣': 50 },
+    minBet: 10
+  },
+  'custom-202': {
+    symbols: ['⚡', '🔥', '🔱', '⚖️', '👑', '🌌'],
+    multipliers: { '⚡': 5, '🔥': 10, '🔱': 20, '⚖️': 50, '👑': 100, '🌌': 250 },
+    minBet: 500
+  },
+  'custom-108': {
+    symbols: ['💾', '💿', '📟', '🔋', '📡', '🛰️'],
+    multipliers: { '💾': 3, '💿': 5, '📟': 8, '🔋': 15, '📡': 35, '🛰️': 100 },
+    minBet: 50
+  }
+};
+
+export default function Slots({ gameId, title, balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, onWatchAd, adsWatchedToday, adsWatchedWithoutWin, resetPityTimer, globalMultiplier = 1, riggedness = 1.0 }: SlotsProps) {
+  const config = GAME_CONFIGS[gameId] || GAME_CONFIGS['custom-101'];
+  const SYMBOLS = config.symbols;
+  const MULTIPLIERS = config.multipliers;
+
+  const [reels, setReels] = useState([SYMBOLS[0], SYMBOLS[0], SYMBOLS[0]]);
   const [spinningReels, setSpinningReels] = useState([false, false, false]);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [bet, setBet] = useState(100);
+  const [bet, setBet] = useState(config.minBet);
   const [winMsg, setWinMsg] = useState('');
   const [winAmount, setWinAmount] = useState(0);
   const [isNearMiss, setIsNearMiss] = useState(false);
   const [showAdOverlay, setShowAdOverlay] = useState(false);
   const [isGhostJackpot, setIsGhostJackpot] = useState(false);
 
-  // Auto-clear win summary within 800ms for "Time-on-Device" optimization
+  // Auto-clear win summary within 800ms
   useEffect(() => {
     if (winMsg) {
       const timer = setTimeout(() => {
@@ -51,10 +76,11 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
 
   const triggerVictoryFeedback = useCallback((amount: number, symbol: string) => {
     setWinAmount(amount);
-    const rarity = getRarity(symbol);
-    setWinMsg(rarity === 'COMMON' ? 'WIN!' : rarity === 'EPIC' ? 'EPIC WIN!' : rarity === 'LEGENDARY' ? 'LEGENDARY!' : 'GODLY JACKPOT!');
-    playSlotsWin(rarity);
-  }, []);
+    const index = SYMBOLS.indexOf(symbol);
+    const status = index > 4 ? 'GODLY' : index > 3 ? 'LEGENDARY' : index > 1 ? 'EPIC' : 'COMMON';
+    setWinMsg(status === 'COMMON' ? 'WIN!' : status === 'EPIC' ? 'EPIC WIN!' : status === 'LEGENDARY' ? 'LEGENDARY!' : 'GODLY JACKPOT!');
+    playSlotsWin(status as any);
+  }, [SYMBOLS]);
 
   const finalizeSpin = useCallback((forcedResult?: string[], ghostJackpot?: boolean) => {
     const finalReels = forcedResult || [
@@ -63,12 +89,12 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
       SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
     ];
     
-    // Ghost Jackpot Logic: Show jackpot, then slip
+    // Ghost Jackpot Logic
     if (ghostJackpot) {
-      setReels([finalReels[0], finalReels[1], finalReels[0]]); // Show full jackpot
+      setReels([finalReels[0], finalReels[1], finalReels[0]]);
       setTimeout(() => {
-        setReels(finalReels); // Slip to the loss
-        playLose(); // Play a harsh lose sound on the slip
+        setReels(finalReels);
+        playLose();
       }, 400);
     }
 
@@ -89,17 +115,17 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
           playCoin();
           setTimeout(playCoin, 200);
         }
-        resetPityTimer(); // Reset pity timer on any win
+        resetPityTimer();
       } else {
         if (!ghostJackpot) playLose();
       }
-      onRecordBet(bet, win, 'Neon Slots', 'chips');
+      onRecordBet(bet, win, title, 'chips');
       setIsSpinning(false);
       setIsNearMiss(false);
       setIsGhostJackpot(false);
       setSpinningReels([false, false, false]);
-    }, ghostJackpot ? 1600 : 1200); // Extra delay if ghost jackpot so they see the slip
-  }, [bet, setBalance, triggerVictoryFeedback, onRecordBet, resetPityTimer]);
+    }, ghostJackpot ? 1600 : 1200);
+  }, [bet, setBalance, triggerVictoryFeedback, onRecordBet, resetPityTimer, SYMBOLS, MULTIPLIERS, globalMultiplier, title]);
 
   const spin = () => {
     if (balance < bet || isSpinning) {
@@ -113,30 +139,26 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
     setWinAmount(0);
     playCoin();
 
-    // Mathematical Drain System (Dynamic RTP)
-    const isHighBalance = balance > 5000;
-    
-    // Weighted RNG Pools
+    const isHighBalance = balance > 10000;
     const rand = Math.random();
     let forcedResult: string[] | undefined;
     let ghostJackpot = false;
     let nearMiss = false;
 
-    // Pool 1: 70% Total Loss (or 80% if high balance)
-    const lossThreshold = isHighBalance ? 0.80 : 0.70;
-    // Pool 2: 20% False Win (pays back 50-80% of bet)
-    const falseWinThreshold = lossThreshold + 0.20;
-    // Pool 3: 10% Hype (2x or 3x) - reduced if high balance
+    // Adjusted RTP for Godly Slots
+    const isGodly = gameId === 'custom-202';
+    // Adjusted loss threshold based on riggedness
+    const baseLossThreshold = isGodly ? (isHighBalance ? 0.85 : 0.75) : (isHighBalance ? 0.80 : 0.70);
+    const lossThreshold = Math.min(0.99, baseLossThreshold * riggedness);
+    const falseWinThreshold = Math.min(0.999, lossThreshold + 0.15);
     
     if (rand < lossThreshold) {
-      // TOTAL LOSS
       const s1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
       const otherSymbols = SYMBOLS.filter(s => s !== s1);
       const s2 = otherSymbols[Math.floor(Math.random() * otherSymbols.length)];
       const s3 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
       
-      // 50% chance of a "Near Miss" in the loss pool to keep them hooked
-      if (Math.random() < 0.5) {
+      if (Math.random() < 0.6) {
         forcedResult = [s1, s1, s2];
         nearMiss = true;
         setIsNearMiss(true);
@@ -144,46 +166,37 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
         forcedResult = [s1, s2, s3];
       }
     } else if (rand < falseWinThreshold) {
-      // FALSE WIN (Disguised Loss)
-      // In this game, 2 matching symbols pay 2x, which is a win.
-      // To make it a "False Win" (50-80% return), we need to adjust the payout logic or just use a near miss that looks like a win.
-      // Actually, let's just force a "Near Miss" that looks like a win but pays nothing, or a small win.
-      const s1 = SYMBOLS[Math.floor(Math.random() * 3)]; // Use lower value symbols
+      const s1 = SYMBOLS[Math.floor(Math.random() * 3)];
       const otherSymbols = SYMBOLS.filter(s => s !== s1);
       const s2 = otherSymbols[Math.floor(Math.random() * otherSymbols.length)];
-      
-      // The "Sandwich" Near Miss
       forcedResult = [s1, s2, s1];
       nearMiss = true;
       setIsNearMiss(true);
     } else {
-      // HYPE WIN (2x or 3x)
-      const s1 = SYMBOLS[Math.floor(Math.random() * 4)]; // Avoid the top 2 symbols usually
+      // Jackpot Terminal has a higher chance for Satellite wins
+      const upperLimit = gameId === 'custom-108' ? SYMBOLS.length : 4;
+      const s1 = SYMBOLS[Math.floor(Math.random() * upperLimit)];
       forcedResult = [s1, s1, s1];
     }
 
-    // Pity Timer Override
     if (adsWatchedWithoutWin >= 5) {
       const s1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
       forcedResult = [s1, s1, s1];
     }
 
-    // Ghost Jackpot Logic (Visual Distraction)
-    if (nearMiss && Math.random() < 0.3) {
+    if (nearMiss && Math.random() < 0.4) {
       ghostJackpot = true;
       setIsGhostJackpot(true);
     }
 
-    // Staggered Reel Stop Logic
     let spins = 0;
-    const stopTimes = [20, 40, 70]; // Reel 1 stops at 2s, Reel 2 at 4s, Reel 3 at 7s
+    const stopTimes = [20, 40, 70];
     
     const spinInterval = setInterval(() => {
       spins++;
       
       setReels(prev => {
         const next = [...prev];
-        // Only update reels that haven't "stopped" yet
         if (spins <= stopTimes[0]) next[0] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
         if (spins <= stopTimes[1]) next[1] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
         if (spins <= stopTimes[2]) next[2] = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
@@ -192,7 +205,6 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
       
       playSpin();
 
-      // Apply forced results as reels stop
       if (spins === stopTimes[0]) {
         setSpinningReels(prev => [false, prev[1], prev[2]]);
         if (forcedResult) setReels(prev => [forcedResult![0], prev[1], prev[2]]);
@@ -219,7 +231,6 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
       exit={{ opacity: 0, scale: 0.95 }}
       className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-4xl mx-auto relative"
     >
-      {/* UI Dimming Effect when out of chips */}
       {isOutOfChips && (
         <div className="absolute inset-0 bg-black/60 z-40 pointer-events-none transition-opacity duration-1000" />
       )}
@@ -232,13 +243,11 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
       </div>
 
       <div className={`bg-zinc-900 border-2 rounded-3xl p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative w-full max-w-2xl overflow-hidden ${isOutOfChips ? 'z-50' : 'z-10'}`} style={{ borderColor: `${themeColor}4d` }}>
-        {/* Trance Palette: Particle Background Effect */}
         <div className="absolute inset-0 pointer-events-none opacity-20">
           <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-yellow-400 to-transparent animate-pulse" />
           <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-yellow-400 to-transparent animate-pulse delay-700" />
         </div>
 
-        {/* Win Overlay */}
         <AnimatePresence>
           {winMsg && (
             <motion.div
@@ -264,7 +273,6 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
           )}
         </AnimatePresence>
 
-        {/* Out of Credits Overlay */}
         <AnimatePresence>
           {showAdOverlay && (
             <motion.div
@@ -305,14 +313,13 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
 
         <div className="text-center mb-8">
           <h1 className={`text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b ${themeGradient} tracking-widest uppercase drop-shadow-lg`}>
-            Neon Slots
+            {title}
           </h1>
         </div>
 
-        {/* Reels */}
         <div className="flex gap-4 justify-center mb-10 bg-zinc-950 p-6 rounded-2xl border-y-4 shadow-inner relative" style={{ borderColor: `${themeColor}80` }}>
           {reels.map((symbol, i) => (
-            <div key={i} className="w-24 h-32 sm:w-32 sm:h-32 bg-zinc-900 rounded-xl border border-white/5 flex items-center justify-center text-6xl sm:text-7xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] relative overflow-hidden">
+            <div key={i} className="w-24 h-32 sm:w-32 sm:h-32 bg-zinc-900 rounded-xl border border-white/5 flex items-center justify-center text-4xl sm:text-7xl shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] relative overflow-hidden">
               <motion.div
                 animate={spinningReels[i] ? { y: [ -100, 100 ] } : { y: 0 }}
                 transition={spinningReels[i] ? { repeat: Infinity, duration: 0.1, ease: "linear" } : { type: "spring", bounce: isGhostJackpot && i === 2 ? 0.8 : 0.5 }}
@@ -321,7 +328,6 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
               >
                 {symbol}
               </motion.div>
-              {/* Visual Tension: Highlight for final reel during near-miss */}
               {isNearMiss && (i === 2 || (reels[0] === reels[2] && i === 1)) && spinningReels[i] && (
                 <div className="absolute inset-0 bg-yellow-400/10 animate-pulse border-2 border-yellow-400/30 rounded-xl" />
               )}
@@ -329,7 +335,6 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
           ))}
         </div>
 
-        {/* Controls */}
         <div className="flex flex-col items-center bg-zinc-950/50 p-6 rounded-2xl border border-white/5 gap-6">
           <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex flex-col items-center sm:items-start">
@@ -337,7 +342,7 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
               <div className="flex items-center gap-2">
                 <button 
                   onMouseEnter={playHover}
-                  onClick={() => { playClick(); setBet(b => Math.max(10, b - 10)); }} 
+                  onClick={() => { playClick(); setBet(b => Math.max(config.minBet, b - 10)); }} 
                   disabled={isSpinning} 
                   className="w-10 h-10 rounded-lg bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 disabled:opacity-50 text-xl font-bold"
                 >
@@ -365,30 +370,9 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
             </div>
 
             <div className="flex gap-2">
-              <button 
-                onMouseEnter={playHover}
-                onClick={() => { playClick(); setBet(b => b + 100); }} 
-                disabled={isSpinning}
-                className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors"
-              >
-                +100
-              </button>
-              <button 
-                onMouseEnter={playHover}
-                onClick={() => { playClick(); setBet(b => b + 1000); }} 
-                disabled={isSpinning}
-                className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors"
-              >
-                +1k
-              </button>
-              <button 
-                onMouseEnter={playHover}
-                onClick={() => { playClick(); setBet(balance); }} 
-                disabled={isSpinning}
-                className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors"
-              >
-                MAX
-              </button>
+              <button onClick={() => { playClick(); setBet(b => b + 100); }} disabled={isSpinning} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+100</button>
+              <button onClick={() => { playClick(); setBet(b => b + 1000); }} disabled={isSpinning} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">+1k</button>
+              <button onClick={() => { playClick(); setBet(balance); }} disabled={isSpinning} className="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs font-bold transition-colors">MAX</button>
             </div>
           </div>
 
@@ -401,7 +385,6 @@ export default function Slots({ balance, setBalance, onExit, themeGradient, them
             className={`w-full py-5 rounded-xl bg-gradient-to-b ${themeGradient} text-white font-black text-2xl tracking-wider shadow-lg disabled:opacity-50 disabled:grayscale transition-all relative overflow-hidden`}
             style={{ boxShadow: !isSpinning && balance >= bet ? `0 0 20px ${themeColor}66` : 'none' }}
           >
-            {/* Trance Palette: Glowing path to button */}
             {!isSpinning && balance >= bet && (
               <motion.div 
                 initial={{ x: '-100%' }}

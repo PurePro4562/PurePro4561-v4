@@ -4,6 +4,8 @@ import { ArrowLeft, Coins, Sparkles, Zap, Dices } from 'lucide-react';
 import { playCoin, playClick, playHover, playLose } from '../audio';
 
 interface CrapsProps {
+  gameId: string;
+  title: string;
   balance: number;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
@@ -13,7 +15,7 @@ interface CrapsProps {
   globalMultiplier?: number;
 }
 
-export default function Craps({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: CrapsProps) {
+export default function Craps({ gameId, title, balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: CrapsProps) {
   const [bet, setBet] = useState(100);
   const [dice, setDice] = useState<[number, number]>([1, 1]);
   const [isRolling, setIsRolling] = useState(false);
@@ -44,12 +46,12 @@ export default function Craps({ balance, setBalance, onExit, themeGradient, them
           setLastWin(winnings);
           setMessage(`Natural! You won ${winnings} chips!`);
           playCoin();
-          onRecordBet(bet, winnings, 'Crypto Craps', 'chips');
+          onRecordBet(bet, winnings, title, 'chips');
         } else if (total === 2 || total === 3 || total === 12) {
           setLastWin(0);
           setMessage(`Craps! You lost.`);
           playLose();
-          onRecordBet(bet, 0, 'Crypto Craps', 'chips');
+          onRecordBet(bet, 0, title, 'chips');
         } else {
           setPoint(total);
           setMessage(`Point is ${total}. Roll again to hit the point!`);
@@ -63,13 +65,13 @@ export default function Craps({ balance, setBalance, onExit, themeGradient, them
           setPoint(null);
           setMessage(`Hit the point! You won ${winnings} chips!`);
           playCoin();
-          onRecordBet(bet, winnings, 'Crypto Craps', 'chips');
+          onRecordBet(bet, winnings, title, 'chips');
         } else if (total === 7) {
           setLastWin(0);
           setPoint(null);
           setMessage(`Seven out! You lost.`);
           playLose();
-          onRecordBet(bet, 0, 'Crypto Craps', 'chips');
+          onRecordBet(bet, 0, title, 'chips');
         } else {
           setMessage(`Rolled ${total}. Still looking for ${point}...`);
         }

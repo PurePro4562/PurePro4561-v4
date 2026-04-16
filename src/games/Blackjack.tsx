@@ -9,6 +9,8 @@ const VALUES = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 interface Card { suit: string; value: string; hidden?: boolean; }
 
 interface BlackjackProps {
+  gameId: string;
+  title: string;
   balance: number;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
@@ -46,7 +48,7 @@ const CARD_BACKS = [
   { id: 'void', name: 'Void Black', color: 'bg-zinc-950', pattern: 'repeating-linear-gradient(45deg, #ffffff05, #ffffff05 10px, transparent 10px, transparent 20px)' },
 ];
 
-export default function Blackjack({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: BlackjackProps) {
+export default function Blackjack({ gameId, title, balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: BlackjackProps) {
   const [deck, setDeck] = useState<Card[]>([]);
   const [playerHand, setPlayerHand] = useState<Card[]>([]);
   const [dealerHand, setDealerHand] = useState<Card[]>([]);
@@ -188,7 +190,7 @@ export default function Blackjack({ balance, setBalance, onExit, themeGradient, 
     } else {
       playBlackjackAction('lose');
     }
-    onRecordBet(bet, winnings, 'High Roller Blackjack', 'chips');
+    onRecordBet(bet, winnings, title, 'chips');
   };
 
   const renderCard = (card: Card, index: number) => {

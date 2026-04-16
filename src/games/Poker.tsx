@@ -4,6 +4,8 @@ import { ArrowLeft, Coins, Sparkles, Zap, Club, Spade, Heart, Diamond } from 'lu
 import { playCoin, playClick, playHover, playLose } from '../audio';
 
 interface PokerProps {
+  gameId: string;
+  title: string;
   balance: number;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
@@ -11,7 +13,6 @@ interface PokerProps {
   themeColor: string;
   onRecordBet: (amount: number, winnings: number, game: string, type: 'chips' | 'tokens') => void;
   globalMultiplier?: number;
-  isHighStakes?: boolean;
 }
 
 type Suit = 'spades' | 'hearts' | 'diamonds' | 'clubs';
@@ -26,7 +27,7 @@ interface Card {
 const SUITS: Suit[] = ['spades', 'hearts', 'diamonds', 'clubs'];
 const VALUES: Value[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
-const PAYTABLE = [
+const STANDARD_PAYTABLE = [
   { name: 'Royal Flush', multiplier: 800 },
   { name: 'Straight Flush', multiplier: 50 },
   { name: 'Four of a Kind', multiplier: 25 },
@@ -38,22 +39,39 @@ const PAYTABLE = [
   { name: 'Jacks or Better', multiplier: 1 },
 ];
 
-export default function Poker({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1, isHighStakes = false }: PokerProps) {
-  const [bet, setBet] = useState(100);
+const HIGH_STAKES_PAYTABLE = [
+  { name: 'Royal Flush', multiplier: 2000 },
+  { name: 'Straight Flush', multiplier: 100 },
+  { name: 'Four of a Kind', multiplier: 40 },
+  { name: 'Full House', multiplier: 12 },
+  { name: 'Flush', multiplier: 8 },
+  { name: 'Straight', multiplier: 5 },
+  { name: 'Three of a Kind', multiplier: 4 },
+  { name: 'Two Pair', multiplier: 2 },
+  { name: 'Jacks or Better', multiplier: 1 },
+];
+
+const createDeck = () => {
+  const deck: Card[] = [];
+  SUITS.forEach(suit => {
+    VALUES.forEach(value => {
+      deck.push({ suit, value, held: false });
+    });
+  });
+  return deck.sort(() => Math.random() - 0.5);
+};
+
+export default function Poker({ gameId, title, balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: PokerProps) {
+  const isHighStakes = gameId === 'custom-204';
+  const paytable = isHighStakes ? HIGH_STAKES_PAYTABLE : STANDARD_PAYTABLE;
+  const minBet = isHighStakes ? 1000 : 100;
+
+  const [bet, setBet] = useState(minBet);
   const [hand, setHand] = useState<Card[]>([]);
   const [gameState, setGameState] = useState<'bet' | 'deal' | 'result'>('bet');
   const [resultMessage, setResultMessage] = useState<string | null>(null);
   const [lastWin, setLastWin] = useState<number | null>(null);
-
-  const createDeck = () => {
-    const deck: Card[] = [];
-    SUITS.forEach(suit => {
-      VALUES.forEach(value => {
-        deck.push({ suit, value, held: false });
-      });
-    });
-    return deck.sort(() => Math.random() - 0.5);
-  };
+  const [winStreak, setWinStreak] = useState(0);
 
   const evaluateHand = (hand: Card[]) => {
     const values = hand.map(c => VALUES.indexOf(c.value) + 2).sort((a, b) => a - b);
@@ -61,23 +79,23 @@ export default function Poker({ balance, setBalance, onExit, themeGradient, them
     
     const isFlush = new Set(suits).size === 1;
     const isStraight = values.every((v, i) => i === 0 || v === values[i - 1] + 1) || 
-                       (values[0] === 2 && values[1] === 3 && values[2] === 4 && values[3] === 5 && values[4] === 14); // A-5 straight
+                       (values[0] === 2 && values[1] === 3 && values[2] === 4 && values[3] === 5 && values[4] === 14);
 
     const counts: { [key: number]: number } = {};
     values.forEach(v => counts[v] = (counts[v] || 0) + 1);
     const countValues = Object.values(counts).sort((a, b) => b - a);
 
-    if (isFlush && isStraight && values[0] === 10) return PAYTABLE[0];
-    if (isFlush && isStraight) return PAYTABLE[1];
-    if (countValues[0] === 4) return PAYTABLE[2];
-    if (countValues[0] === 3 && countValues[1] === 2) return PAYTABLE[3];
-    if (isFlush) return PAYTABLE[4];
-    if (isStraight) return PAYTABLE[5];
-    if (countValues[0] === 3) return PAYTABLE[6];
-    if (countValues[0] === 2 && countValues[1] === 2) return PAYTABLE[7];
+    if (isFlush && isStraight && values[0] === 10) return paytable[0];
+    if (isFlush && isStraight) return paytable[1];
+    if (countValues[0] === 4) return paytable[2];
+    if (countValues[0] === 3 && countValues[1] === 2) return paytable[3];
+    if (isFlush) return paytable[4];
+    if (isStraight) return paytable[5];
+    if (countValues[0] === 3) return paytable[6];
+    if (countValues[0] === 2 && countValues[1] === 2) return paytable[7];
     
     const jacksOrBetter = Object.entries(counts).some(([val, count]) => parseInt(val) >= 11 && count === 2);
-    if (jacksOrBetter) return PAYTABLE[8];
+    if (jacksOrBetter) return paytable[8];
 
     return null;
   };
@@ -104,17 +122,21 @@ export default function Poker({ balance, setBalance, onExit, themeGradient, them
 
     const result = evaluateHand(newHand);
     if (result) {
-      const winnings = Math.floor(bet * result.multiplier * globalMultiplier);
+      // High Stakes gets a streak bonus: 5% extra per streak (max 5)
+      const streakBonus = isHighStakes ? (1 + (Math.min(winStreak, 5) * 0.05)) : 1;
+      const winnings = Math.floor(bet * result.multiplier * globalMultiplier * streakBonus);
       setBalance(prev => prev + winnings);
       setLastWin(winnings);
       setResultMessage(result.name);
+      setWinStreak(prev => prev + 1);
       playCoin();
-      onRecordBet(bet, winnings, isHighStakes ? 'High Stakes Poker' : 'Cyber Poker', 'chips');
+      onRecordBet(bet, winnings, title, 'chips');
     } else {
       setLastWin(0);
       setResultMessage('No Hand');
+      setWinStreak(0);
       playLose();
-      onRecordBet(bet, 0, isHighStakes ? 'High Stakes Poker' : 'Cyber Poker', 'chips');
+      onRecordBet(bet, 0, title, 'chips');
     }
     setTimeout(() => setLastWin(null), 3000);
   };
@@ -163,7 +185,7 @@ export default function Poker({ balance, setBalance, onExit, themeGradient, them
           <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 hidden lg:block">
             <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Paytable</h3>
             <div className="space-y-2">
-              {PAYTABLE.map((p, i) => (
+              {paytable.map((p, i) => (
                 <div key={i} className={`flex justify-between text-xs font-mono p-2 rounded-lg ${resultMessage === p.name ? 'bg-amber-500/20 text-amber-500 font-bold' : 'text-zinc-400'}`}>
                   <span>{p.name}</span>
                   <span>{p.multiplier}x</span>

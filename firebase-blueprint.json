@@ -7,6 +7,7 @@
       "properties": {
         "uid": { "type": "string", "description": "Unique user ID" },
         "email": { "type": "string", "format": "email", "description": "User email" },
+        "nickname": { "type": "string", "description": "Unique user nickname" },
         "role": { "type": "string", "enum": ["user", "admin"], "description": "User role" },
         "balance": { "type": "number", "description": "Casino Chips" },
         "tokens": { "type": "number", "description": "Arcade Tokens" },
@@ -21,7 +22,8 @@
         "adsWatchedWithoutWin": { "type": "number", "description": "Pity counter for slots" },
         "keyFragments": { "type": "number", "description": "Fragments for Pro Mode" },
         "isProMode": { "type": "boolean", "description": "Whether Pro Mode is unlocked" },
-        "adsEnabled": { "type": "boolean", "description": "Whether ads are enabled for the user" }
+        "adsEnabled": { "type": "boolean", "description": "Whether ads are enabled for the user" },
+        "luckFactor": { "type": "number", "description": "Individual win probability multiplier (default 1.0)" }
       },
       "required": ["uid", "email", "role", "balance", "tokens"]
     },
@@ -35,9 +37,39 @@
         "amount": { "type": "number", "description": "Bet amount" },
         "winnings": { "type": "number", "description": "Amount won (negative for loss)" },
         "game": { "type": "string", "description": "Name of the game" },
+        "gameId": { "type": "string", "description": "ID of the game variant" },
         "type": { "type": "string", "enum": ["chips", "tokens"], "description": "Currency used" }
       },
       "required": ["uid", "date", "amount", "winnings", "game", "type"]
+    },
+    "Nickname": {
+      "title": "Nickname",
+      "description": "Registry for unique nicknames",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "UID of the owner" }
+      },
+      "required": ["uid"]
+    },
+    "GameSetting": {
+      "title": "GameSetting",
+      "description": "Per-game settings for odds and logic",
+      "type": "object",
+      "properties": {
+        "riggedness": { "type": "number", "description": "House edge multiplier (1.0 = standard, higher = harder)" },
+        "minBet": { "type": "number" },
+        "maxBet": { "type": "number" }
+      }
+    },
+    "GameStat": {
+      "title": "GameStat",
+      "description": "Aggregated statistics for a game",
+      "type": "object",
+      "properties": {
+        "totalBets": { "type": "number" },
+        "totalWins": { "type": "number" },
+        "netProfit": { "type": "number" }
+      }
     }
   },
   "firestore": {
@@ -45,9 +77,35 @@
       "schema": "User",
       "description": "User profile data"
     },
+    "/nicknames/{nickname}": {
+      "schema": "Nickname",
+      "description": "Registry to ensure nickname uniqueness"
+    },
     "/bets/{betId}": {
       "schema": "Bet",
       "description": "Bet history records"
+    },
+    "/game_settings/{gameId}": {
+      "schema": "GameSetting",
+      "description": "Dynamic game configuration"
+    },
+    "/game_stats/{gameId}": {
+      "schema": "GameStat",
+      "description": "Game performance analytics"
+    },
+    "/promo_codes/{codeId}": {
+      "schema": {
+        "title": "PromoCode",
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "rewardType": { "type": "string" },
+          "rewardAmount": { "type": "number" },
+          "active": { "type": "boolean" },
+          "uses": { "type": "number" }
+        }
+      },
+      "description": "Promotional codes"
     },
     "/system/config": {
       "schema": {
@@ -60,6 +118,59 @@
         }
       },
       "description": "Global system configuration"
+    },
+    "/users/{userId}/friends/{friendId}": {
+        "schema": "Friendship",
+        "description": "Friend list"
+    },
+    "/conversations/{convId}/messages/{msgId}": {
+        "schema": "Message",
+        "description": "Chat messages"
+    },
+    "/friend_requests/{requestId}": {
+        "schema": {
+            "title": "FriendRequest",
+            "type": "object",
+            "properties": {
+                "fromUid": { "type": "string" },
+                "fromName": { "type": "string" },
+                "fromEmail": { "type": "string" },
+                "toUid": { "type": "string" },
+                "toEmail": { "type": "string" },
+                "status": { "type": "string", "enum": ["pending", "accepted", "declined"] },
+                "timestamp": { "type": "number" }
+            }
+        },
+        "description": "Friend requests"
+    },
+    "/profiles/{userId}": {
+        "schema": {
+            "title": "PublicProfile",
+            "type": "object",
+            "properties": {
+                "uid": { "type": "string" },
+                "nickname": { "type": "string" },
+                "nicknameLower": { "type": "string" },
+                "timestamp": { "type": "number" }
+            }
+        },
+        "description": "Public user data for search"
+    },
+    "/notifications/{noticeId}": {
+        "schema": {
+            "title": "Notification",
+            "type": "object",
+            "properties": {
+                "toUid": { "type": "string" },
+                "fromUid": { "type": "string" },
+                "fromName": { "type": "string" },
+                "type": { "type": "string" },
+                "text": { "type": "string" },
+                "read": { "type": "boolean" },
+                "timestamp": { "type": "number" }
+            }
+        },
+        "description": "User notifications"
     }
   }
 }

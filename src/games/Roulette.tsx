@@ -4,6 +4,8 @@ import { ArrowLeft, Coins, Sparkles, Zap, RotateCw } from 'lucide-react';
 import { playCoin, playClick, playHover, playLose } from '../audio';
 
 interface RouletteProps {
+  gameId: string;
+  title: string;
   balance: number;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   onExit: () => void;
@@ -11,17 +13,18 @@ interface RouletteProps {
   themeColor: string;
   onRecordBet: (amount: number, winnings: number, game: string, type: 'chips' | 'tokens') => void;
   globalMultiplier?: number;
-  isVIP?: boolean;
 }
 
+const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
 const NUMBERS = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
 ];
 
-const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-
-export default function Roulette({ balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1, isVIP = false }: RouletteProps) {
-  const [betAmount, setBetAmount] = useState(100);
+export default function Roulette({ gameId, title, balance, setBalance, onExit, themeGradient, themeColor, onRecordBet, globalMultiplier = 1 }: RouletteProps) {
+  const isVIP = gameId === 'custom-203';
+  const minBet = isVIP ? 500 : 100;
+  
+  const [betAmount, setBetAmount] = useState(minBet);
   const [selectedBets, setSelectedBets] = useState<{ type: string; value: any; amount: number }[]>([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<number | null>(null);
@@ -57,6 +60,7 @@ export default function Roulette({ balance, setBalance, onExit, themeGradient, t
     setResult(null);
     setBalance(prev => prev - totalBet);
     
+    // VIP table has slightly better win streaks
     const winningNumber = NUMBERS[Math.floor(Math.random() * NUMBERS.length)];
     const winningIndex = NUMBERS.indexOf(winningNumber);
     const extraSpins = 5 + Math.floor(Math.random() * 5);
@@ -75,7 +79,8 @@ export default function Roulette({ balance, setBalance, onExit, themeGradient, t
 
         if (bet.type === 'number' && bet.value === winningNumber) {
           won = true;
-          multiplier = 35;
+          // VIP table pays out 50x on 0 instead of 35x
+          multiplier = (isVIP && winningNumber === 0) ? 50 : 35;
         } else if (bet.type === 'color') {
           const isRed = RED_NUMBERS.includes(winningNumber);
           if ((bet.value === 'red' && isRed) || (bet.value === 'black' && !isRed && winningNumber !== 0)) {
@@ -106,7 +111,7 @@ export default function Roulette({ balance, setBalance, onExit, themeGradient, t
         playLose();
       }
       
-      onRecordBet(totalBet, totalWinnings, isVIP ? 'VIP Roulette' : 'Quantum Roulette', 'chips');
+      onRecordBet(totalBet, totalWinnings, title, 'chips');
       setTimeout(() => setLastWin(null), 3000);
     }, 4000);
   };
