@@ -145,12 +145,12 @@ export default function Slots({ gameId, title, balance, setBalance, onExit, them
     let ghostJackpot = false;
     let nearMiss = false;
 
-    // Adjusted RTP for Godly Slots
+    // Riggedness: Make it really hard to win
     const isGodly = gameId === 'custom-202';
-    // Adjusted loss threshold based on riggedness
-    const baseLossThreshold = isGodly ? (isHighBalance ? 0.85 : 0.75) : (isHighBalance ? 0.80 : 0.70);
-    const lossThreshold = Math.min(0.99, baseLossThreshold * riggedness);
-    const falseWinThreshold = Math.min(0.999, lossThreshold + 0.15);
+    // Significantly increased loss threshold to make wins very rare
+    const baseLossThreshold = isGodly ? (isHighBalance ? 0.98 : 0.95) : (isHighBalance ? 0.95 : 0.90);
+    const lossThreshold = Math.min(0.995, baseLossThreshold * riggedness);
+    const falseWinThreshold = Math.min(0.999, lossThreshold + 0.05);
     
     if (rand < lossThreshold) {
       const s1 = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];

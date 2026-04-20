@@ -12,7 +12,13 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super-admin'] ||
+          (request.auth.token.email == "purepro4561@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super-admin' ||
           (request.auth.token.email == "purepro4561@gmail.com" && request.auth.token.email_verified == true));
     }
 
@@ -29,10 +35,13 @@ service cloud.firestore {
                       request.resource.data.uid == userId &&
                       request.resource.data.email is string &&
                       isValidEmail(request.resource.data.email) &&
-                      (request.resource.data.role == 'user' || isAdmin());
+                      (request.resource.data.role == 'user' || isSuperAdmin());
                       
-      allow update: if isAuthenticated() && 
-                      ((isOwner(userId) && request.resource.data.role == resource.data.role) || isAdmin());
+      allow update: if isAuthenticated() && (
+                      (isOwner(userId) && request.resource.data.role == resource.data.role && request.resource.data.kicked == resource.data.kicked) || 
+                      isSuperAdmin() ||
+                      (isAdmin() && request.resource.data.role == resource.data.role)
+                    );
 
       match /friends/{friendId} {
         allow read: if isOwner(userId) || isAdmin();

@@ -416,7 +416,7 @@ export default function App() {
               email: firebaseUser.email,
               nickname: firebaseUser.email?.split('@')[0] || 'User',
               nicknameLower: (firebaseUser.email?.split('@')[0] || 'user').toLowerCase(),
-              role: firebaseUser.email === 'purepro4561@gmail.com' ? 'admin' : 'user',
+              role: firebaseUser.email === 'purepro4561@gmail.com' ? 'super-admin' : 'user',
               username: firebaseUser.email?.split('@')[0] || 'User',
               balance: 1000,
               tokens: 250,
@@ -556,6 +556,16 @@ export default function App() {
       const unsubscribe = onSnapshot(doc(db, 'users', user.uid), (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
+          
+          // Force Kick Logic
+          if (data.kicked) {
+            setRewardMessage('You have been kicked by an administrator');
+            setTimeout(() => {
+              signOut(auth);
+            }, 3000);
+            return;
+          }
+
           setUserProfile(data);
           if (!data.nickname && !showNicknameModal) {
             setShowNicknameModal(true);
@@ -1502,6 +1512,42 @@ export default function App() {
     }, 1000);
   };
 
+  const isSuperAdmin = useMemo(() => {
+    return user?.email === 'purepro4561@gmail.com' || userProfile?.role === 'super-admin';
+  }, [user, userProfile]);
+
+  const toggleUserAdminRole = async (targetUid: string, currentRole: string) => {
+    if (!isSuperAdmin) {
+      setRewardMessage('Only super admins can manage roles');
+      return;
+    }
+    try {
+      const newRole = currentRole === 'admin' ? 'user' : 'admin';
+      await updateDoc(doc(db, 'users', targetUid), { role: newRole });
+      setRewardMessage(`User role updated to ${newRole}`);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'users');
+    }
+  };
+
+  const kickUser = async (targetUid: string) => {
+    try {
+      await updateDoc(doc(db, 'users', targetUid), { kicked: true });
+      setRewardMessage('User has been kicked');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'users');
+    }
+  };
+
+  const unkickUser = async (targetUid: string) => {
+    try {
+      await updateDoc(doc(db, 'users', targetUid), { kicked: false });
+      setRewardMessage('User has been unkicked');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'users');
+    }
+  };
+
   const handleReturnToLobby = () => {
     setActiveGame(null);
   };
@@ -1591,7 +1637,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-700">
       {/* Maintenance Mode Overlay */}
-      {systemConfig.maintenanceMode && userProfile?.role !== 'admin' && (
+      {systemConfig.maintenanceMode && (userProfile?.role !== 'admin' && userProfile?.role !== 'super-admin') && (
         <div className="fixed inset-0 z-[200] bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
           <div className="w-24 h-24 rounded-3xl bg-zinc-900 border border-amber-500/30 flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(245,158,11,0.2)]">
             <AlertTriangle className="w-12 h-12 text-amber-500" />
@@ -1708,7 +1754,7 @@ export default function App() {
             {/* Active Avatar */}
             {user ? (
               <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                {userProfile?.role === 'admin' && (
+                {(userProfile?.role === 'admin' || userProfile?.role === 'super-admin') && (
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -3230,7 +3276,8 @@ export default function App() {
                                   <div>
                                     <div className="text-sm font-bold text-zinc-100 flex items-center gap-2">
                                       {u.nickname || u.email}
-                                      {u.role === 'admin' && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                                      {(u.role === 'admin' || u.role === 'super-admin') && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                                      {u.role === 'super-admin' && <Crown className="w-3 h-3 text-yellow-400" />}
                                       {u.email === 'purepro4561@gmail.com' && <div className="text-[10px] bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded-full font-mono uppercase">Dev/Owner</div>}
                                     </div>
                                     <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{u.email}</div>
@@ -3304,6 +3351,34 @@ export default function App() {
                                       {u.adsEnabled !== false ? 'Enabled' : 'Disabled'}
                                     </button>
                                   </div>
+
+                                  <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <Skull className={`w-3 h-3 ${u.kicked ? 'text-red-500' : 'text-zinc-500'}`} />
+                                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Session</span>
+                                    </div>
+                                    <button 
+                                      onClick={() => u.kicked ? unkickUser(u.uid) : kickUser(u.uid)}
+                                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${u.kicked ? 'bg-red-500 text-white' : 'bg-zinc-800 text-zinc-500 hover:text-red-400 border border-white/5'}`}
+                                    >
+                                      {u.kicked ? 'Kicked' : 'Kick'}
+                                    </button>
+                                  </div>
+
+                                  {isSuperAdmin && (
+                                    <div className="flex flex-col gap-1">
+                                      <div className="flex items-center gap-2">
+                                        <Key className={`w-3 h-3 ${u.role === 'admin' ? 'text-yellow-500' : 'text-zinc-500'}`} />
+                                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Role</span>
+                                      </div>
+                                      <button 
+                                        onClick={() => toggleUserAdminRole(u.uid, u.role)}
+                                        className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${u.role === 'admin' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' : 'bg-zinc-800 text-zinc-500 border border-white/5'}`}
+                                      >
+                                        {u.role === 'admin' ? 'Admin' : 'Make Admin'}
+                                      </button>
+                                    </div>
+                                  )}
 
                                   <div className="text-right min-w-[100px]">
                                     <div className="text-xs font-mono text-amber-500">${u.balance?.toLocaleString()}</div>
