@@ -1559,17 +1559,9 @@ export default function App() {
       return;
     }
 
-    // Trigger Monetag Vignette as a Rewarded Ad
-    try {
-      const s = document.createElement('script');
-      s.dataset.zone = '10902009';
-      s.src = 'https://n6wxm.com/vignette.min.js';
-      const container = [document.documentElement, document.body].filter(Boolean).pop();
-      if (container) {
-        container.appendChild(s);
-      }
-    } catch (e) {
-      console.error('Ad trigger failed', e);
+    // Trigger Monetag Vignette (Defined in index.html for verification)
+    if (typeof (window as any).triggerMonetag === 'function') {
+      (window as any).triggerMonetag();
     }
 
     setShowAdModal(true);
