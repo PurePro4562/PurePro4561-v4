@@ -1558,6 +1558,20 @@ export default function App() {
       setAdsWatchedToday(prev => prev + 1);
       return;
     }
+
+    // Trigger Monetag Vignette as a Rewarded Ad
+    try {
+      const s = document.createElement('script');
+      s.dataset.zone = '10902009';
+      s.src = 'https://n6wxm.com/vignette.min.js';
+      const container = [document.documentElement, document.body].filter(Boolean).pop();
+      if (container) {
+        container.appendChild(s);
+      }
+    } catch (e) {
+      console.error('Ad trigger failed', e);
+    }
+
     setShowAdModal(true);
     setAdProgress(0);
     let progress = 0;
