@@ -1559,11 +1559,35 @@ export default function App() {
       return;
     }
 
-    // Trigger Monetag Vignette (Defined in index.html for verification)
-    if (typeof (window as any).triggerMonetag === 'function') {
-      (window as any).triggerMonetag();
+    // Primary: Google H5 AdBreak (AdSense for Games)
+    if (typeof (window as any).adBreak === 'function') {
+      (window as any).adBreak({
+        type: 'reward',
+        name: 'rewarded_action',
+        beforeReward: (showAdFn: any) => {
+          showAdFn();
+        },
+        adViewed: () => {
+          callback();
+          setAdsWatchedToday(prev => prev + 1);
+          setRewardMessage('Success: Reward Granted!');
+          setTimeout(() => setRewardMessage(''), 3000);
+        },
+        adDismissed: () => {
+          setRewardMessage('Reward Denied: Ad was closed early.');
+          setTimeout(() => setRewardMessage(''), 5000);
+        },
+        adError: (error: any) => {
+          console.warn('AdSense Error, falling back to internal timer', error);
+          startInternalAdFallback(callback);
+        }
+      });
+    } else {
+      startInternalAdFallback(callback);
     }
+  };
 
+  const startInternalAdFallback = (callback: () => void) => {
     setShowAdModal(true);
     setAdProgress(0);
     let progress = 0;
@@ -1573,9 +1597,11 @@ export default function App() {
       if (progress >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-          callback();
           setShowAdModal(false);
+          callback();
           setAdsWatchedToday(prev => prev + 1);
+          setRewardMessage('Success: Reward Granted!');
+          setTimeout(() => setRewardMessage(''), 3000);
         }, 500);
       }
     }, 100);
