@@ -21,17 +21,23 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">2. COOKIES AND LOCAL STORAGE</h2>
-            <p>We use local storage and cookies to maintain your session, preferences, and authentication state. No third-party tracking cookies are used for advertising or cross-site tracking.</p>
+            <h2 className="text-xl font-bold text-white mb-4">2. COOKIES AND ADVERTISING</h2>
+            <p>PurePro4561 uses cookies to store information about visitors' preferences, to record user-specific information on which pages the site visitor accesses or visits, and to personalize or customize our web page content based upon visitors' browser type or other information that the visitor sends via their browser.</p>
+            <p className="mt-4">Google, as a third-party vendor, uses cookies to serve ads on PurePro4561. Google's use of the advertising cookie enables it and its partners to serve ads to our users based on their visit to our site and other sites on the Internet. Users may opt out of the use of the DART cookie by visiting the Google ad and content network privacy policy.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">3. THIRD PARTIES</h2>
-            <p>Your data is never sold to third parties. We use Google Firebase for secure data storage and authentication. Please refer to Google's Privacy Policy for more information on how they handle data.</p>
+            <h2 className="text-xl font-bold text-white mb-4">3. ADVERTISING PARTNERS</h2>
+            <p>Some of our advertising partners may use cookies and web beacons on our site. Our advertising partners include Google AdSense. These third-party ad servers or ad networks use technology in their respective advertisements and links that appear on PurePro4561 and which are sent directly to your browser. They automatically receive your IP address when this occurs.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">4. SECURITY</h2>
+            <h2 className="text-xl font-bold text-white mb-4">4. GDPR & CCPA RIGHTS</h2>
+            <p>If you are a resident of the European Economic Area (EEA), you have certain data protection rights. PurePro4561 aims to take reasonable steps to allow you to correct, amend, delete, or limit the use of your Personal Data. If you are a California resident, you have rights under the CCPA to control your personal data.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white mb-4">5. DATA SECURITY</h2>
             <p>We implement industry-standard security measures to protect your digital assets and personal information. However, no method of transmission over the Internet or electronic storage is 100% secure.</p>
           </section>
 

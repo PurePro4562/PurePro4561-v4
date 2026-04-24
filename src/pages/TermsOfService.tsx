@@ -36,7 +36,12 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-white mb-4">5. MODIFICATIONS TO SERVICE</h2>
+            <h2 className="text-xl font-bold text-white mb-4">5. RESPONSIBLE GAMING</h2>
+            <p>While PurePro4561 is a social casino with no real-money risk, we encourage all users to practice healthy gaming habits. Gaming should be for entertainment only. If you feel that your gaming is becoming a problem, we recommend taking a break. You can contact support to have your account temporarily or permanently restricted at any time.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white mb-4">6. MODIFICATIONS TO SERVICE</h2>
             <p>We reserve the right to modify or discontinue, temporarily or permanently, the service (or any part thereof) with or without notice. We may also update these Terms of Service at any time.</p>
           </section>
         </div>

@@ -97,6 +97,66 @@ const ADULT_GAMES = [
   { id: 'custom-204', title: 'High Stakes Poker', category: 'Premium', icon: Club, color: 'from-emerald-500 to-teal-700', players: '1.5k', status: 'HIGH STAKES' },
 ];
 
+const ARTICLES = [
+  {
+    id: 'art-1',
+    title: 'The Ultimate Guide to Mastering Neon Slots',
+    category: 'Strategy',
+    author: 'PurePro Admin',
+    date: 'April 2026',
+    content: `Neon Slots is one of the most popular games on PurePro4561, but many players struggle to understand the mechanics behind the spinning reels. To master this game, you need to understand two key concepts: Volatility and Return to Player (RTP).
+
+    Volatility refers to how often a slot machine pays out and how large those payouts are. High volatility slots offer massive jackpots but less frequent wins, while low volatility slots offer steady, smaller wins. At PurePro, our Neon Slots are tuned for a "mid-to-high" volatility experience, meaning the thrill of a big win is always just a few spins away.
+
+    Strategy tip: Always manage your bankroll! Start with small bets to get a feel for the machine's current rhythm before increasing your stakes during "hot" streaks. Remember, social gaming is about longevity and fun, not just the next big hit.`
+  },
+  {
+    id: 'art-2',
+    title: 'Why Social Casinos are the Future of Entertainment',
+    category: 'Industry',
+    author: 'Tech Insights',
+    date: 'March 2026',
+    content: `The gaming landscape is shifting. While traditional casinos focus on the transaction, social casinos like PurePro4561 focus on the community. By removing the real-money barrier, players can enjoy the psychological thrill of the game without the financial risk.
+
+    Social interaction is the heartbeat of this platform. Our global chat, friend systems, and leaderboard competitions create a sense of belonging that you won't find in a standard sportsbook or casino app. As technology advances, we expect to see even more immersive features, from VR casino lobbies to decentralized tournament hosting.`
+  },
+  {
+    id: 'art-3',
+    title: 'Understanding RNG: The Science of Luck',
+    category: 'Technical',
+    author: 'PurePro Engineering',
+    date: 'February 2026',
+    content: `Have you ever wondered if a game is "due" for a win? In the world of Random Number Generators (RNG), the answer is always no. Every spin, every card dealt, and every dice roll is a completely independent event.
+
+    At PurePro4561, we use cryptographic algorithms to ensure total fairness. Our RNG server generates thousands of numbers every second, and the exact moment you click the "Spin" button determines your outcome. This means it is impossible to predict a win based on previous losses. Understanding this "independence of events" is the first step toward becoming a rational and disciplined gamer.`
+  },
+  {
+    id: 'art-4',
+    title: 'Blackjack Strategy: Cutting the House Edge',
+    category: 'Cards',
+    author: 'Blackjack Pro',
+    date: 'January 2026',
+    content: `Blackjack is one of the few casino games where player skill actually matters. By following "Basic Strategy"—a mathematically derived set of rules for when to hit, stand, double down, or split—you can significantly improve your odds.
+
+    Key rule: Never play a "hunch" against the dealer's face-up card. If the dealer is showing a 6, they are in a weak position. You should stand on anything above a 12 and let the dealer take the risk of busting. Conversely, if the dealer shows an Ace, you must play conservatively. Mastering these subtle shifts in momentum is what separates the winners from the crowd.`
+  },
+  {
+    id: 'art-5',
+    title: '5 Tips for Safe and Responsible Gaming',
+    category: 'Safety',
+    author: 'Community Care',
+    date: 'May 2026',
+    content: `Gaming should always be a source of joy, not stress. Here are our top 5 tips for staying safe:
+    1. Set a time limit before you start.
+    2. Never chase a loss; it's okay to walk away.
+    3. Treat your virtual chips as a score, not a necessity.
+    4. Balance gaming with other hobbies and social activities.
+    5. Reach out to friends if you feel you're spending too much time online.
+
+    PurePro4561 is committed to providing a safe environment for all students and gamers. We are here to provide excitement, but your well-being always comes first.`
+  }
+];
+
 const THEMES = {
   default: { name: 'Hacker Green', gradient: 'from-lime-400 to-cyan-400', colors: ['#a3e635', '#22d3ee'], glow: 'rgba(163, 230, 53, 0.5)', primary: '#a3e635', price: 0 },
   purple: { name: 'Neon Purple', gradient: 'from-purple-500 to-pink-500', colors: ['#a855f7', '#ec4899'], glow: 'rgba(168, 85, 247, 0.5)', primary: '#a855f7', price: 500 },
@@ -261,6 +321,8 @@ const VFXOverlay = ({ activeVFX }: { activeVFX: string }) => {
 
 export default function App() {
   const [showNicknameModal, setShowNicknameModal] = useState(false);
+  const [showGuides, setShowGuides] = useState(false);
+  const [activeArticle, setActiveArticle] = useState<typeof ARTICLES[0] | null>(null);
   const [nicknameInput, setNicknameInput] = useState('');
   const [nicknameError, setNicknameError] = useState('');
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
@@ -334,6 +396,17 @@ export default function App() {
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'system/config');
     });
+
+    // Step B: Configure the Game Ad Placements
+    if (typeof (window as any).adConfig === 'function') {
+      (window as any).adConfig({
+        preloadAdBreaks: 'on',
+        onReady: () => {
+          console.log("Ad Placement API is ready.");
+        },
+      });
+    }
+
     return () => unsubscribe();
   }, []);
 
@@ -1559,11 +1632,17 @@ export default function App() {
       return;
     }
 
-    // Primary: Google H5 AdBreak (AdSense for Games)
+    // Primary: Google H5 AdBreak (AdSense for Games - Step C)
     if (typeof (window as any).adBreak === 'function') {
       (window as any).adBreak({
         type: 'reward',
         name: 'rewarded_action',
+        beforeAd: () => {
+          console.log('Ad starting, pausing audio/logic');
+        },
+        afterAd: () => {
+          console.log('Ad finished, resuming audio/logic');
+        },
         beforeReward: (showAdFn: any) => {
           showAdFn();
         },
@@ -1577,9 +1656,13 @@ export default function App() {
           setRewardMessage('Reward Denied: Ad was closed early.');
           setTimeout(() => setRewardMessage(''), 5000);
         },
-        adError: (error: any) => {
-          console.warn('AdSense Error, falling back to internal timer', error);
-          startInternalAdFallback(callback);
+        adBreakDone: (placementInfo: any) => {
+          console.log("Ad placement status:", placementInfo.breakStatus);
+          // If the breakStatus is 'not_found' or 'error', we fall back to the internal timer
+          if (placementInfo.breakStatus === 'nopreload' || placementInfo.breakStatus === 'not_found' || placementInfo.breakStatus === 'error') {
+            console.warn('AdSense could not fill, falling back to internal timer');
+            startInternalAdFallback(callback);
+          }
         }
       });
     } else {
@@ -2029,198 +2112,317 @@ export default function App() {
       ) : (
         <>
           <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
-            <section className="py-16 md:py-24 flex flex-col items-center text-center">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5, y: -20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ type: 'spring', bounce: 0.5 }}
-                  className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border ${isProMode ? 'border-amber-500/30 text-amber-400' : 'border-white/20 text-zinc-300'} text-xs font-mono mb-8`}
+            {showGuides ? (
+              <div className="py-12">
+                <button 
+                  onClick={() => { setShowGuides(false); setActiveArticle(null); }}
+                  className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-8 group"
                 >
-                  <span className={`w-2 h-2 rounded-full ${isProMode ? 'bg-amber-500' : 'bg-zinc-300'} animate-pulse`} />
-                  {isProMode ? 'RESTRICTED ACCESS GRANTED' : 'SYSTEM ONLINE // V2.0.4'}
-                </motion.div>
+                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Gaming
+                </button>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-5xl md:text-7xl font-bold tracking-tighter mb-6"
-              >
-                All Your Favorite Games <br className="hidden md:block" />
-                <motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} dynamic-glow-text`}>
-                  In One Place
-                </motion.span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-zinc-400 text-lg md:text-xl max-w-2xl font-light mb-10"
-              >
-                {isProMode 
-                  ? "Welcome to the high roller's club. Premium stakes, exclusive tables, and maximum payouts await."
-                  : "Access the ultimate collection of web-based experiences. Minimal latency, maximum performance. Initialize your session now."}
-              </motion.p>
-
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={scrollToGames}
-                className={`px-8 py-4 rounded-2xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold flex items-center gap-2 dynamic-glow-box-hover transition-all`}
-              >
-                <Play className="w-5 h-5 fill-current" />
-                {isProMode ? 'ENTER CASINO' : 'START PLAYING'}
-              </motion.button>
-            </section>
-
-            <section ref={gamesSectionRef} className="py-12 scroll-mt-24">
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex items-center justify-between mb-8"
-              >
-                <h2 className="text-2xl font-semibold flex items-center gap-3">
-                  {isProMode ? <ShieldAlert className="w-6 h-6 text-amber-500" /> : <Terminal className="w-6 h-6 text-zinc-300" />}
-                  {isProMode ? 'High_Stakes_Lobby' : 'Featured_Executables'}
-                </h2>
-                <span className="text-zinc-500 font-mono text-sm">{totalFilteredGames} MODULES</span>
-              </motion.div>
-
-              <>
-                <motion.div
-                  key={isProMode ? 'adult-grid' : 'standard-grid'}
-                  variants={{
-                    hidden: { opacity: 0 },
-                    show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-                  }}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, margin: "-50px" }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-                >
-                {displayedGames.length > 0 && (
-                  displayedGames.map((game) => (
-                    <motion.div
-                      key={game.id}
-                        variants={{
-                          hidden: { opacity: 0, y: 30, scale: 0.9 },
-                          show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
-                        }}
-                        whileHover={{ y: -8, scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        onMouseEnter={playHover}
-                        onClick={() => { playClick(); handlePlayGame(game.id); }}
-                        className={`group relative bg-zinc-900/40 backdrop-blur-sm border rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors dynamic-glow-box-hover ${launchingGame === game.id ? 'border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'border-white/5 hover:border-white/20'}`}
-                      >
-                        <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-
-                        <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
-                          <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            
-                            <motion.div
-                              whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
-                              transition={{ type: 'spring', stiffness: 300 }}
-                              className={`w-full h-full flex items-center justify-center transition-all duration-500 ${launchingGame === game.id ? 'scale-110 blur-sm opacity-40' : ''}`}
-                            >
-                              <GameImage 
-                                src={game.image} 
-                                alt={game.title} 
-                                icon={game.icon}
-                                className="w-full h-full"
-                              />
-                            </motion.div>
-                            
-                            <AnimatePresence>
-                              {launchingGame === game.id && (
-                                <motion.div 
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  exit={{ opacity: 0 }}
-                                  className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-zinc-950/40 backdrop-blur-[2px]"
-                                >
-                                  <motion.div
-                                    initial={{ scale: 0.8, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-                                    className="flex flex-col items-center"
-                                  >
-                                    <Loader2 className="w-10 h-10 text-white animate-spin mb-4 drop-shadow-lg" />
-                                    <div className="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden backdrop-blur-md border border-white/10">
-                                      <motion.div 
-                                        initial={{ width: "0%" }}
-                                        animate={{ width: "100%" }}
-                                        transition={{ duration: 1, ease: "easeInOut" }}
-                                        className="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-                                      />
-                                    </div>
-                                    <span className="text-[10px] font-mono text-white/80 mt-2 tracking-widest uppercase">Initializing</span>
-                                  </motion.div>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
-                            <p className="text-zinc-500 text-sm">{game.category}</p>
-                          </div>
-                          <div className="flex flex-col items-end gap-1">
-                            <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
-                              {game.status}
-                            </span>
-                            <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
-                              {game.players}
-                            </span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))
-                  )}
-                  </motion.div>
-                
-                  {displayedGames.length > 0 && visibleCount < totalFilteredGames && (
-                    <div className="mt-12 flex justify-center">
-                      <button
-                        onClick={() => setVisibleCount(prev => prev + 24)}
-                        onMouseEnter={playHover}
-                        className="px-8 py-3 rounded-xl bg-zinc-900 border border-white/10 hover:border-white/20 text-zinc-300 font-bold transition-all hover:bg-zinc-800"
-                      >
-                        Load More Games
-                      </button>
+                {activeArticle ? (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-3xl mx-auto"
+                  >
+                    <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 mb-4 uppercase tracking-widest">
+                      <span>{activeArticle.category}</span>
+                      <span>•</span>
+                      <span>{activeArticle.date}</span>
                     </div>
-                  )}
-                </>
-            </section>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">{activeArticle.title}</h1>
+                    <div className="prose prose-invert prose-zinc max-w-none">
+                      {activeArticle.content.split('\n\n').map((para, i) => (
+                        <p key={i} className="text-zinc-400 text-lg leading-relaxed mb-6">{para.trim()}</p>
+                      ))}
+                    </div>
+                  </motion.div>
+                ) : (
+                  <div>
+                    <h2 className="text-4xl font-bold mb-12 tracking-tight">Gaming Knowledge Base</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {ARTICLES.map((art) => (
+                        <motion.div
+                          key={art.id}
+                          whileHover={{ scale: 1.02 }}
+                          onClick={() => setActiveArticle(art)}
+                          className="bg-zinc-900/50 border border-white/5 rounded-3xl p-8 cursor-pointer hover:border-white/20 transition-all group"
+                        >
+                          <div className="text-xs font-mono text-zinc-500 mb-4 uppercase tracking-widest">{art.category}</div>
+                          <h3 className="text-2xl font-bold mb-4 group-hover:text-amber-400 transition-colors">{art.title}</h3>
+                          <p className="text-zinc-400 text-sm line-clamp-3 leading-relaxed mb-6">
+                            {art.content.substring(0, 150)}...
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-zinc-600 text-xs font-mono">By {art.author}</span>
+                            <span className="text-white text-xs font-bold uppercase tracking-widest group-hover:translate-x-2 transition-transform inline-flex items-center gap-2 font-mono">
+                              Read Guide <Play className="w-3 h-3 fill-current" />
+                            </span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <section className="py-16 md:py-24 flex flex-col items-center text-center">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5, y: -20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ type: 'spring', bounce: 0.5 }}
+                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border ${isProMode ? 'border-amber-500/30 text-amber-400' : 'border-white/20 text-zinc-300'} text-xs font-mono mb-8`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${isProMode ? 'bg-amber-500' : 'bg-zinc-300'} animate-pulse`} />
+                      {isProMode ? 'RESTRICTED ACCESS GRANTED' : 'SYSTEM ONLINE // V2.0.4'}
+                    </motion.div>
+
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="text-5xl md:text-7xl font-bold tracking-tighter mb-6"
+                  >
+                    All Your Favorite Games <br className="hidden md:block" />
+                    <motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} dynamic-glow-text`}>
+                      In One Place
+                    </motion.span>
+                  </motion.h1>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-zinc-400 text-lg md:text-xl max-w-2xl font-light mb-10"
+                  >
+                    {isProMode 
+                      ? "Welcome to the high roller's club. Premium stakes, exclusive tables, and maximum payouts await."
+                      : "Access the ultimate collection of web-based experiences. Minimal latency, maximum performance. Initialize your session now."}
+                  </motion.p>
+
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={scrollToGames}
+                    className={`px-8 py-4 rounded-2xl bg-gradient-to-r ${themeGradient} text-zinc-950 font-bold flex items-center gap-2 dynamic-glow-box-hover transition-all`}
+                  >
+                    <Play className="w-5 h-5 fill-current" />
+                    {isProMode ? 'ENTER CASINO' : 'START PLAYING'}
+                  </motion.button>
+                </section>
+
+                <section ref={gamesSectionRef} className="py-12 scroll-mt-24">
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    className="flex items-center justify-between mb-8"
+                  >
+                    <h2 className="text-2xl font-semibold flex items-center gap-3">
+                      {isProMode ? <ShieldAlert className="w-6 h-6 text-amber-500" /> : <Terminal className="w-6 h-6 text-zinc-300" />}
+                      {isProMode ? 'High_Stakes_Lobby' : 'Featured_Executables'}
+                    </h2>
+                    <span className="text-zinc-500 font-mono text-sm">{totalFilteredGames} MODULES</span>
+                  </motion.div>
+
+                  <>
+                    <motion.div
+                      key={isProMode ? 'adult-grid' : 'standard-grid'}
+                      variants={{
+                        hidden: { opacity: 0 },
+                        show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+                      }}
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={{ once: true, margin: "-50px" }}
+                      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
+                    {displayedGames.length > 0 && (
+                      displayedGames.map((game) => (
+                        <motion.div
+                          key={game.id}
+                            variants={{
+                              hidden: { opacity: 0, y: 30, scale: 0.9 },
+                              show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } }
+                            }}
+                            whileHover={{ y: -8, scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onMouseEnter={playHover}
+                            onClick={() => { playClick(); handlePlayGame(game.id); }}
+                            className={`group relative bg-zinc-900/40 backdrop-blur-sm border rounded-3xl p-4 cursor-pointer overflow-hidden transition-colors dynamic-glow-box-hover ${launchingGame === game.id ? 'border-white/40 shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'border-white/5 hover:border-white/20'}`}
+                          >
+                            <div className={`absolute inset-0 bg-gradient-to-br ${themeGradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+
+                            <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${themeGradient} p-1 mb-4 relative`}>
+                              <div className="w-full h-full bg-zinc-950/90 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                
+                                <motion.div
+                                  whileHover={{ scale: 1.15, rotate: isProMode ? 5 : -5 }}
+                                  transition={{ type: 'spring', stiffness: 300 }}
+                                  className={`w-full h-full flex items-center justify-center transition-all duration-500 ${launchingGame === game.id ? 'scale-110 blur-sm opacity-40' : ''}`}
+                                >
+                                  <GameImage 
+                                    src={game.image} 
+                                    alt={game.title} 
+                                    icon={game.icon}
+                                    className="w-full h-full"
+                                  />
+                                </motion.div>
+                                
+                                <AnimatePresence>
+                                  {launchingGame === game.id && (
+                                    <motion.div 
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-zinc-950/40 backdrop-blur-[2px]"
+                                    >
+                                      <motion.div
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                                        className="flex flex-col items-center"
+                                      >
+                                        <Loader2 className="w-10 h-10 text-white animate-spin mb-4 drop-shadow-lg" />
+                                        <div className="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden backdrop-blur-md border border-white/10">
+                                          <motion.div 
+                                            initial={{ width: "0%" }}
+                                            animate={{ width: "100%" }}
+                                            transition={{ duration: 1, ease: "easeInOut" }}
+                                            className="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                                          />
+                                        </div>
+                                        <span className="text-[10px] font-mono text-white/80 mt-2 tracking-widest uppercase">Initializing</span>
+                                      </motion.div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                            </div>
+
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="font-semibold text-lg text-zinc-100 group-hover:text-white transition-colors">{game.title}</h3>
+                                <p className="text-zinc-500 text-sm">{game.category}</p>
+                              </div>
+                              <div className="flex flex-col items-end gap-1">
+                                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border ${isProMode ? 'border-red-900/50' : 'border-zinc-700'}`}>
+                                  {game.status}
+                                </span>
+                                <span className="text-xs text-zinc-500 font-mono flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: themeColor }} />
+                                  {game.players}
+                                </span>
+                              </div>
+                            </div>
+                        </motion.div>
+                      ))
+                    )}
+                    </motion.div>
+                  
+                    {displayedGames.length > 0 && visibleCount < totalFilteredGames && (
+                      <div className="mt-12 flex justify-center">
+                        <button
+                          onClick={() => setVisibleCount(prev => prev + 24)}
+                          onMouseEnter={playHover}
+                          className="px-8 py-3 rounded-xl bg-zinc-900 border border-white/10 hover:border-white/20 text-zinc-300 font-bold transition-all hover:bg-zinc-800"
+                        >
+                          Load More Games
+                        </button>
+                      </div>
+                    )}
+                  </>
+                </section>
+
+                <section className="py-24 border-t border-white/5 space-y-16">
+                  <div className="max-w-4xl">
+                    <h2 className="text-4xl font-bold mb-8 tracking-tight">PurePro Platform Overview</h2>
+                    <div className="space-y-6 text-zinc-400 leading-relaxed text-lg">
+                      <p>
+                        PurePro4561 is the world's most advanced web-based social gaming environment. Designed with a mobile-first philosophy and powered by cutting-edge cryptographic RNG (Random Number Generation) technology, our platform provides a safe, exciting, and entirely risk-free experience for players globally. Whether you're looking for the high-octane thrill of Godly Slots or the strategic depth of Cyber Poker, our library which features over 100+ simulated modules has something for every type of player.
+                      </p>
+                      <p>
+                        Our mission is to redefine social gaming. Unlike traditional platforms, PurePro4561 focuses on the <strong>social elements</strong> of play. With integrated global chat, robust friend management systems, and competitive leaderboards, you're never playing alone. We believe that gaming is better when shared, and our platform is built from the ground up to foster community interaction and healthy competition.
+                      </p>
+                      <p>
+                        Safety is our top priority. As a "Social Casino," we do not deal in real-world currency transitions. All chips and tokens earned on the platform are purely virtual and used to enhance your digital experience through themes, VFX, and progression systems. We provide extensive guides on responsible gaming and maintain strict community standards to ensure a positive environment for all our users.
+                      </p>
+                      <p>
+                        PurePro4561 is constantly evolving. Our developers are dedicated to regular updates, introducing new game mechanics, improved UI performance, and exclusive seasonal content. By leveraging modern web technologies like React, Tailwind CSS, and Framer Motion, we deliver a "native app" feel directly in the browser, ensuring zero-install access across all devices. Join us today and experience the future of digital entertainment.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div>
+                      <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">Provably Fair</h4>
+                      <p className="text-zinc-500 text-sm leading-relaxed">
+                        Every game outcome is determined by advanced cryptographic hashes. We believe in total transparency, ensuring every spin and deal is 100% random and verifiable.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">Secure Session</h4>
+                      <p className="text-zinc-500 text-sm leading-relaxed">
+                        Your identity and progression are protected by Google Authentication. We never store personal sensitive data, focusing entirely on your gaming history and virtual achievements.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">Community First</h4>
+                      <p className="text-zinc-500 text-sm leading-relaxed">
+                        Join thousands of players in our global ecosystem. Trade tips, compete in daily challenges, and rise through the ranks of the ultimate social gaming leaderboard.
+                      </p>
+                    </div>
+                  </div>
+                </section>
+              </>
+            )}
           </main>
 
           <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-white/5 w-full">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-              <div className="flex flex-col items-center md:items-start">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+              <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-2 mb-4">
                   <Gamepad2 className={`w-6 h-6 text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`} />
                   <span className="text-xl font-black text-white tracking-tighter uppercase">PUREPRO CASINO</span>
                 </div>
-                <p className="text-zinc-500 text-sm font-mono max-w-xs text-center md:text-left">
-                  The ultimate high-stakes digital playground. Play responsibly.
+                <p className="text-zinc-500 text-sm font-mono max-w-md leading-relaxed">
+                  The ultimate high-stakes digital playground. We provide high-quality simulated gaming experiences designed for performance and social interaction. Join the elite.
                 </p>
               </div>
               
-              <div className="flex gap-8">
-                <a href="#/privacy" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Privacy Policy</a>
-                <a href="#/tos" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Terms of Service</a>
+              <div>
+                <h4 className="text-white font-bold mb-4 text-xs uppercase tracking-widest">Navigation</h4>
+                <ul className="space-y-2">
+                  <li><button onClick={() => { setShowGuides(false); window.scrollTo(0,0); }} className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Games Lobby</button></li>
+                  <li><button onClick={() => { setShowGuides(true); setActiveArticle(null); window.scrollTo(0,0); }} className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors underline decoration-amber-500/50 underline-offset-4">Gaming Guides</button></li>
+                  <li><button className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Support</button></li>
+                </ul>
               </div>
 
+              <div>
+                <h4 className="text-white font-bold mb-4 text-xs uppercase tracking-widest">Legal</h4>
+                <ul className="space-y-2">
+                  <li><a href="#/privacy" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Privacy Policy</a></li>
+                  <li><a href="#/tos" className="text-zinc-500 hover:text-zinc-300 text-xs font-mono uppercase tracking-widest transition-colors">Terms of Service</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/5">
               <div className="text-zinc-600 text-[10px] font-mono uppercase tracking-[0.2em]">
                 © 2026 PUREPRO DIGITAL // ALL RIGHTS RESERVED
+              </div>
+              <div className="flex gap-4">
+                <div className="w-6 h-6 rounded-full bg-zinc-800 border border-white/5" />
+                <div className="w-6 h-6 rounded-full bg-zinc-800 border border-white/5" />
+                <div className="w-6 h-6 rounded-full bg-zinc-800 border border-white/5" />
               </div>
             </div>
           </footer>
