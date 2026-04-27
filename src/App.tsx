@@ -425,6 +425,7 @@ export default function App() {
   // Currencies & Customization
   const [balance, setBalance] = useState(1000); // Casino Chips
   const [tokens, setTokens] = useState(250); // Arcade Tokens
+  const [tickets, setTickets] = useState(0); // Tickets
   const [ownedThemes, setOwnedThemes] = useState<string[]>(['default']);
   const [ownedBadges, setOwnedBadges] = useState<string[]>([]);
   const [ownedAvatars, setOwnedAvatars] = useState<string[]>(['avatar_default']);
@@ -533,12 +534,12 @@ export default function App() {
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [userSearchResults, setUserSearchResults] = useState<any[]>([]);
   const [isSearchingUsers, setIsSearchingUsers] = useState(false);
-  const [socialTab, setSocialTab] = useState<'friends' | 'requests' | 'search'>('friends');
+  const [socialTab, setSocialTab] = useState<'friends' | 'requests' | 'search' | 'notifications'>('friends');
   const [socialSearchQuery, setSocialSearchQuery] = useState('');
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
 
-  const [showAdOfferModal, setShowAdOfferModal] = useState(false);
+
   const [pendingAdReward, setPendingAdReward] = useState<{ 
     type: 'chips' | 'tokens' | 'pack' | 'unlock', 
     amount?: number, 
@@ -647,6 +648,7 @@ export default function App() {
               setShowNicknameModal(true);
             }
 
+            setHasNebulaCrown(!!data.hasNebulaCrown);
             setUserProfile(data);
           }
         } catch (error) {
@@ -666,6 +668,7 @@ export default function App() {
     if (userProfile) {
       setBalance(userProfile.balance);
       setTokens(userProfile.tokens);
+      setTickets(userProfile.tickets || 0);
       setOwnedThemes(userProfile.ownedThemes);
       setOwnedBadges(userProfile.ownedBadges);
       setOwnedAvatars(userProfile.ownedAvatars);
@@ -821,7 +824,7 @@ export default function App() {
       ), (snap) => {
         const notices = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
         setNotifications(notices);
-        setUnreadNotificationsCount(notices.filter((n: any) => !n.read).length);
+        setUnreadNotificationsCount(notices.filter((n: any) => !n.read && (n.type === 'message' || n.type === 'friend_accepted')).length);
         
         // Find latest unread message notification and show toast
         const latest = notices[0];
@@ -831,6 +834,9 @@ export default function App() {
             setTimeout(() => setRewardMessage(''), 4000);
           } else if (latest.type === 'friend_accepted') {
             setRewardMessage(`${latest.fromName} accepted your friend request!`);
+            setTimeout(() => setRewardMessage(''), 4000);
+          } else if (latest.type === 'reward' || latest.type === 'system') {
+            setRewardMessage(latest.text || latest.message);
             setTimeout(() => setRewardMessage(''), 4000);
           }
         }
@@ -923,6 +929,18 @@ export default function App() {
         read: false,
         timestamp: Date.now()
       });
+
+      // Update state
+      setNotifications(prev => [{
+        id: noticeRef.id,
+        toUid: request.fromUid,
+        fromUid: user!.uid,
+        fromName: userProfile?.nickname || user!.email?.split('@')[0],
+        type: 'friend_accepted',
+        text: 'Accepted your friend request!',
+        read: false,
+        timestamp: Date.now()
+      }, ...prev]);
 
       await batch.commit();
 
@@ -1031,6 +1049,14 @@ export default function App() {
     setTokens(prev => {
       const newVal = typeof updater === 'function' ? updater(prev) : updater;
       updateFirestoreProfile({ tokens: newVal });
+      return newVal;
+    });
+  };
+
+  const handleSetTickets = (updater: number | ((prev: number) => number)) => {
+    setTickets(prev => {
+      const newVal = typeof updater === 'function' ? updater(prev) : updater;
+      updateFirestoreProfile({ tickets: newVal });
       return newVal;
     });
   };
@@ -1149,9 +1175,11 @@ export default function App() {
         await setDoc(doc(db, 'leaderboard', user.uid), {
            uid: user.uid,
            email: user.email,
+           nickname: userProfile?.nickname || null,
            xp: newXp,
-           level: Math.max(level, newLevel)
-        });
+           level: Math.max(level, newLevel),
+           hasNebulaCrown: userProfile?.hasNebulaCrown || false
+        }, { merge: true });
       } catch (err) {
         console.log('Failed to update leaderboard', err);
       }
@@ -1597,6 +1625,32 @@ export default function App() {
     }
   };
 
+  const createSystemNotification = async (title: string, message: string) => {
+    if (!user) return;
+    try {
+      const noticeRef = doc(collection(db, 'notifications'));
+      const now = Date.now();
+      const noticeData = {
+        toUid: user.uid,
+        fromUid: 'system',
+        fromName: 'System Reward',
+        type: 'reward',
+        title,
+        text: message,
+        read: false,
+        timestamp: now
+      };
+      
+      await setDoc(noticeRef, noticeData);
+      
+      // Update local state immediately for better UX
+      setNotifications(prev => [{ id: noticeRef.id, ...noticeData }, ...prev]);
+      setUnreadNotificationsCount(prev => prev + 1);
+    } catch (e) {
+      console.error("Failed to create notification", e);
+    }
+  };
+
   const deletePromoCode = async (codeId: string) => {
     if (userProfile?.role !== 'admin') return;
     try {
@@ -1639,7 +1693,7 @@ export default function App() {
       updateFirestoreProfile({ isProMode: false });
       setActiveGame(null);
     } else {
-      if (userProfile?.hasProAccess) {
+      if (userProfile?.hasProAccess && user?.email !== 'purepro4561@gmail.com') {
         setIsProMode(true);
         updateFirestoreProfile({ isProMode: true });
       } else {
@@ -1731,11 +1785,6 @@ export default function App() {
   };
 
   const watchAdForKey = () => {
-    if (userProfile?.adsEnabled === false || (userProfile?.noAdsEndsAt && userProfile.noAdsEndsAt > Date.now())) {
-      const newKey = "PRO-" + Math.floor(1000 + Math.random() * 9000);
-      setGeneratedKey(newKey);
-      return;
-    }
     setShowAdModal(true);
     setAdProgress(0);
     let progress = 0;
@@ -1748,6 +1797,7 @@ export default function App() {
           const newKey = "PRO-" + Math.floor(1000 + Math.random() * 9000);
           setGeneratedKey(newKey);
           setShowAdModal(false);
+          createSystemNotification('Pro Access Key', `Your Pro Access Key: ${newKey}`);
         }, 500);
       }
     }, 100);
@@ -1803,48 +1853,14 @@ export default function App() {
   };
 
   const watchAdWithCallback = (callback: () => void) => {
-    if (userProfile?.adsEnabled === false || (userProfile?.noAdsEndsAt && userProfile.noAdsEndsAt > Date.now())) {
+    const isBypass = (userProfile?.adsEnabled === false || (userProfile?.noAdsEndsAt && userProfile.noAdsEndsAt > Date.now())) && user?.email !== 'purepro4561@gmail.com' && userProfile?.role !== 'super-admin';
+    if (isBypass) {
       callback();
       setAdsWatchedToday(prev => prev + 1);
       return;
     }
 
-    // Primary: Google H5 AdBreak (AdSense for Games - Step C)
-    if (typeof (window as any).adBreak === 'function') {
-      (window as any).adBreak({
-        type: 'reward',
-        name: 'rewarded_action',
-        beforeAd: () => {
-          console.log('Ad starting, pausing audio/logic');
-        },
-        afterAd: () => {
-          console.log('Ad finished, resuming audio/logic');
-        },
-        beforeReward: (showAdFn: any) => {
-          showAdFn();
-        },
-        adViewed: () => {
-          callback();
-          setAdsWatchedToday(prev => prev + 1);
-          setRewardMessage('Success: Reward Granted!');
-          setTimeout(() => setRewardMessage(''), 3000);
-        },
-        adDismissed: () => {
-          setRewardMessage('Reward Denied: Ad was closed early.');
-          setTimeout(() => setRewardMessage(''), 5000);
-        },
-        adBreakDone: (placementInfo: any) => {
-          console.log("Ad placement status:", placementInfo.breakStatus);
-          // If the breakStatus is 'not_found' or 'error', we fall back to the internal timer
-          if (placementInfo.breakStatus === 'nopreload' || placementInfo.breakStatus === 'not_found' || placementInfo.breakStatus === 'error') {
-            console.warn('AdSense could not fill, falling back to internal timer');
-            startInternalAdFallback(callback);
-          }
-        }
-      });
-    } else {
-      startInternalAdFallback(callback);
-    }
+    startInternalAdFallback(callback);
   };
 
   const startInternalAdFallback = (callback: () => void) => {
@@ -1858,10 +1874,8 @@ export default function App() {
         clearInterval(interval);
         setTimeout(() => {
           setShowAdModal(false);
-          callback();
           setAdsWatchedToday(prev => prev + 1);
-          setRewardMessage('Success: Reward Granted!');
-          setTimeout(() => setRewardMessage(''), 3000);
+          callback();
         }, 500);
       }
     }, 100);
@@ -1881,13 +1895,19 @@ export default function App() {
       const baseReward = 500;
       const reward = Math.floor(baseReward * Math.pow(1.2, adsWatchedToday));
       
+      let rewardText = '';
       if (isProMode) {
         handleSetBalance(b => b + reward);
-        setRewardMessage(`+${reward.toLocaleString()} Chips Earned!`);
+        rewardText = `${reward.toLocaleString()} Chips`;
+        setRewardMessage(`+${rewardText} Earned!`);
       } else {
         handleSetTokens(t => t + reward);
-        setRewardMessage(`+${reward.toLocaleString()} Tokens Earned!`);
+        rewardText = `${reward.toLocaleString()} Tokens`;
+        setRewardMessage(`+${rewardText} Earned!`);
       }
+
+      createSystemNotification('Ad Reward Received', `You've received ${rewardText} for watching an ad!`);
+
       setAdsWatchedWithoutWin(prev => prev + 1);
       setTimeout(() => setRewardMessage(''), 3000);
     });
@@ -1931,14 +1951,7 @@ export default function App() {
       if (selectedAdminUser?.id === userId) {
         setSelectedAdminUser((prev: any) => ({ ...prev, ...updates }));
       }
-      setNotifications(prev => [{
-        id: Date.now(),
-        title: 'Admin Action',
-        message: `Updated user ${userId} stats`,
-        time: 'Just now',
-        unread: true,
-        type: 'system'
-      }, ...prev]);
+      createSystemNotification('Admin Action', `Updated user ${userId} stats`);
     } catch (e) {
       handleFirestoreError(e, OperationType.UPDATE, `users/${userId}`);
     }
@@ -1981,29 +1994,62 @@ export default function App() {
     });
   }, [allAdminUsers, adminUserSearchResults, adminUserSearch, adminUserSort]);
 
-  const triggerWeeklyReset = (manual = false) => {
+  const triggerWeeklyReset = async (manual = false) => {
     // Check if user is #1 on leaderboard
     const topPlayer = leaderboardData[0];
-    const isWinner = topPlayer && (topPlayer.name === userProfile?.nickname || topPlayer.userId === auth.currentUser?.uid);
     
-    if (isWinner) {
-      setHasNebulaCrown(true);
-      localStorage.setItem('nebula_crown', 'true');
-      setShowResetCeremony(true);
-    } else {
-      setHasNebulaCrown(false);
-      localStorage.removeItem('nebula_crown');
+    // Hardening the crown logic: 
+    // We need to remove crown from previous winner and give to new winner in Firestore
+    try {
+      // 1. Find anyone who has a crown currently (optional: could just use currentWinnerUid if we stored it)
+      // For safety, we search for all users with hasNebulaCrown: true
+      const q = query(collection(db, 'users'), where('hasNebulaCrown', '==', true));
+      const crownSnap = await getDocs(q);
+      const batch = writeBatch(db);
+      
+      crownSnap.docs.forEach(d => {
+        batch.update(d.ref, { hasNebulaCrown: false });
+        // Also update leaderboard entry if it exists
+        batch.set(doc(db, 'leaderboard', d.id), { hasNebulaCrown: false }, { merge: true });
+      });
+
+      // 2. Give crown to new winner
+      if (topPlayer && topPlayer.uid) {
+        batch.update(doc(db, 'users', topPlayer.uid), { hasNebulaCrown: true });
+        batch.set(doc(db, 'leaderboard', topPlayer.uid), { hasNebulaCrown: true }, { merge: true });
+        
+        // If current user is winner, trigger animation
+        if (topPlayer.uid === auth.currentUser?.uid) {
+          setHasNebulaCrown(true);
+          localStorage.setItem('nebula_crown', 'true');
+          setShowResetCeremony(true);
+          createSystemNotification('Weekly Champion', 'Congratulations! You have won the Nebula Crown!');
+        } else {
+          setHasNebulaCrown(false);
+          localStorage.removeItem('nebula_crown');
+        }
+      }
+      
+      await batch.commit();
+    } catch (e) {
+      console.error("Failed to update weekly champion in Firestore", e);
     }
 
-    setBalance(1000); // Reset balance too for a fresh start? Actually user might not like that.
-    // We'll just reset levels and XP as per original intent.
+    setBalance(1000); 
     setLevel(1);
     setXp(0);
     
+    // Update local Firestore for current user reset
+    updateFirestoreProfile({
+      balance: 1000,
+      level: 1,
+      xp: 0
+    });
+
     // Find the Monday 12 AM that just happened
     const now = new Date();
     const day = now.getDay();
-    const diff = (day + 6) % 7; // days since last Monday
+    const diff = (day + 6) % 7; 
     const lastMonday = new Date(now);
     lastMonday.setHours(0, 0, 0, 0);
     lastMonday.setDate(now.getDate() - diff);
@@ -2011,14 +2057,7 @@ export default function App() {
     setLastReset(lastMonday.getTime());
     localStorage.setItem('nebula_last_reset', lastMonday.getTime().toString());
     
-    setNotifications(prev => [{
-      id: Date.now(),
-      title: 'Weekly Season Reset!',
-      message: 'All levels have been reset to 1. A new race for the Nebula Crown begins!',
-      time: 'Just now',
-      unread: true,
-      type: 'system'
-    }, ...prev]);
+    createSystemNotification('Weekly Season Reset!', 'All levels have been reset to 1. A new race for the Nebula Crown begins!');
   };
 
   useEffect(() => {
@@ -2040,40 +2079,26 @@ export default function App() {
     return () => clearInterval(interval);
   }, [lastReset]);
 
-  const adOffers = useMemo(() => {
-    if (isProMode) {
-      return {
-        pack_aura: { type: 'pack', packType: 'AURA' as PackType, ads: 1, label: 'Aura Essence', icon: Sparkles, color: 'text-purple-400' },
-        pack_avatar: { type: 'pack', packType: 'AVATAR' as PackType, ads: 1, label: 'Identity Shift', icon: User, color: 'text-cyan-400' },
-        pack_vfx: { type: 'pack', packType: 'VFX' as PackType, ads: 1, label: 'Particle Storm', icon: Zap, color: 'text-emerald-400' },
-        mega_chips: { type: 'chips', amount: 50000, ads: 1, label: 'Pro Stimulus', icon: Coins, color: 'text-amber-400' },
-        elite_tokens: { type: 'tokens', amount: 500, ads: 1, label: 'Godly Tokens', icon: Ticket, color: 'text-zinc-200' }
-      };
-    }
-    return {
-      chips: { type: 'chips', amount: 1000, ads: 1, label: 'Fast Cash', icon: Coins, color: 'text-amber-500' },
-      tokens: { type: 'tokens', amount: 10, ads: 1, label: 'Elite Pass', icon: Ticket, color: 'text-zinc-400' }
-    };
-  }, [isProMode]);
 
   const handleAdOfferSelect = (type: any, amount: any, adsNeeded: number, extra?: any) => {
-    setPendingAdReward({ type, amount, adsNeeded, ...extra });
-    setAdsCompletedForReward(0);
-    
     watchAdWithCallback(() => {
-      if (adsNeeded === 1) {
-        if (type === 'chips') handleSetBalance(b => b + amount);
-        else if (type === 'tokens') handleSetTokens(t => t + amount);
-        else if (type === 'pack') {
-          const packKey = `freePacks_${extra.packType}`;
-          updateFirestoreProfile({ [packKey]: (userProfile[packKey] || 0) + 1 });
-          setRewardMessage(`Ad watched! +1 ${extra.packType} Pack added to inventory!`);
-        }
-        setPendingAdReward(null);
-        setShowAdOfferModal(false);
-      } else {
-        setAdsCompletedForReward(1);
+      let rewardText = '';
+      if (type === 'chips') {
+        handleSetBalance(b => b + amount);
+        rewardText = `${amount.toLocaleString()} Chips`;
       }
+      else if (type === 'tokens') {
+        handleSetTokens(t => t + amount);
+        rewardText = `${amount.toLocaleString()} Tokens`;
+      }
+      else if (type === 'tickets') {
+        handleSetTickets(t => t + amount);
+        rewardText = `${amount.toLocaleString()} Tickets`;
+      }
+
+      setRewardMessage(`Added ${rewardText}`);
+      setTimeout(() => setRewardMessage(''), 3000);
+      createSystemNotification('Ad Reward Received', `Added ${rewardText}`);
     });
   };
 
@@ -2084,15 +2109,31 @@ export default function App() {
       const nextCount = adsCompletedForReward + 1;
       if (nextCount >= pendingAdReward.adsNeeded) {
         const { type, amount, packType } = pendingAdReward;
-        if (type === 'chips') handleSetBalance(b => b + (amount || 0));
-        else if (type === 'tokens') handleSetTokens(t => t + (amount || 0));
+        let rewardText = '';
+        if (type === 'chips') {
+          handleSetBalance(b => b + (amount || 0));
+          rewardText = `${(amount || 0).toLocaleString()} Chips`;
+        }
+        else if (type === 'tokens') {
+          handleSetTokens(t => t + (amount || 0));
+          rewardText = `${(amount || 0).toLocaleString()} Tokens`;
+        }
+        else if (type === 'tickets') {
+          handleSetTickets(t => t + (amount || 0));
+          rewardText = `${(amount || 0).toLocaleString()} Tickets`;
+        }
         else if (type === 'pack' && packType) {
           const packKey = `freePacks_${packType}`;
           updateFirestoreProfile({ [packKey]: (userProfile[packKey] || 0) + 1 });
-          setRewardMessage(`Ad sequence complete! +1 ${packType} Pack added!`);
+          rewardText = `1 ${packType} Pack`;
+          setRewardMessage(`Ad sequence complete! +${rewardText} added!`);
         }
+
+        if (rewardText) {
+          createSystemNotification('Ad Sequence Reward', `You've received ${rewardText} for completing the ad sequence!`);
+        }
+
         setPendingAdReward(null);
-        setShowAdOfferModal(false);
       } else {
         setAdsCompletedForReward(nextCount);
       }
@@ -2218,22 +2259,22 @@ export default function App() {
                 <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> ${balance.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
-                  onClick={() => setShowAdOfferModal(true)} 
+                  onClick={() => handleAdOfferSelect('chips', 1000, 1)} 
                   className="ml-1.5 bg-amber-500/20 hover:bg-amber-500/40 p-1 rounded-full transition-colors flex" 
                   title="Watch Ad for Chips"
                 >
-                  <Plus className="w-3.5 h-3.5 text-amber-400" />
+                  <Video className="w-3.5 h-3.5 text-amber-400" />
                 </button>
               </div>
               <div className="flex items-center gap-1.5 bg-zinc-800/50 pl-3 pr-1 py-1 rounded-full border border-white/10 text-zinc-300 font-mono text-xs sm:text-sm">
                 <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {tokens.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
-                  onClick={() => setShowAdOfferModal(true)} 
+                  onClick={() => handleAdOfferSelect('tokens', 500, 1)} 
                   className="ml-1.5 bg-white/10 hover:bg-white/20 p-1 rounded-full transition-colors flex" 
                   title="Watch Ad for Tokens"
                 >
-                  <Plus className="w-3.5 h-3.5 text-lime-400" />
+                  <Video className="w-3.5 h-3.5 text-lime-400" />
                 </button>
                 <button 
                   onMouseEnter={playHover}
@@ -3168,7 +3209,7 @@ export default function App() {
                         <div>
                           <div className="font-bold text-zinc-100 flex items-center gap-2">
                              {lbUser.email?.split('@')[0] || 'Unknown'}
-                             {idx === 0 && <Crown className="w-4 h-4 text-yellow-500" />}
+                             {lbUser.hasNebulaCrown && <Crown className="w-4 h-4 text-yellow-500" />}
                           </div>
                           <div className="text-xs font-mono text-zinc-500">Level {lbUser.level || 1}</div>
                         </div>
@@ -4686,7 +4727,7 @@ export default function App() {
                         <div className="flex items-center gap-2">
                           <div className="text-zinc-100 font-bold">{lbUser.nickname || (lbUser.email ? lbUser.email.split('@')[0] : 'Guest')}</div>
                           {(lbUser.role === 'admin' || lbUser.email === 'purepro4561@gmail.com') && <ShieldCheck className="w-3 h-3 text-amber-500" />}
-                          {idx === 0 && <Crown className="w-3 h-3 text-cyan-400 font-glow ml-1" title="Weekly Champion" />}
+                          {lbUser.hasNebulaCrown && <Crown className="w-3 h-3 text-cyan-400 font-glow ml-1" title="Nebula Champion" />}
                         </div>
                       </div>
                       <div className="text-right">
@@ -4957,13 +4998,15 @@ export default function App() {
                   </h3>
                   
                   <div className="flex gap-2 p-1 bg-zinc-900 rounded-xl border border-white/5">
-                    {(['friends', 'requests', 'search'] as const).map(tab => (
+                    {(['friends', 'requests', 'search', 'notifications'] as const).map(tab => (
                       <button
                         key={tab}
                         onClick={() => setSocialTab(tab)}
                         className={`flex-1 py-1.5 text-[10px] font-bold uppercase rounded-lg transition-all ${socialTab === tab ? 'bg-amber-500 text-zinc-950 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
                       >
-                        {tab} {tab === 'requests' && friendRequests.length > 0 && `(${friendRequests.length})`}
+                        {tab} 
+                        {tab === 'requests' && friendRequests.length > 0 && ` (${friendRequests.length})`}
+                        {tab === 'notifications' && unreadNotificationsCount > 0 && ` (${unreadNotificationsCount})`}
                       </button>
                     ))}
                   </div>
@@ -5024,6 +5067,28 @@ export default function App() {
                                   <Ban className="w-4 h-4" />
                                 </button>
                               </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+
+                    {socialTab === 'notifications' && (
+                      <div className="space-y-2">
+                        {notifications.length === 0 ? (
+                          <div className="text-center py-10 text-zinc-600 text-[11px] font-mono tracking-wider uppercase">No notifications yet.</div>
+                        ) : (
+                          notifications.map(n => (
+                            <div key={n.id} className={`p-4 rounded-xl border transition-all ${n.read ? 'bg-zinc-950/30 border-white/5 grayscale-[0.5]' : 'bg-zinc-900 border-amber-500/20'}`}>
+                              <div className="flex justify-between items-start mb-1">
+                                <div className="text-[10px] font-black uppercase tracking-widest text-amber-500">
+                                  {n.title || n.type || 'System'}
+                                </div>
+                                <div className="text-[9px] font-mono text-zinc-500">
+                                  {new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                              </div>
+                              <div className="text-xs text-zinc-200 leading-relaxed">{n.text}</div>
                             </div>
                           ))
                         )}
@@ -5681,73 +5746,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Ad Offer Modal */}
-      <AnimatePresence>
-        {showAdOfferModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
-            onClick={() => setShowAdOfferModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-zinc-900 border border-white/10 rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl relative overflow-hidden"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500" />
-              
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">Free Loot</h2>
-                  <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest mt-2">Watch an ad to recharge</p>
-                </div>
-                <button onClick={() => setShowAdOfferModal(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                  <Plus className="w-6 h-6 rotate-45 text-zinc-500" />
-                </button>
-              </div>
 
-              <div className="space-y-4">
-                {Object.entries(adOffers).map(([offerKey, offer]: [string, any]) => {
-                  const Icon = offer.icon;
-                  return (
-                    <button
-                      key={offerKey}
-                      onClick={() => handleAdOfferSelect(offer.type, offer.amount, offer.ads, { packType: offer.packType })}
-                      className="w-full flex items-center justify-between p-6 bg-zinc-950 border border-white/5 rounded-2xl hover:border-emerald-500/50 hover:bg-zinc-900 transition-all group overflow-hidden relative"
-                    >
-                      <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <Icon className={`w-16 h-16 ${offer.color} group-hover:scale-110 transition-transform`} />
-                      </div>
-                      <div className="text-left relative z-10">
-                        <div className={`text-xs font-bold ${offer.color} uppercase mb-1`}>{offer.label}</div>
-                        <div className="text-xl font-black text-white leading-tight">
-                          {offer.type === 'chips' && `GET $${offer.amount.toLocaleString()} CHIPS`}
-                          {offer.type === 'tokens' && `GET ${offer.amount} TOKENS`}
-                          {offer.type === 'pack' && `GET +1 ${offer.packType} PACK`}
-                        </div>
-                      </div>
-                      <div className={`${offer.color.replace('text', 'bg')} text-black p-2 rounded-xl group-hover:scale-110 transition-transform relative z-10 shadow-lg`}>
-                        <Video className="w-6 h-6" />
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center">
-                <div className="flex items-center gap-2 text-zinc-600">
-                  <Sparkles className="w-3 h-3" />
-                  <span className="text-[9px] font-bold uppercase tracking-widest">Rewards refresh instantly</span>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

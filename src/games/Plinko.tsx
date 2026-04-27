@@ -28,6 +28,15 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
   const [isDropping, setIsDropping] = useState(false);
   const [balls, setBalls] = useState<{ id: number; path: number[]; active: boolean; resultIndex?: number }[]>([]);
   const [lastWin, setLastWin] = useState<number | null>(null);
+  const [particleBursts, setParticleBursts] = useState<{ id: number; x: string; y: string; color: string }[]>([]);
+
+  const triggerBurst = (x: string, y: string, color: string) => {
+    const id = Date.now() + Math.random();
+    setParticleBursts(prev => [...prev, { id, x, y, color }]);
+    setTimeout(() => {
+      setParticleBursts(prev => prev.filter(b => b.id !== id));
+    }, 1000);
+  };
 
   const dropBall = () => {
     if (balance < bet) return;
@@ -74,6 +83,17 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
         const newBall = { id: ballId, path, active: true, resultIndex: finalIndex };
         setBalls(prev => [...prev, newBall]);
 
+        // Trigger peg hits
+        path.forEach((pos, i) => {
+          const travelTime = 3000;
+          const delayForRow = ((i + 1) / (ROWS + 1)) * travelTime;
+          setTimeout(() => {
+            const pegX = `${50 + (pos / (ROWS + 2)) * 38}%`;
+            const pegY = `${8 + ((i + 1) / ROWS) * 78}%`;
+            triggerBurst(pegX, pegY, '#ffffff');
+          }, delayForRow);
+        });
+
         setTimeout(() => {
           const mult = multipliers[finalIndex] * globalMultiplier;
           const winnings = Math.floor(bet * mult);
@@ -84,6 +104,11 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
           
           if (winnings > bet) playCoin();
           else playLose();
+
+          // Trigger particle burst at the multiplier slot
+          const targetPos = (finalIndex * 2) - multipliers.length + 1;
+          const finalX = `${50 + (targetPos / (ROWS + 2)) * 38}%`;
+          triggerBurst(finalX, '92%', themeColor);
 
           setBalls(prev => {
             const remaining = prev.filter(b => b.id !== ballId);
@@ -127,6 +152,27 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
         <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-center lg:items-center w-full lg:h-[60vh]">
           {/* Pegs Board Area */}
           <div className="relative bg-zinc-900/50 border border-white/5 rounded-3xl p-4 sm:p-8 flex-1 w-full max-w-2xl h-full shadow-2xl flex flex-col justify-between overflow-hidden">
+            {/* Particles */}
+            {particleBursts.map(burst => (
+              <div key={burst.id} className="absolute pointer-events-none z-30" style={{ left: burst.x, top: burst.y }}>
+                {[...Array(6)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ scale: 0, opacity: 1, x: 0, y: 0 }}
+                    animate={{ 
+                      scale: [0, 1.2, 0],
+                      opacity: [1, 0.8, 0],
+                      x: (Math.random() - 0.5) * 30,
+                      y: (Math.random() - 0.5) * 30
+                    }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute w-1 h-1 rounded-full"
+                    style={{ backgroundColor: burst.color, boxShadow: `0 0 10px ${burst.color}` }}
+                  />
+                ))}
+              </div>
+            ))}
+            
             {/* Pegs */}
             <div className="flex-1 flex flex-col justify-around items-center py-2">
               {[...Array(ROWS)].map((_, rowIndex) => (
