@@ -103,79 +103,79 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full bg-zinc-950 relative overflow-hidden">
+    <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 w-full h-full bg-zinc-950 relative overflow-hidden">
       <button 
         onClick={onExit}
-        className="absolute top-6 left-6 z-50 px-4 py-2 bg-zinc-900/80 backdrop-blur rounded-xl border border-white/10 hover:bg-zinc-800 transition-colors flex items-center gap-2"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-50 px-3 py-1.5 sm:px-4 sm:py-2 bg-zinc-900/80 backdrop-blur rounded-xl border border-white/10 hover:bg-zinc-800 transition-colors flex items-center gap-2 text-xs sm:text-sm"
       >
-        <ArrowLeft className="w-4 h-4" /> Exit to Lobby
+        <ArrowLeft className="w-4 h-4" /> Exit
       </button>
 
-      <div className="relative z-10 flex flex-col items-center max-w-4xl w-full">
-        <div className="mb-8 text-center">
+      <div className="relative z-10 flex flex-col items-center max-w-6xl w-full h-full justify-center">
+        <div className="mb-4 sm:mb-8 text-center">
           <motion.h2 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-black text-white tracking-tighter uppercase flex items-center gap-3"
+            className="text-2xl sm:text-4xl font-black text-white tracking-tighter uppercase flex items-center gap-3 justify-center"
           >
-            <Sparkles className="w-8 h-8 text-yellow-400" />
-            Cyber Plinko
+            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+            {title}
           </motion.h2>
-          <p className="text-zinc-500 font-mono text-xs mt-2 uppercase tracking-widest">Premium High-Stakes Physics Engine</p>
+          <p className="text-zinc-500 font-mono text-[8px] sm:text-xs mt-1 uppercase tracking-widest leading-none">Premium High-Stakes Physics Engine</p>
         </div>
 
-        <div className="relative bg-zinc-900/50 border border-white/5 rounded-3xl p-4 sm:p-12 mb-8 shadow-2xl overflow-hidden w-full aspect-[4/5] sm:aspect-square md:aspect-video flex flex-col justify-between">
-          {/* Pegs */}
-          <div className="flex-1 flex flex-col justify-around items-center py-4">
-            {[...Array(ROWS)].map((_, rowIndex) => (
-              <div key={rowIndex} className="flex gap-2 sm:gap-6 md:gap-8 justify-center">
-                {[...Array(rowIndex + 3)].map((_, pegIndex) => (
-                  <div key={pegIndex} className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-zinc-700 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
-                ))}
-              </div>
-            ))}
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 items-center lg:items-center w-full lg:h-[60vh]">
+          {/* Pegs Board Area */}
+          <div className="relative bg-zinc-900/50 border border-white/5 rounded-3xl p-4 sm:p-8 flex-1 w-full max-w-2xl h-full shadow-2xl flex flex-col justify-between overflow-hidden">
+            {/* Pegs */}
+            <div className="flex-1 flex flex-col justify-around items-center py-2">
+              {[...Array(ROWS)].map((_, rowIndex) => (
+                <div key={rowIndex} className="flex gap-2 sm:gap-4 md:gap-6 justify-center">
+                  {[...Array(rowIndex + 3)].map((_, pegIndex) => (
+                    <div key={pegIndex} className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-zinc-700 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Multipliers */}
+            <div className="flex justify-between mt-4 gap-0.5 px-0.5">
+              {multipliers.map((m, i) => (
+                <div 
+                  key={i} 
+                  className={`flex-1 py-1 sm:py-2 rounded-md border text-center font-mono font-black text-[7px] sm:text-[10px] transition-all truncate px-0.5 ${
+                    m >= 10 ? 'bg-amber-500/20 border-amber-500/40 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 
+                    m >= 2 ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 
+                    m >= 1 ? 'bg-zinc-800 border-white/10 text-zinc-400' : 
+                    'bg-zinc-900/50 border-white/5 text-zinc-600'
+                  }`}
+                >
+                  {m}x
+                </div>
+              ))}
+            </div>
+
+            <AnimatePresence>
+              {balls.map(ball => (
+                <motion.div
+                  key={ball.id}
+                  initial={{ top: '5%', left: '50%' }}
+                  animate={{ 
+                    top: ['5%', ...ball.path.map((_, i) => `${8 + ((i + 1) / ROWS) * 78}%`)],
+                    left: ['50%', ...ball.path.map(pos => `${50 + (pos / (ROWS + 2)) * 38}%`)]
+                  }}
+                  transition={{ duration: 3, ease: "linear" }}
+                  className="absolute w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-white shadow-[0_0_15px_white] z-20 -translate-x-1/2"
+                />
+              ))}
+            </AnimatePresence>
           </div>
 
-          {/* Multipliers */}
-          <div className="flex justify-between mt-4 gap-0.5 sm:gap-1 px-1">
-            {multipliers.map((m, i) => (
-              <div 
-                key={i} 
-                className={`flex-1 py-1.5 sm:py-2 rounded-md sm:rounded-lg border text-center font-mono font-black text-[8px] sm:text-[10px] md:text-xs transition-all ${
-                  m >= 20 ? 'bg-amber-500/20 border-amber-500/40 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 
-                  m >= 2 ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 
-                  m >= 1 ? 'bg-zinc-800 border-white/10 text-zinc-400' : 
-                  'bg-zinc-900/50 border-white/5 text-zinc-600'
-                }`}
-              >
-                {m}x
-              </div>
-            ))}
-          </div>
-
-          <AnimatePresence>
-            {balls.map(ball => (
-              <motion.div
-                key={ball.id}
-                initial={{ top: '5%', left: '50%' }}
-                animate={{ 
-                  top: ['5%', ...ball.path.map((_, i) => `${8 + ((i + 1) / ROWS) * 78}%`)],
-                  left: ['50%', ...ball.path.map(pos => `${50 + (pos / (ROWS + 2)) * 38}%`)]
-                }}
-                transition={{ duration: 3, ease: "linear" }}
-                className="absolute w-2.5 h-2.5 sm:w-4 sm:h-4 rounded-full bg-white shadow-[0_0_15px_white] z-20 -translate-x-1/2"
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-
-        <div className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 w-full max-w-md shadow-2xl">
-          <div className="text-center mb-6">
-             <h3 className="text-2xl font-black text-white drop-shadow-lg">{title}</h3>
-          </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <div className="flex-1 w-full bg-zinc-950 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+          {/* Controls Panel */}
+          <div className="w-full lg:w-96 bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 sm:p-8 shadow-2xl flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
+               <div className="flex-1 w-full bg-zinc-950 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
                   <Coins className="w-5 h-5 text-amber-500" />
                 </div>
                 <div className="flex-1">
@@ -188,12 +188,13 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
                   />
                 </div>
               </div>
-              <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+              
+              <div className="grid grid-cols-4 gap-2 w-full">
                 {[100, 500, 1000, 5000].map(amt => (
                   <button
                     key={amt}
                     onClick={() => { playClick(); setBet(amt); }}
-                    className={`px-4 py-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap min-w-[60px] ${bet === amt ? 'bg-white text-zinc-950' : 'bg-zinc-900 border border-white/5 text-zinc-400 hover:bg-zinc-800'}`}
+                    className={`py-2 px-1 rounded-xl text-[10px] font-bold transition-all truncate border ${bet === amt ? 'bg-white text-zinc-950 border-white' : 'bg-zinc-900 border-white/5 text-zinc-400 hover:bg-zinc-800'}`}
                   >
                     {amt < 1000 ? amt : `${amt/1000}k`}
                   </button>
@@ -201,33 +202,42 @@ export default function Plinko({ gameId, title, balance, setBalance, onExit, the
               </div>
             </div>
 
-          <button
-            onClick={dropBall}
-            disabled={balance < bet}
-            className={`w-full py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg ${
-              balance < bet 
-                ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed' 
-                : `bg-gradient-to-r ${themeGradient} text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`
-            }`}
-          >
-            DROP BALL
-            <Zap className="w-6 h-6" />
-          </button>
+            <button
+              onClick={dropBall}
+              disabled={balance < bet}
+              className={`w-full py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg ${
+                balance < bet 
+                  ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed' 
+                  : `bg-gradient-to-r ${themeGradient} text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`
+              }`}
+            >
+              DROP BALL
+              <Zap className="w-6 h-6" />
+            </button>
 
-          <AnimatePresence>
-            {lastWin !== null && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="mt-4 text-center"
-              >
-                <div className={`text-2xl font-black font-mono ${lastWin >= bet ? 'text-amber-500' : 'text-zinc-500'}`}>
-                  {lastWin >= bet ? '+' : ''}{lastWin.toLocaleString()} CHIPS
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <div className="mt-2 flex flex-col gap-2">
+              <AnimatePresence mode="wait">
+                {lastWin !== null && (
+                  <motion.div
+                    key={lastWin}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className={`text-center py-2 rounded-xl bg-black/30 border border-white/5`}
+                  >
+                    <div className={`text-xl font-black font-mono ${lastWin >= bet ? 'text-amber-500 font-glow' : 'text-zinc-500'}`}>
+                      {lastWin >= bet ? '+' : ''}{lastWin.toLocaleString()}
+                    </div>
+                    <div className="text-[8px] text-zinc-500 font-mono uppercase tracking-widest">Winnings</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div className="flex items-center justify-between px-2 text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-2 border-t border-white/5 pt-4">
+                <span>Holdings</span>
+                <span className="text-zinc-300 font-bold">${balance.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

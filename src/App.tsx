@@ -12,6 +12,8 @@ import {
   Search,
   Menu,
   Play,
+  Plus,
+  ShieldCheck,
   Dices,
   Coins,
   Spade,
@@ -33,12 +35,12 @@ import {
   Zap,
   Skull,
   Crown,
-  ShieldCheck,
   LogOut,
   Settings,
   Database,
   Users,
   TrendingUp,
+  BarChart3,
   AlertTriangle,
   RefreshCw,
   Megaphone,
@@ -49,6 +51,8 @@ import {
   Star,
   Tag,
   Activity,
+  Gem,
+  RotateCcw,
   Settings2,
   Trash2,
   MessageSquare,
@@ -66,12 +70,16 @@ import type { User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, where, orderBy, limit, getDocs, writeBatch } from 'firebase/firestore';
 
 import Slots from './games/Slots';
+import Dice from './games/Dice';
 import Blackjack from './games/Blackjack';
 import Plinko from './games/Plinko';
 import Roulette from './games/Roulette';
 import Poker from './games/Poker';
 import Craps from './games/Craps';
 import Baccarat from './games/Baccarat';
+import Crash from './games/Crash';
+import Mines from './games/Mines';
+import CoinFlip from './games/CoinFlip';
 import GameImage from './components/GameImage';
 import AuraPackModal, { PackType } from './components/AuraPackModal';
 import ChatModal from './components/ChatModal';
@@ -80,21 +88,21 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 
 const STANDARD_GAMES = [
+  { id: 'custom-107', title: 'Cyber Dice', category: 'Strategy', icon: Dices, color: 'from-purple-500 to-indigo-600', players: '7.3k', status: 'HOT' },
   { id: 'custom-101', title: 'Neon Slots', category: 'Slots', icon: Coins, color: 'from-amber-400 to-red-500', players: '4.2k', status: 'HOT' },
+  { id: 'custom-205', title: 'Nebula Crash', category: 'Instant', icon: Rocket, color: 'from-rose-500 to-red-600', players: '15.2k', status: 'TRENDING' },
   { id: 'custom-102', title: 'High Roller Blackjack', category: 'Cards', icon: Spade, color: 'from-red-500 to-rose-600', players: '2.1k', status: 'ONLINE' },
   { id: 'custom-103', title: 'Cyber Poker', category: 'Cards', icon: Club, color: 'from-amber-500 to-orange-600', players: '5.5k', status: 'TOURNAMENT' },
   { id: 'custom-104', title: 'Quantum Roulette', category: 'Table', icon: Crosshair, color: 'from-rose-400 to-red-500', players: '1.8k', status: 'ONLINE' },
   { id: 'custom-105', title: 'Crypto Craps', category: 'Dice', icon: Dices, color: 'from-amber-400 to-orange-500', players: '950', status: 'ONLINE' },
   { id: 'custom-106', title: 'Baccarat Royale', category: 'Cards', icon: Diamond, color: 'from-red-400 to-rose-500', players: '620', status: 'VIP ONLY' },
-  { id: 'custom-107', title: 'Hearts of Fire', category: 'Cards', icon: Heart, color: 'from-rose-500 to-red-600', players: '1.1k', status: 'ONLINE' },
-  { id: 'custom-108', title: 'Jackpot Terminal', category: 'Slots', icon: Terminal, color: 'from-amber-300 to-red-500', players: '8.9k', status: 'MEGA DROP' },
 ];
 
 const ADULT_GAMES = [
   { id: 'custom-201', title: 'Cyber Plinko', category: 'Premium', icon: Sparkles, color: 'from-yellow-400 to-amber-600', players: '12.5k', status: 'PREMIUM' },
+  { id: 'custom-206', title: 'Cosmic Flip', category: 'Table', icon: RotateCcw, color: 'from-indigo-400 to-purple-600', players: '4.1k', status: 'FAST' },
+  { id: 'custom-207', title: 'Nebula Mines', category: 'Strategy', icon: Gem, color: 'from-amber-400 to-orange-600', players: '8.4k', status: 'POPULAR' },
   { id: 'custom-202', title: 'Godly Slots', category: 'Premium', icon: Crown, color: 'from-amber-300 via-orange-500 to-red-600', players: '8.1k', status: 'GODLY' },
-  { id: 'custom-203', title: 'VIP Roulette', category: 'Premium', icon: Crosshair, color: 'from-purple-600 to-pink-600', players: '3.2k', status: 'VIP' },
-  { id: 'custom-204', title: 'High Stakes Poker', category: 'Premium', icon: Club, color: 'from-emerald-500 to-teal-700', players: '1.5k', status: 'HIGH STAKES' },
 ];
 
 const ARTICLES = [
@@ -343,8 +351,12 @@ export default function App() {
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [adminUserSearch, setAdminUserSearch] = useState('');
+  const [adminUserSearchResults, setAdminUserSearchResults] = useState<any[]>([]);
+  const [isAdminSearching, setIsAdminSearching] = useState(false);
+  const [selectedAdminUser, setSelectedAdminUser] = useState<any | null>(null);
+  const [adminTab, setAdminTab] = useState<'stats' | 'economy' | 'users' | 'promos' | 'live' | 'system'>('system');
   const [adminStats, setAdminStats] = useState<any>(null);
-  const [adminTab, setAdminTab] = useState<'stats' | 'economy' | 'users' | 'promos' | 'live' | 'system'>('stats');
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [userSort, setUserSort] = useState<'none' | 'hours' | 'online'>('none');
@@ -443,13 +455,66 @@ export default function App() {
   // New Engagement States
   const [xp, setXp] = useState(0);
   const [level, setLevel] = useState(1);
+  const [lastReset, setLastReset] = useState<number>(() => {
+    const saved = localStorage.getItem('nebula_last_reset');
+    return saved ? parseInt(saved) : Date.now();
+  });
+  const [hasNebulaCrown, setHasNebulaCrown] = useState(() => localStorage.getItem('nebula_crown') === 'true');
+  const [showResetCeremony, setShowResetCeremony] = useState(false);
   const [loginStreak, setLoginStreak] = useState(0);
   const [showDailyModal, setShowDailyModal] = useState(false);
   const [dailyReward, setDailyReward] = useState(0);
   const [showQuestsModal, setShowQuestsModal] = useState(false);
+  const getDailyQuests = (dateStr: string) => {
+    // Simple deterministic random based on date string
+    let seed = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+      seed = (seed << 5) - seed + dateStr.charCodeAt(i);
+    }
+    
+    const random = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+
+    const pool = [
+      { id: 'play', title: 'Play 50 Hands', desc: 'Play any game 50 times.', target: 50 },
+      { id: 'wager', title: 'High Roller', desc: 'Wager $10,000 total today.', target: 10000 },
+      { id: 'win_single', title: 'Lucky Strike', desc: 'Win $5,000 in a single round.', target: 5000 },
+      { id: 'play_more', title: 'Game Master', desc: 'Play 100 rounds of any game.', target: 100 },
+      { id: 'wins_total', title: 'Fortune Favor', desc: 'Win 20 rounds total.', target: 20 },
+      { id: 'tokens_wager', title: 'Token Hunter', desc: 'Wager 50 tokens.', target: 50 },
+      { id: 'wager_huge', title: 'Big Spender', desc: 'Wager $50,000 total today.', target: 50000 },
+      { id: 'wins_massive', title: 'Elite Winner', desc: 'Win $25,000 total today.', target: 25000 },
+      { id: 'xp_focus', title: 'XP Grinder', desc: 'Wager $5,000 to earn massive XP.', target: 5000 }
+    ];
+
+    const selected: any[] = [];
+    const indices = new Set<number>();
+    while (selected.length < 3) {
+      const idx = Math.floor(random() * pool.length);
+      if (!indices.has(idx)) {
+        indices.add(idx);
+        const base = pool[idx];
+        const isXp = random() > 0.4; // 60% chance of XP reward
+        selected.push({
+          ...base,
+          id: `q-${dateStr}-${selected.length}`,
+          type: base.id,
+          progress: 0,
+          completed: false,
+          rewardType: isXp ? 'xp' : (random() > 0.5 ? 'balance' : 'tokens'),
+          rewardAmount: isXp ? 1000 : (random() > 0.5 ? 10000 : 50)
+        });
+      }
+    }
+    return selected;
+  };
+
   const [quests, setQuests] = useState<any[]>([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
+  const [resetTick, setResetTick] = useState(0);
   const [globalWins, setGlobalWins] = useState<any[]>([]);
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [promoInput, setPromoInput] = useState('');
@@ -472,6 +537,16 @@ export default function App() {
   const [socialSearchQuery, setSocialSearchQuery] = useState('');
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+
+  const [showAdOfferModal, setShowAdOfferModal] = useState(false);
+  const [pendingAdReward, setPendingAdReward] = useState<{ 
+    type: 'chips' | 'tokens' | 'pack' | 'unlock', 
+    amount?: number, 
+    adsNeeded: number,
+    packType?: PackType,
+    rewardId?: string
+  } | null>(null);
+  const [adsCompletedForReward, setAdsCompletedForReward] = useState(0);
 
   const gamesSectionRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -544,10 +619,7 @@ export default function App() {
               showDaily = true;
               reward = currentStreak * 500; // 500 linearly increasing
               
-              const newQuests = [
-                { id: `q-${Date.now()}-1`, title: 'Play 50 Hands', desc: 'Play any card game 50 times.', target: 50, progress: 0, rewardType: 'keyFragments', rewardAmount: 1, completed: false },
-                { id: `q-${Date.now()}-2`, title: 'High Roller', desc: 'Wager $10,000 total today.', target: 10000, progress: 0, rewardType: 'balance', rewardAmount: 5000, completed: false }
-              ];
+              const newQuests = getDailyQuests(today);
 
               const updates = {
                 loginStreak: currentStreak,
@@ -605,6 +677,9 @@ export default function App() {
       setAdsWatchedWithoutWin(userProfile.adsWatchedWithoutWin);
       setKeyFragments(userProfile.keyFragments);
       setIsProMode(userProfile.isProMode);
+      if (userProfile.isProMode && !userProfile.hasProAccess) {
+        updateFirestoreProfile({ hasProAccess: true });
+      }
       setXp(userProfile.xp || 0);
       setLevel(userProfile.level || 1);
       setLoginStreak(userProfile.loginStreak || 0);
@@ -1005,13 +1080,45 @@ export default function App() {
         const updatedQuests = quests.map(q => {
           if (q.completed) return q;
           let newProgress = q.progress;
-          if (q.title === 'Play 50 Hands') newProgress += 1;
-          if (q.title === 'High Roller' && type === 'chips') newProgress += amount;
+          
+          switch (q.type) {
+            case 'play':
+            case 'play_more':
+              newProgress += 1;
+              break;
+            case 'wager':
+            case 'wager_huge':
+            case 'xp_focus':
+              if (type === 'chips') newProgress += amount;
+              break;
+            case 'tokens_wager':
+              if (type === 'tokens') newProgress += amount;
+              break;
+            case 'win_single':
+              if (winnings >= q.target) newProgress = q.target;
+              break;
+            case 'wins_total':
+              if (winnings > 0) newProgress += 1;
+              break;
+            case 'wins_massive':
+              if (winnings > 0) newProgress += winnings;
+              break;
+            default:
+              // Fallback for old quest titles if any
+              if (q.title === 'Play 50 Hands') newProgress += 1;
+              if (q.title === 'High Roller' && type === 'chips') newProgress += amount;
+          }
           
           if (newProgress >= q.target && !q.completed) {
             // Quest completed
             if (q.rewardType === 'balance') {
                handleSetBalance(b => b + q.rewardAmount);
+            } else if (q.rewardType === 'tokens') {
+               setTokens(t => t + q.rewardAmount);
+            } else if (q.rewardType === 'xp') {
+               // Reward XP
+               xpUpdates.xp += q.rewardAmount;
+               // No need to update local newXp/newLevel here as they are updated below
             } else if (q.rewardType === 'keyFragments') {
                const newFrags = keyFragments + q.rewardAmount;
                setKeyFragments(newFrags);
@@ -1022,6 +1129,17 @@ export default function App() {
           }
           return { ...q, progress: newProgress };
         });
+        
+        // Recalculate level if XP was gained from quests
+        if (xpUpdates.xp > newXp) {
+          const finalXp = xpUpdates.xp;
+          const finalLevel = Math.floor(Math.sqrt(finalXp / 100)) + 1;
+          if (finalLevel > (xpUpdates.level || level)) {
+            xpUpdates.level = finalLevel;
+            setRewardMessage(`Level Up! You are now Level ${finalLevel}!`);
+          }
+        }
+
         setQuests(updatedQuests);
         xpUpdates.quests = updatedQuests;
       }
@@ -1058,6 +1176,7 @@ export default function App() {
     try {
       const q = query(
         collection(db, 'leaderboard'),
+        orderBy('level', 'desc'),
         orderBy('xp', 'desc'),
         limit(20)
       );
@@ -1070,7 +1189,7 @@ export default function App() {
       try {
         const snap = await getDocs(collection(db, 'leaderboard'));
         let topUsers = snap.docs.map(doc => doc.data());
-        topUsers.sort((a,b) => (b.xp || 0) - (a.xp || 0));
+        topUsers.sort((a,b) => (b.level || 1) - (a.level || 1) || (b.xp || 0) - (a.xp || 0));
         setLeaderboardData(topUsers.slice(0, 20));
       } catch (err) {
         handleFirestoreError(err, OperationType.LIST, 'leaderboard');
@@ -1078,6 +1197,30 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    const q = query(
+      collection(db, 'leaderboard'),
+      orderBy('level', 'desc'),
+      orderBy('xp', 'desc'),
+      limit(20)
+    );
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const topUsers = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setLeaderboardData(topUsers);
+    }, (error) => {
+      console.warn("Leaderboard index likely missing, falling back to one-time fetch:", error);
+      fetchLeaderboards();
+    });
+
+    const interval = setInterval(() => {
+      setResetTick(t => t + 1);
+    }, 60000); // Pulse every minute for UI updates
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
+  }, []);
   const handleRedeemPromo = async () => {
     if (!promoInput.trim() || !user) return;
     try {
@@ -1099,9 +1242,8 @@ export default function App() {
           
           if (type === 'balance' || type === 'tokens') {
             const amount = promoData.rewardAmount || 0;
-            updates[type] = (userProfile[type] || 0) + amount;
-            if (type === 'tokens') setTokens(t => t + amount);
-            else setBalance(b => b + amount);
+            if (type === 'tokens') handleSetTokens(t => t + amount);
+            else handleSetBalance(b => b + amount);
             setRewardMessage(`Redeemed ${code}! +${amount.toLocaleString()} ${type === 'tokens' ? 'Tokens' : 'Chips'}!`);
           } else if (type === 'multiplier' || type === 'no_ads' || type === 'pro_access') {
              const duration = promoData.duration || 60;
@@ -1109,7 +1251,11 @@ export default function App() {
              updates[type + 'EndsAt'] = endTime;
              if (type === 'multiplier') updates.multiplierFactor = promoData.rewardAmount || 2;
              setRewardMessage(`Redeemed ${code}! You received ${type.replace('_', ' ')} for ${duration} mins!`);
-             if (type === 'pro_access') setIsProMode(true);
+             if (type === 'pro_access') {
+               setIsProMode(true);
+               updates.hasProAccess = true;
+               updates.isProMode = true;
+             }
           } else if (type === 'free_pack') {
              const amount = promoData.rewardAmount || 1;
              updates[`freePacks_${promoData.packType}`] = (userProfile[`freePacks_${promoData.packType}`] || 0) + amount;
@@ -1125,18 +1271,44 @@ export default function App() {
             uses: (promoData.uses || 0) + 1 
           });
         }
-      } else if (code === 'LAUNCH2026') { // Fallback for the hardcoded one if it doesn't exist in DB
-        if (redeemedPromos.includes('LAUNCH2026')) {
+      } else if (code === 'LAUNCH2026' || code === 'PUREPRO' || code === 'GODLY' || code === 'GEMINI' || code === 'NEBULA' || code === 'COSMIC' || code === 'AVATAR' || code === 'VFX' || code === 'ULTIMATE' || code === 'DIAMOND' || code === 'EMERALD' || code === 'SAPPHIRE' || code === 'RUBY') { // Fallbacks
+        const c = code;
+        if (redeemedPromos.includes(c)) {
           setRewardMessage('Promo code already redeemed!');
         } else {
-          updateFirestoreProfile({
-            redeemedPromos: [...redeemedPromos, 'LAUNCH2026'],
-            balance: (userProfile.balance || 0) + 5000,
-            tokens: (userProfile.tokens || 0) + 1000,
+          let chips = 0;
+          let tokens = 0;
+          let packs: any = {};
+          
+          if (c === 'LAUNCH2026') { chips = 5000; tokens = 1000; }
+          else if (c === 'PUREPRO') { chips = 50000; }
+          else if (c === 'GODLY') { tokens = 5000; }
+          else if (c === 'GEMINI') { chips = 100000; tokens = 2000; }
+          else if (c === 'NEBULA') { packs.freePacks_AURA = 3; }
+          else if (c === 'COSMIC') { packs.freePacks_GOD = 1; }
+          else if (c === 'AVATAR') { packs.freePacks_AVATAR = 5; }
+          else if (c === 'VFX') { packs.freePacks_VFX = 5; }
+          else if (c === 'ULTIMATE') { chips = 1000000; tokens = 10000; packs.freePacks_GOD = 5; }
+          else if (c === 'DIAMOND') { chips = 250000; }
+          else if (c === 'EMERALD') { packs.freePacks_AURA = 10; }
+          else if (c === 'SAPPHIRE') { tokens = 20000; }
+          else if (c === 'RUBY') { chips = 500000; packs.freePacks_GOD = 2; }
+
+          const updates: any = {
+            redeemedPromos: [...redeemedPromos, c],
+            ...packs
+          };
+          updateFirestoreProfile(updates);
+          if (chips) handleSetBalance(b => b + chips);
+          if (tokens) handleSetTokens(t => t + tokens);
+          
+          let msg = `Redeemed ${c}! `;
+          if (chips) msg += `+${chips.toLocaleString()} Chips `;
+          if (tokens) msg += `+${tokens.toLocaleString()} Tokens `;
+          Object.keys(packs).forEach(k => {
+            msg += `+${packs[k]} ${k.split('_')[1]} Packs `;
           });
-          setBalance(b => b + 5000);
-          setTokens(t => t + 1000);
-          setRewardMessage('Redeemed LAUNCH2026! +5,000 Chips & +1,000 Tokens!');
+          setRewardMessage(msg);
           setPromoInput('');
           setShowPromoModal(false);
         }
@@ -1467,10 +1639,15 @@ export default function App() {
       updateFirestoreProfile({ isProMode: false });
       setActiveGame(null);
     } else {
-      setKeyInput('');
-      setKeyError(false);
-      setGeneratedKey('');
-      setShowKeyModal(true);
+      if (userProfile?.hasProAccess) {
+        setIsProMode(true);
+        updateFirestoreProfile({ isProMode: true });
+      } else {
+        setKeyInput('');
+        setKeyError(false);
+        setGeneratedKey('');
+        setShowKeyModal(true);
+      }
     }
   };
 
@@ -1528,7 +1705,7 @@ export default function App() {
         const newCount = prev + 1;
         if (newCount >= 5) {
           setIsProMode(true);
-          updateFirestoreProfile({ isProMode: true, keyFragments: 0 });
+          updateFirestoreProfile({ isProMode: true, hasProAccess: true, keyFragments: 0 });
           setRewardMessage(`5 Fragments Collected! VIP Key Forged!`);
           return 0;
         }
@@ -1545,7 +1722,7 @@ export default function App() {
     e.preventDefault();
     if (keyInput.toUpperCase() === generatedKey && generatedKey !== '') {
       setIsProMode(true);
-      updateFirestoreProfile({ isProMode: true });
+      updateFirestoreProfile({ isProMode: true, hasProAccess: true });
       setShowKeyModal(false);
     } else {
       setKeyError(true);
@@ -1716,8 +1893,231 @@ export default function App() {
     });
   };
 
+  const handleAdminUserSearch = async (term: string) => {
+    setAdminUserSearch(term);
+    if (term.length < 2) {
+      setAdminUserSearchResults([]);
+      return;
+    }
+    setIsAdminSearching(true);
+    try {
+      const lowerTerm = term.toLowerCase();
+      const q = query(collection(db, 'users'), where('email', '>=', lowerTerm), where('email', '<=', lowerTerm + '\uf8ff'), limit(20));
+      const snap = await getDocs(q);
+      const results = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setAdminUserSearchResults(results);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAdminSearching(false);
+    }
+  };
+
+  const updateUserStats = async (userId: string, updates: any) => {
+    try {
+      await updateDoc(doc(db, 'users', userId), updates);
+
+      if (updates.level !== undefined || updates.xp !== undefined) {
+        try {
+          const lbUpdates: any = {};
+          if (updates.level !== undefined) lbUpdates.level = updates.level;
+          if (updates.xp !== undefined) lbUpdates.xp = updates.xp;
+          await setDoc(doc(db, 'leaderboard', userId), lbUpdates, { merge: true });
+        } catch (e) {
+          console.error("Failed to sync admin update to leaderboard", e);
+        }
+      }
+
+      if (selectedAdminUser?.id === userId) {
+        setSelectedAdminUser((prev: any) => ({ ...prev, ...updates }));
+      }
+      setNotifications(prev => [{
+        id: Date.now(),
+        title: 'Admin Action',
+        message: `Updated user ${userId} stats`,
+        time: 'Just now',
+        unread: true,
+        type: 'system'
+      }, ...prev]);
+    } catch (e) {
+      handleFirestoreError(e, OperationType.UPDATE, `users/${userId}`);
+    }
+  };
+  const [allAdminUsers, setAllAdminUsers] = useState<any[]>([]);
+  const [adminUserSort, setAdminUserSort] = useState<'none' | 'hours' | 'online'>('none');
+  const [isAllUsersLoading, setIsAllUsersLoading] = useState(false);
+
+  const fetchAllAdminUsers = async () => {
+    setIsAllUsersLoading(true);
+    try {
+      const q = query(collection(db, 'users'), limit(50));
+      const snap = await getDocs(q);
+      const users = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setAllAdminUsers(users);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAllUsersLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showAdminPanel && adminTab === 'users' && adminUserSearch.length === 0) {
+      fetchAllAdminUsers();
+    }
+  }, [showAdminPanel, adminTab, adminUserSearch]);
+
+  const sortedUsers = useMemo(() => {
+    const list = adminUserSearch.length >= 2 ? adminUserSearchResults : allAdminUsers;
+    return [...list].sort((a, b) => {
+      if (adminUserSort === 'hours') return (b.playTime || 0) - (a.playTime || 0);
+      if (adminUserSort === 'online') {
+        const aOnline = a.lastActive && (Date.now() - a.lastActive < 300000);
+        const bOnline = b.lastActive && (Date.now() - b.lastActive < 300000);
+        if (aOnline === bOnline) return 0;
+        return aOnline ? -1 : 1;
+      }
+      return 0;
+    });
+  }, [allAdminUsers, adminUserSearchResults, adminUserSearch, adminUserSort]);
+
+  const triggerWeeklyReset = (manual = false) => {
+    // Check if user is #1 on leaderboard
+    const topPlayer = leaderboardData[0];
+    const isWinner = topPlayer && (topPlayer.name === userProfile?.nickname || topPlayer.userId === auth.currentUser?.uid);
+    
+    if (isWinner) {
+      setHasNebulaCrown(true);
+      localStorage.setItem('nebula_crown', 'true');
+      setShowResetCeremony(true);
+    } else {
+      setHasNebulaCrown(false);
+      localStorage.removeItem('nebula_crown');
+    }
+
+    setBalance(1000); // Reset balance too for a fresh start? Actually user might not like that.
+    // We'll just reset levels and XP as per original intent.
+    setLevel(1);
+    setXp(0);
+    
+    // Find the Monday 12 AM that just happened
+    const now = new Date();
+    const day = now.getDay();
+    const diff = (day + 6) % 7; // days since last Monday
+    const lastMonday = new Date(now);
+    lastMonday.setHours(0, 0, 0, 0);
+    lastMonday.setDate(now.getDate() - diff);
+    
+    setLastReset(lastMonday.getTime());
+    localStorage.setItem('nebula_last_reset', lastMonday.getTime().toString());
+    
+    setNotifications(prev => [{
+      id: Date.now(),
+      title: 'Weekly Season Reset!',
+      message: 'All levels have been reset to 1. A new race for the Nebula Crown begins!',
+      time: 'Just now',
+      unread: true,
+      type: 'system'
+    }, ...prev]);
+  };
+
+  useEffect(() => {
+    const checkReset = () => {
+      const now = new Date();
+      const day = now.getDay();
+      const diff = (day + 6) % 7;
+      const currentMonday = new Date(now);
+      currentMonday.setHours(0, 0, 0, 0);
+      currentMonday.setDate(now.getDate() - diff);
+      
+      if (lastReset < currentMonday.getTime()) {
+        triggerWeeklyReset();
+      }
+    };
+    
+    checkReset();
+    const interval = setInterval(checkReset, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [lastReset]);
+
+  const adOffers = useMemo(() => {
+    if (isProMode) {
+      return {
+        pack_aura: { type: 'pack', packType: 'AURA' as PackType, ads: 1, label: 'Aura Essence', icon: Sparkles, color: 'text-purple-400' },
+        pack_avatar: { type: 'pack', packType: 'AVATAR' as PackType, ads: 1, label: 'Identity Shift', icon: User, color: 'text-cyan-400' },
+        pack_vfx: { type: 'pack', packType: 'VFX' as PackType, ads: 1, label: 'Particle Storm', icon: Zap, color: 'text-emerald-400' },
+        mega_chips: { type: 'chips', amount: 50000, ads: 1, label: 'Pro Stimulus', icon: Coins, color: 'text-amber-400' },
+        elite_tokens: { type: 'tokens', amount: 500, ads: 1, label: 'Godly Tokens', icon: Ticket, color: 'text-zinc-200' }
+      };
+    }
+    return {
+      chips: { type: 'chips', amount: 1000, ads: 1, label: 'Fast Cash', icon: Coins, color: 'text-amber-500' },
+      tokens: { type: 'tokens', amount: 10, ads: 1, label: 'Elite Pass', icon: Ticket, color: 'text-zinc-400' }
+    };
+  }, [isProMode]);
+
+  const handleAdOfferSelect = (type: any, amount: any, adsNeeded: number, extra?: any) => {
+    setPendingAdReward({ type, amount, adsNeeded, ...extra });
+    setAdsCompletedForReward(0);
+    
+    watchAdWithCallback(() => {
+      if (adsNeeded === 1) {
+        if (type === 'chips') handleSetBalance(b => b + amount);
+        else if (type === 'tokens') handleSetTokens(t => t + amount);
+        else if (type === 'pack') {
+          const packKey = `freePacks_${extra.packType}`;
+          updateFirestoreProfile({ [packKey]: (userProfile[packKey] || 0) + 1 });
+          setRewardMessage(`Ad watched! +1 ${extra.packType} Pack added to inventory!`);
+        }
+        setPendingAdReward(null);
+        setShowAdOfferModal(false);
+      } else {
+        setAdsCompletedForReward(1);
+      }
+    });
+  };
+
+  const continueAdSequence = () => {
+    if (!pendingAdReward) return;
+    
+    watchAdWithCallback(() => {
+      const nextCount = adsCompletedForReward + 1;
+      if (nextCount >= pendingAdReward.adsNeeded) {
+        const { type, amount, packType } = pendingAdReward;
+        if (type === 'chips') handleSetBalance(b => b + (amount || 0));
+        else if (type === 'tokens') handleSetTokens(t => t + (amount || 0));
+        else if (type === 'pack' && packType) {
+          const packKey = `freePacks_${packType}`;
+          updateFirestoreProfile({ [packKey]: (userProfile[packKey] || 0) + 1 });
+          setRewardMessage(`Ad sequence complete! +1 ${packType} Pack added!`);
+        }
+        setPendingAdReward(null);
+        setShowAdOfferModal(false);
+      } else {
+        setAdsCompletedForReward(nextCount);
+      }
+    });
+  };
+
   const scrollToGames = () => {
     gamesSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const getRemainingTime = () => {
+    const now = new Date();
+    const day = now.getDay();
+    const daysUntilMonday = (8 - day) % 7 || 7;
+    const nextMonday = new Date(now);
+    nextMonday.setHours(0, 0, 0, 0);
+    nextMonday.setDate(now.getDate() + daysUntilMonday);
+    
+    const remaining = Math.max(0, nextMonday.getTime() - Date.now());
+    
+    const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+    
+    return `${days}d ${hours}h ${minutes}m`;
   };
 
   const activeGames = useMemo(() => {
@@ -1806,42 +2206,42 @@ export default function App() {
             >
               <Terminal className="w-5 h-5 text-zinc-950" />
             </motion.div>
-            <span className="font-bold text-xl tracking-tight hidden md:flex items-center gap-2">
+            <span className="font-bold text-xl tracking-tight hidden lg:flex items-center gap-2">
               PurePro<motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`}>4561</motion.span>
               {ownedBadges.map(b => <span key={b} className="text-lg" title={BADGES[b as keyof typeof BADGES].name}>{BADGES[b as keyof typeof BADGES].icon}</span>)}
             </span>
           </motion.div>
 
-          <div className="flex flex-1 items-center justify-end gap-2 sm:gap-4 ml-4">
+          <div className="flex flex-1 items-center justify-end gap-2 sm:gap-4 ml-2 sm:ml-4">
             <div className="hidden sm:flex items-center gap-2 lg:gap-4">
-              <div className="flex items-center gap-2 bg-amber-500/10 pl-3 pr-1 py-1 rounded-full border border-amber-500/20 text-amber-400 font-mono text-sm">
-                <Coins className="w-4 h-4" /> ${balance.toLocaleString()}
+              <div className="flex items-center gap-1.5 bg-amber-500/10 pl-3 pr-1 py-1 rounded-full border border-amber-500/20 text-amber-400 font-mono text-xs sm:text-sm">
+                <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> ${balance.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
-                  onClick={watchAd} 
-                  className="ml-2 bg-amber-500/20 hover:bg-amber-500/40 p-1.5 rounded-full transition-colors hidden lg:block" 
+                  onClick={() => setShowAdOfferModal(true)} 
+                  className="ml-1.5 bg-amber-500/20 hover:bg-amber-500/40 p-1 rounded-full transition-colors flex" 
                   title="Watch Ad for Chips"
                 >
-                  <Video className="w-4 h-4 text-amber-400" />
+                  <Plus className="w-3.5 h-3.5 text-amber-400" />
                 </button>
               </div>
-              <div className="flex items-center gap-2 bg-zinc-800/50 pl-3 pr-1 py-1 rounded-full border border-white/10 text-zinc-300 font-mono text-sm">
-                <Ticket className="w-4 h-4" /> {tokens.toLocaleString()}
+              <div className="flex items-center gap-1.5 bg-zinc-800/50 pl-3 pr-1 py-1 rounded-full border border-white/10 text-zinc-300 font-mono text-xs sm:text-sm">
+                <Ticket className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {tokens.toLocaleString()}
                 <button 
                   onMouseEnter={playHover}
-                  onClick={watchAd} 
-                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors hidden lg:block" 
+                  onClick={() => setShowAdOfferModal(true)} 
+                  className="ml-1.5 bg-white/10 hover:bg-white/20 p-1 rounded-full transition-colors flex" 
                   title="Watch Ad for Tokens"
                 >
-                  <Video className="w-4 h-4 text-lime-400" />
+                  <Plus className="w-3.5 h-3.5 text-lime-400" />
                 </button>
                 <button 
                   onMouseEnter={playHover}
                   onClick={() => setShowShopModal(true)} 
-                  className="ml-2 bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition-colors hidden lg:block" 
+                  className="ml-1.5 bg-white/10 hover:bg-white/20 p-1 rounded-full transition-colors flex" 
                   title="Open Shop"
                 >
-                  <Store className="w-4 h-4 text-zinc-300" />
+                  <Store className="w-3.5 h-3.5 text-zinc-300" />
                 </button>
               </div>
             </div>
@@ -1853,14 +2253,14 @@ export default function App() {
             )}
             
             <motion.div 
-              className="flex items-center gap-2 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-white/5 shrink-0"
+              className="flex items-center gap-1.5 sm:gap-2 bg-zinc-900/50 px-2 sm:px-3 py-1.5 rounded-full border border-white/5 shrink-0"
               whileHover={{ scale: 1.05 }}
             >
-              <span className={`hidden sm:inline text-xs font-mono font-bold ${isProMode ? 'text-amber-500' : 'text-zinc-500'}`}>PRO</span>
+              <span className={`hidden lg:inline text-[10px] font-mono font-bold ${isProMode ? 'text-amber-500' : 'text-zinc-500'}`}>PRO</span>
               <button 
                 onMouseEnter={playHover}
                 onClick={handleToggleProMode} 
-                className={`w-10 h-5 rounded-full p-1 flex items-center transition-colors duration-300 ${isProMode ? 'bg-gradient-to-r from-amber-500 to-red-500 justify-end' : 'bg-zinc-700 justify-start'}`}
+                className={`w-8 sm:w-10 h-4 sm:h-5 rounded-full p-0.5 sm:p-1 flex items-center transition-colors duration-300 ${isProMode ? 'bg-gradient-to-r from-amber-500 to-red-500 justify-end' : 'bg-zinc-700 justify-start'}`}
               >
                 <motion.div layout className="w-3 h-3 rounded-full bg-white shadow-sm" />
               </button>
@@ -1912,6 +2312,16 @@ export default function App() {
                   <div className="text-[10px] font-bold text-white flex items-center gap-1 mb-0.5">
                     {userProfile?.nickname || user?.email?.split('@')[0]}
                     {(userProfile?.role === 'admin' || user?.email === 'purepro4561@gmail.com') && <ShieldCheck className="w-2.5 h-2.5 text-amber-500" />}
+                    {hasNebulaCrown && (
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1], filter: ["hue-rotate(0deg)", "hue-rotate(360deg)"] }}
+                        transition={{ duration: 4, repeat: Infinity }}
+                        className="relative"
+                      >
+                        <Crown className="w-3 h-3 text-cyan-400 font-glow" />
+                        <div className="absolute inset-0 bg-cyan-400 blur-sm opacity-50" />
+                      </motion.div>
+                    )}
                   </div>
                   <div className="font-mono text-[10px] sm:text-xs text-zinc-400 leading-none">Level {level}</div>
                   <div className="w-16 sm:w-24 h-1 sm:h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-white/10 mt-1" title={`${xp} XP`}>
@@ -2059,7 +2469,7 @@ export default function App() {
             onRecordBet={recordBet}
             globalMultiplier={activeMultiplier}
           />
-        ) : activeGame === 'custom-103' || activeGame === 'custom-204' || activeGame === 'custom-107' ? (
+        ) : activeGame === 'custom-103' || activeGame === 'custom-204' ? (
           <Poker
             gameId={activeGame}
             title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || ADULT_GAMES.find(g => g.id === activeGame)?.title || "Poker"}
@@ -2075,6 +2485,54 @@ export default function App() {
           <Craps
             gameId={activeGame}
             title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || "Craps"}
+            balance={balance}
+            setBalance={handleSetBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={activeMultiplier}
+          />
+        ) : activeGame === 'custom-205' ? (
+          <Crash
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || "Crash"}
+            balance={balance}
+            setBalance={handleSetBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={activeMultiplier}
+          />
+        ) : activeGame === 'custom-206' ? (
+          <CoinFlip
+            gameId={activeGame}
+            title={ADULT_GAMES.find(g => g.id === activeGame)?.title || "Coin Flip"}
+            balance={balance}
+            setBalance={handleSetBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={activeMultiplier}
+          />
+        ) : activeGame === 'custom-207' ? (
+          <Mines
+            gameId={activeGame}
+            title={ADULT_GAMES.find(g => g.id === activeGame)?.title || "Mines"}
+            balance={balance}
+            setBalance={handleSetBalance}
+            onExit={() => setActiveGame(null)}
+            themeGradient={themeGradient}
+            themeColor={themeColor}
+            onRecordBet={recordBet}
+            globalMultiplier={activeMultiplier}
+          />
+        ) : activeGame === 'custom-107' ? (
+          <Dice
+            gameId={activeGame}
+            title={STANDARD_GAMES.find(g => g.id === activeGame)?.title || "Dice"}
             balance={balance}
             setBalance={handleSetBalance}
             onExit={() => setActiveGame(null)}
@@ -2184,7 +2642,7 @@ export default function App() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
-                    className="text-5xl md:text-7xl font-bold tracking-tighter mb-6"
+                    className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter mb-6"
                   >
                     All Your Favorite Games <br className="hidden md:block" />
                     <motion.span layout className={`text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} dynamic-glow-text`}>
@@ -2215,6 +2673,75 @@ export default function App() {
                     <Play className="w-5 h-5 fill-current" />
                     {isProMode ? 'ENTER CASINO' : 'START PLAYING'}
                   </motion.button>
+                </section>
+
+                {/* Weekly Race Marketing Banner */}
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="relative overflow-hidden rounded-[2.5rem] bg-zinc-900 border border-white/5 p-8 sm:p-12 shadow-2xl"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-indigo-500/10 pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-400/10 blur-[100px] rounded-full -mr-48 -mt-48 animate-pulse" />
+                    
+                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
+                      <div className="flex-1 text-center lg:text-left">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                          <Sparkles className="w-3 h-3" /> Season 01: Galactic Ascent
+                        </div>
+                        <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter mb-6 leading-[0.9] uppercase italic">
+                          The race for the <span className="text-cyan-400 font-glow">Nebula Crown</span> is on.
+                        </h2>
+                        <p className="text-zinc-400 text-lg mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                          Every Sunday at 00:00 UTC, the galaxy resets. Only the #1 ranked player on the global leaderboard ascends to Champion status, earning the <span className="text-white font-bold">Eternal Nebula Crown</span> and exclusive platform bragging rights.
+                        </p>
+                        
+                        <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-8">
+                          <div className="px-5 py-3 bg-zinc-950 border border-white/5 rounded-2xl">
+                            <div className="text-zinc-500 text-[10px] uppercase font-black tracking-widest mb-1">Time Remaining</div>
+                            <div className="text-xl font-mono font-black text-white" key={resetTick}>{getRemainingTime()}</div>
+                          </div>
+                          <div className="px-5 py-3 bg-zinc-950 border border-white/5 rounded-2xl">
+                            <div className="text-zinc-500 text-[10px] uppercase font-black tracking-widest mb-1">Current Leader</div>
+                            <div className="text-xl font-mono font-black text-cyan-400">
+                              {leaderboardData[0]?.nickname || leaderboardData[0]?.email?.split('@')[0] || "Calculating..."}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button 
+                          onClick={() => setShowLeaderboard(true)}
+                          className="px-10 py-5 bg-white text-zinc-950 font-black rounded-2xl text-lg hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] uppercase tracking-tighter"
+                        >
+                          Climb the Leaderboard
+                        </button>
+                      </div>
+
+                      <div className="relative w-full max-w-[400px] aspect-square flex items-center justify-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                          className="absolute inset-0 border-[40px] border-cyan-400/5 rounded-full border-dashed"
+                        />
+                        <motion.div
+                          animate={{ 
+                            y: [0, -20, 0],
+                            rotateY: [0, 360]
+                          }}
+                          transition={{ 
+                            y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                            rotateY: { duration: 15, repeat: Infinity, ease: "linear" }
+                          }}
+                          className="relative z-10"
+                        >
+                          <Crown className="w-48 h-48 text-cyan-400 font-glow drop-shadow-[0_0_60px_rgba(34,211,238,0.6)]" />
+                          <div className="absolute inset-0 bg-cyan-400/20 blur-[40px] -z-10" />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </section>
 
                 <section ref={gamesSectionRef} className="py-12 scroll-mt-24">
@@ -2346,7 +2873,7 @@ export default function App() {
                     <h2 className="text-4xl font-bold mb-8 tracking-tight">PurePro Platform Overview</h2>
                     <div className="space-y-6 text-zinc-400 leading-relaxed text-lg">
                       <p>
-                        PurePro4561 is the world's most advanced web-based social gaming environment. Designed with a mobile-first philosophy and powered by cutting-edge cryptographic RNG (Random Number Generation) technology, our platform provides a safe, exciting, and entirely risk-free experience for players globally. Whether you're looking for the high-octane thrill of Godly Slots or the strategic depth of Cyber Poker, our library which features over 100+ simulated modules has something for every type of player.
+                        PurePro4561 is a leading web-based social gaming environment. Designed with a mobile-first philosophy and powered by secure RNG (Random Number Generation) technology, our platform provides a safe and exciting experience for players globally. Whether you're looking for the high-octane thrill of Godly Slots or the strategic depth of Cyber Poker, our library of curated modules has something for every type of player.
                       </p>
                       <p>
                         Our mission is to redefine social gaming. Unlike traditional platforms, PurePro4561 focuses on the <strong>social elements</strong> of play. With integrated global chat, robust friend management systems, and competitive leaderboards, you're never playing alone. We believe that gaming is better when shared, and our platform is built from the ground up to foster community interaction and healthy competition.
@@ -2362,9 +2889,9 @@ export default function App() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div>
-                      <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">Provably Fair</h4>
+                      <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-sm">Algorithmic RNG</h4>
                       <p className="text-zinc-500 text-sm leading-relaxed">
-                        Every game outcome is determined by advanced cryptographic hashes. We believe in total transparency, ensuring every spin and deal is 100% random and verifiable.
+                        Every game outcome is calculated using standard algorithmic random number generation to simulate casino odds. While not cryptographically verifiable, our algorithms are tuned for fair recreational play.
                       </p>
                     </div>
                     <div>
@@ -2385,9 +2912,18 @@ export default function App() {
             )}
           </main>
 
-          <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-white/5 w-full">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-              <div className="col-span-1 md:col-span-2">
+          <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-white/5 w-full relative">
+            {(userProfile?.role === 'admin' || user?.email === 'purepro4561@gmail.com') && (
+              <button 
+                onClick={() => setShowAdminPanel(true)}
+                className="absolute bottom-4 right-6 p-2 rounded-full bg-zinc-900 border border-white/5 text-zinc-700 hover:text-white transition-colors"
+                title="Admin Control"
+              >
+                <ShieldCheck className="w-4 h-4" />
+              </button>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+              <div className="col-span-1 sm:col-span-2">
                 <div className="flex items-center gap-2 mb-4">
                   <Gamepad2 className={`w-6 h-6 text-transparent bg-clip-text bg-gradient-to-r ${themeGradient}`} />
                   <span className="text-xl font-black text-white tracking-tighter uppercase">PUREPRO CASINO</span>
@@ -4150,6 +4686,7 @@ export default function App() {
                         <div className="flex items-center gap-2">
                           <div className="text-zinc-100 font-bold">{lbUser.nickname || (lbUser.email ? lbUser.email.split('@')[0] : 'Guest')}</div>
                           {(lbUser.role === 'admin' || lbUser.email === 'purepro4561@gmail.com') && <ShieldCheck className="w-3 h-3 text-amber-500" />}
+                          {idx === 0 && <Crown className="w-3 h-3 text-cyan-400 font-glow ml-1" title="Weekly Champion" />}
                         </div>
                       </div>
                       <div className="text-right">
@@ -4299,14 +4836,22 @@ export default function App() {
               <h3 className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${themeGradient} mb-2 flex items-center gap-3`}>
                 <Target style={{ color: themeColor }} className="w-8 h-8"/> Daily Quests
               </h3>
-              <p className="text-zinc-400 mb-6 text-sm">Complete these tasks to earn bonus Key Fragments and Chips.</p>
+              <p className="text-zinc-400 mb-6 text-sm">Complete these tasks to earn bonus Chips, Tokens, XP, and more.</p>
 
               <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
                 {quests.length > 0 ? quests.map((q) => (
                   <div key={q.id} className={`bg-zinc-950 border border-white/10 rounded-2xl p-4 flex items-center justify-between transition-opacity ${q.completed ? 'opacity-50 grayscale' : ''}`}>
                      <div className="flex items-center gap-4">
-                       <div className={`w-12 h-12 rounded-xl border flex items-center justify-center ${q.rewardType === 'balance' ? 'bg-amber-500/10 border-amber-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
-                          {q.rewardType === 'balance' ? <Coins className="w-6 h-6 text-amber-500" /> : <Gamepad2 className="w-6 h-6 text-emerald-500" />}
+                       <div className={`w-12 h-12 rounded-xl border flex items-center justify-center ${
+                         q.rewardType === 'balance' ? 'bg-amber-500/10 border-amber-500/20' : 
+                         q.rewardType === 'tokens' ? 'bg-indigo-500/10 border-indigo-500/20' :
+                         q.rewardType === 'xp' ? 'bg-lime-500/10 border-lime-500/20' :
+                         'bg-emerald-500/10 border-emerald-500/20'
+                       }`}>
+                          {q.rewardType === 'balance' ? <Coins className="w-6 h-6 text-amber-500" /> : 
+                           q.rewardType === 'tokens' ? <Ticket className="w-6 h-6 text-indigo-500" /> :
+                           q.rewardType === 'xp' ? <Zap className="w-6 h-6 text-lime-500" /> :
+                           <Gamepad2 className="w-6 h-6 text-emerald-500" />}
                        </div>
                        <div>
                          <div className="font-bold text-white text-lg">{q.title}</div>
@@ -4322,13 +4867,23 @@ export default function App() {
                        ) : (
                          <>
                            <div className="flex items-center gap-2">
-                             <div className="text-xs font-mono text-zinc-500">{q.progress}/{q.target}</div>
+                             <div className="text-xs font-mono text-zinc-500">{q.progress?.toLocaleString()}/{q.target?.toLocaleString()}</div>
                              <div className="w-20 h-1.5 bg-zinc-900 rounded-full overflow-hidden">
                                 <div className="h-full bg-emerald-500 transition-all" style={{ width: `${Math.min(100, Math.max(0, (q.progress / q.target) * 100))}%` }} />
                              </div>
                            </div>
-                           <span className={`text-xs font-bold px-2 py-1 rounded-md border ${q.rewardType === 'balance' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
-                             Reward: {q.rewardAmount} {q.rewardType === 'balance' ? 'Chips' : 'Key Frags'}
+                           <span className={`text-xs font-bold px-2 py-1 rounded-md border ${
+                              q.rewardType === 'balance' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
+                              q.rewardType === 'tokens' ? 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' :
+                              q.rewardType === 'xp' ? 'text-lime-400 bg-lime-500/10 border-lime-500/20' :
+                              'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                            }`}>
+                             Reward: {q.rewardAmount} {
+                                q.rewardType === 'balance' ? 'Chips' : 
+                                q.rewardType === 'tokens' ? 'Tokens' :
+                                q.rewardType === 'xp' ? 'XP' :
+                                'Key Frags'
+                              }
                            </span>
                          </>
                        )}
@@ -4521,6 +5076,672 @@ export default function App() {
                       </div>
                     )}
                   </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Comprehensive Admin Panel */}
+      <AnimatePresence>
+        {showAdminPanel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 sm:p-6"
+          >
+            <div className="bg-zinc-900 sm:border border-white/10 sm:rounded-3xl w-full h-full sm:max-w-6xl sm:h-[85vh] shadow-2xl relative overflow-hidden flex flex-col md:flex-row">
+              {/* Sidebar */}
+              <div className="w-full md:w-64 bg-zinc-950/50 border-b md:border-b-0 md:border-r border-white/5 p-4 flex md:flex-col gap-2 overflow-x-auto scrollbar-hide shrink-0">
+                <div className="hidden md:flex items-center gap-3 mb-8 px-2">
+                  <ShieldCheck className="w-6 h-6 text-amber-500" />
+                  <div>
+                    <div className="text-sm font-black text-white uppercase tracking-tighter">Admin Core</div>
+                    <div className="text-[10px] text-zinc-500 font-mono">v5.0.1-ENTERPRISE</div>
+                  </div>
+                </div>
+                
+                {[
+                  { id: 'system', icon: Settings, label: 'System' },
+                  { id: 'users', icon: Users, label: 'Users' },
+                  { id: 'stats', icon: BarChart3, label: 'Stats' },
+                  { id: 'promos', icon: Ticket, label: 'Promos' },
+                  { id: 'live', icon: Activity, label: 'Live' },
+                  { id: 'economy', icon: Coins, label: 'Economy' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setAdminTab(tab.id as any)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                      adminTab === tab.id 
+                        ? 'bg-amber-500 text-black shadow-[0_0_20px_rgba(245,158,11,0.3)]' 
+                        : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <tab.icon className="w-4 h-4 shrink-0" />
+                    {tab.label}
+                  </button>
+                ))}
+                
+                <button 
+                  onClick={() => setShowAdminPanel(false)}
+                  className="md:mt-auto flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all"
+                >
+                  <Plus className="w-4 h-4 rotate-45 shrink-0" />
+                  Exit Panel
+                </button>
+              </div>
+
+              {/* Content area */}
+              <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar bg-zinc-900/30">
+                {adminTab === 'system' && (
+                  <div className="space-y-8 max-w-2xl mx-auto">
+                    <section>
+                      <h3 className="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <Database className="w-3 h-3" /> System States
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-2xl">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-sm font-bold text-white">Maintenance Mode</span>
+                            <button 
+                              onClick={() => updateSystemConfig({ maintenanceMode: !systemConfig.maintenanceMode })}
+                              className={`w-12 h-6 rounded-full relative transition-colors ${systemConfig.maintenanceMode ? 'bg-red-500' : 'bg-zinc-800'}`}
+                            >
+                              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${systemConfig.maintenanceMode ? 'left-7' : 'left-1'}`} />
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono">Blocks all non-admin access</p>
+                        </div>
+                        <div className="p-6 bg-zinc-950 border border-white/5 rounded-2xl">
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="p-2 bg-amber-500/20 rounded-lg">
+                              <Megaphone className="w-4 h-4 text-amber-500" />
+                            </div>
+                            <span className="text-sm font-bold text-white">Global Announcement</span>
+                          </div>
+                          <input 
+                            type="text" 
+                            value={systemConfig.announcement}
+                            onChange={(e) => setSystemConfig(prev => ({ ...prev, announcement: e.target.value }))}
+                            onBlur={() => updateSystemConfig({ announcement: systemConfig.announcement })}
+                            className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs focus:border-amber-500/50 outline-none"
+                            placeholder="Type broadcast message..."
+                          />
+                        </div>
+                      </div>
+                    </section>
+
+                    <section>
+                      <h3 className="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <Sparkles className="w-3 h-3" /> Season Logic
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button 
+                          onClick={() => { triggerWeeklyReset(true); setShowAdminPanel(false); }}
+                          className="flex flex-col items-center justify-center p-8 bg-zinc-950 border border-red-500/10 hover:border-red-500/30 rounded-2xl group transition-all"
+                        >
+                          <RefreshCw className="w-8 h-8 text-red-500 mb-4 group-hover:rotate-180 transition-transform duration-500" />
+                          <span className="text-xs font-black text-white uppercase tracking-widest">Force Season Reset</span>
+                          <span className="text-[9px] text-zinc-600 mt-2">Immediately triggers Monday logic</span>
+                        </button>
+                        <button 
+                          onClick={() => { setHasNebulaCrown(true); localStorage.setItem('nebula_crown', 'true'); setShowResetCeremony(true); setShowAdminPanel(false); }}
+                          className="flex flex-col items-center justify-center p-8 bg-zinc-950 border border-cyan-500/10 hover:border-cyan-500/30 rounded-2xl group transition-all"
+                        >
+                          <Crown className="w-8 h-8 text-cyan-400 mb-4 group-hover:scale-110 transition-transform" />
+                          <span className="text-xs font-black text-white uppercase tracking-widest">Test Trophy Ceremony</span>
+                          <span className="text-[9px] text-zinc-600 mt-2">Simulate winning Nebula Crown</span>
+                        </button>
+                      </div>
+                    </section>
+                  </div>
+                )}
+
+                {adminTab === 'users' && (
+                  <div className="space-y-6">
+                    <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                      <div className="relative w-full max-w-md">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                        <input 
+                          type="text" 
+                          placeholder="Search users by email..."
+                          value={adminUserSearch}
+                          onChange={(e) => handleAdminUserSearch(e.target.value)}
+                          className="w-full bg-zinc-950 border border-white/5 rounded-2xl pl-12 pr-4 py-4 text-sm outline-none focus:border-amber-500/50 transition-all font-mono"
+                        />
+                        {isAdminSearching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-amber-500" />}
+                      </div>
+                      
+                      <div className="flex items-center gap-2 p-1 bg-zinc-950 rounded-xl border border-white/5">
+                        {[
+                          { id: 'none', label: 'Recent', icon: Activity },
+                          { id: 'hours', label: 'Playtime', icon: History },
+                          { id: 'online', label: 'Online', icon: Activity },
+                        ].map(sort => (
+                          <button
+                            key={sort.id}
+                            onClick={() => setAdminUserSort(sort.id as any)}
+                            className={`px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                              adminUserSort === sort.id ? 'bg-amber-500 text-black' : 'text-zinc-500 hover:text-white'
+                            }`}
+                          >
+                            <sort.icon className="w-3 h-3" /> {sort.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* User List */}
+                      <div className="md:col-span-1 space-y-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                        {isAllUsersLoading && adminUserSearch.length === 0 ? (
+                          <div className="py-12 text-center animate-pulse">
+                            <Loader2 className="w-8 h-8 animate-spin text-zinc-700 mx-auto" />
+                          </div>
+                        ) : sortedUsers.length > 0 ? (
+                          sortedUsers.map(user => (
+                            <button
+                              key={user.id}
+                              onClick={() => setSelectedAdminUser(user)}
+                              className={`w-full flex items-center gap-4 p-4 rounded-xl text-left transition-all border relative overflow-hidden ${
+                                selectedAdminUser?.id === user.id 
+                                  ? 'bg-amber-500/10 border-amber-500/50' 
+                                  : 'bg-zinc-950 border-white/5 hover:border-white/20'
+                              }`}
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center text-lg border border-white/5 shrink-0">
+                                {user.avatar || (user.nickname ? user.nickname[0].toUpperCase() : '?')}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                {user.lastActive && (Date.now() - user.lastActive < 300000) ? (
+                                  <div className="absolute top-4 right-4">
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                  </div>
+                                ) : (
+                                  <div className="absolute top-4 right-4">
+                                    <div className="w-2 h-2 bg-zinc-700 rounded-full" />
+                                  </div>
+                                )}
+                                <div className={`text-xs font-bold leading-none mb-1 truncate ${selectedAdminUser?.id === user.id ? 'text-amber-500' : 'text-white'}`}>
+                                  {user.nickname || user.email?.split('@')[0]}
+                                </div>
+                                <div className="flex items-center justify-between mt-1">
+                                  <div className="text-[10px] text-zinc-500 truncate font-mono max-w-[100px]">{user.email}</div>
+                                  <div className="text-[9px] text-zinc-600 font-mono">{(user.playTime || 0).toFixed(1)}h</div>
+                                </div>
+                              </div>
+                            </button>
+                          ))
+                        ) : (
+                          <div className="p-8 text-center bg-zinc-950/50 rounded-2xl border border-dashed border-white/5">
+                            <Users className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
+                            <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest leading-relaxed">No users found</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* User Editor */}
+                      <div className="md:col-span-2">
+                        {selectedAdminUser ? (
+                          <div className="bg-zinc-950 border border-white/5 rounded-3xl p-6 sm:p-8 animate-in slide-in-from-right-4 duration-300">
+                            <div className="flex items-center gap-4 mb-8">
+                              <div className="w-16 h-16 rounded-2xl bg-zinc-900 flex items-center justify-center text-2xl border border-white/5">
+                                {selectedAdminUser.avatar || (selectedAdminUser.nickname ? selectedAdminUser.nickname[0].toUpperCase() : '?')}
+                              </div>
+                              <div>
+                                <h4 className="text-xl font-black text-white">{selectedAdminUser.nickname || 'Unknown Player'}</h4>
+                                <p className="text-xs text-zinc-500 font-mono">{selectedAdminUser.email}</p>
+                                <div className="flex flex-wrap items-center gap-2 mt-2">
+                                  <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${selectedAdminUser.role === 'admin' ? 'bg-amber-500 text-black' : 'bg-white/10 text-zinc-400'}`}>
+                                    {selectedAdminUser.role || 'Member'}
+                                  </span>
+                                  {selectedAdminUser.isBanned && <span className="bg-red-500 text-white px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">Banned</span>}
+                                  {selectedAdminUser.adsDisabled && <span className="bg-cyan-500 text-black px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">Pro Member</span>}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+                              {[
+                                { label: 'Balance', val: selectedAdminUser.balance, icon: Coins, field: 'balance', step: 1000 },
+                                { label: 'Tokens', val: selectedAdminUser.tokens, icon: Ticket, field: 'tokens', step: 10 },
+                                { label: 'Level', val: selectedAdminUser.level, icon: Trophy, field: 'level', step: 1 },
+                                { label: 'XP', val: selectedAdminUser.xp, icon: Zap, field: 'xp', step: 100 },
+                              ].map(stat => (
+                                <div key={stat.label} className="p-4 bg-zinc-900 border border-white/5 rounded-2xl">
+                                  <div className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mb-1 flex items-center gap-1">
+                                    <stat.icon className="w-3 h-3" /> {stat.label}
+                                  </div>
+                                  <div className="text-lg font-black text-white mb-2">{stat.val?.toLocaleString() || 0}</div>
+                                  <div className="flex gap-1">
+                                    <button 
+                                      onClick={() => updateUserStats(selectedAdminUser.id, { [stat.field]: Math.max(0, (stat.val || 0) - stat.step) })}
+                                      className="flex-1 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold transition-all"
+                                    >- </button>
+                                    <button 
+                                      onClick={() => updateUserStats(selectedAdminUser.id, { [stat.field]: (stat.val || 0) + stat.step })}
+                                      className="flex-1 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold transition-all"
+                                    >+ </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="flex flex-wrap gap-4">
+                              <button 
+                                onClick={() => updateUserStats(selectedAdminUser.id, { isBanned: !selectedAdminUser.isBanned })}
+                                className={`flex-1 px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedAdminUser.isBanned ? 'bg-emerald-500 text-black' : 'bg-red-500/10 border border-red-500/20 text-red-500'}`}
+                              >
+                                {selectedAdminUser.isBanned ? 'Unban User' : 'Ban Identity'}
+                              </button>
+                              <button 
+                                onClick={() => updateUserStats(selectedAdminUser.id, { adsDisabled: !selectedAdminUser.adsDisabled })}
+                                className={`flex-1 px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedAdminUser.adsDisabled ? 'bg-zinc-800 text-white' : 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(34,211,238,0.3)]'}`}
+                              >
+                                {selectedAdminUser.adsDisabled ? 'Enable Ads' : 'Disable Ads (Pro)'}
+                              </button>
+                              <button 
+                                onClick={() => updateUserStats(selectedAdminUser.id, { role: selectedAdminUser.role === 'admin' ? 'user' : 'admin' })}
+                                className="flex-1 px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all text-white"
+                              >
+                                {selectedAdminUser.role === 'admin' ? 'Revoke Admin' : 'Make Admin'}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="h-full flex items-center justify-center p-12 bg-zinc-950/20 border border-white/5 rounded-3xl border-dashed">
+                             <div className="text-center">
+                               <User className="w-12 h-12 text-zinc-800 mx-auto mb-4" />
+                               <p className="text-xs font-black text-zinc-600 uppercase tracking-[0.2em] max-w-[200px] leading-relaxed">Select a subject from the listing to examine or modify stats</p>
+                             </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'stats' && (
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { label: 'Active Pop.', val: adminStats?.totalUsers, icon: Users, color: 'text-blue-400' },
+                        { label: 'Operation Vol.', val: `$${adminStats?.totalVolume?.toLocaleString()}`, icon: TrendingUp, color: 'text-emerald-400' },
+                        { label: 'Total Payouts', val: `$${adminStats?.totalPayout?.toLocaleString()}`, icon: Gift, color: 'text-purple-400' },
+                        { label: 'System Bets', val: adminStats?.totalBets, icon: Dices, color: 'text-amber-400' },
+                      ].map(stat => (
+                        <div key={stat.label} className="p-6 bg-zinc-950 border border-white/5 rounded-2xl relative overflow-hidden">
+                          <stat.icon className={`absolute -right-4 -bottom-4 w-20 h-20 opacity-5 ${stat.color}`} />
+                          <div className="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-2">{stat.label}</div>
+                          <div className="text-2xl font-black text-white tracking-tighter">{stat.val || 0}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="bg-zinc-950 border border-white/5 rounded-3xl p-8">
+                      <h3 className="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                        <Activity className="w-3 h-3" /> Distribution by Component
+                      </h3>
+                      <div className="space-y-4">
+                        {adminStats?.gameStats && Object.entries(adminStats.gameStats).map(([game, stats]: [string, any]) => (
+                          <div key={game} className="group">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-black text-zinc-300 uppercase tracking-wider">{game}</span>
+                              <span className="text-[10px] font-mono text-zinc-500">{stats.bets} transactions</span>
+                            </div>
+                            <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden border border-white/5">
+                              <motion.div 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${Math.min(100, (stats.volume / (adminStats.totalVolume || 1)) * 100)}%` }}
+                                className="h-full bg-gradient-to-r from-amber-500 to-amber-300"
+                              />
+                            </div>
+                            <div className="flex justify-between mt-1 text-[9px] font-mono text-zinc-600">
+                              <span>ROI: {((stats.payout / (stats.volume || 1)) * 100).toFixed(1)}%</span>
+                              <span>Vol: ${stats.volume.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'promos' && (
+                  <div className="space-y-8 max-w-4xl mx-auto">
+                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-6">
+                      <div className="flex-1">
+                        <h4 className="text-xl font-black text-amber-500 uppercase tracking-tighter mb-1">Coupon Foundry</h4>
+                        <p className="text-zinc-400 text-xs">Create temporary power-ups for the community</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <input 
+                          type="text" 
+                          placeholder="CODE (e.g. ALPHA_50)"
+                          value={newPromoCode}
+                          onChange={(e) => setNewPromoCode(e.target.value.toUpperCase())}
+                          className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs outline-none focus:border-amber-500"
+                        />
+                        <select 
+                          value={newPromoRewardType}
+                          onChange={(e) => setNewPromoRewardType(e.target.value)}
+                          className="bg-black border border-white/10 rounded-xl px-4 py-3 text-xs outline-none"
+                        >
+                          <option value="balance">Chips</option>
+                          <option value="tokens">Tokens</option>
+                          <option value="pack">Pack</option>
+                        </select>
+                        <input 
+                          type="number" 
+                          value={newPromoRewardAmount}
+                          onChange={(e) => setNewPromoRewardAmount(parseInt(e.target.value))}
+                          className="w-24 bg-black border border-white/10 rounded-xl px-4 py-3 text-xs outline-none"
+                        />
+                        <button 
+                          onClick={createPromoCode}
+                          disabled={!newPromoCode}
+                          className="bg-amber-500 text-black px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all disabled:opacity-50"
+                        >
+                          Generate
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {promoCodes.map(promo => (
+                        <div key={promo.id} className="bg-zinc-950 border border-white/5 rounded-2xl p-6 flex flex-col">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="font-mono text-lg font-black text-white">{promo.code}</span>
+                            <button onClick={() => deletePromoCode(promo.id)} className="p-1 hover:text-red-500 transition-colors">
+                              <Trash2 className="w-4 h-4 text-zinc-700" />
+                            </button>
+                          </div>
+                          <div className="space-y-1 mb-6">
+                            <div className="text-[10px] text-zinc-500 uppercase font-black tracking-widest">Reward</div>
+                            <div className="text-sm font-bold text-amber-500">
+                              {promo.rewardType === 'pack' ? `Level ${promo.rewardAmount} ${promo.packType} Pack` : `${promo.rewardAmount} ${promo.rewardType}`}
+                            </div>
+                          </div>
+                          <div className="mt-auto flex items-center justify-between text-[9px] font-mono text-zinc-600">
+                             <span>USES: {promo.usedCount || 0}</span>
+                             <span>EXPIRES: {new Date(promo.expiresAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'live' && (
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                       <Activity className="w-3 h-3 animate-pulse" /> Real-time Nerve Center
+                    </h3>
+                    <div className="space-y-2">
+                      {liveBetsFeed.length > 0 ? (
+                        liveBetsFeed.map((bet, idx) => (
+                          <motion.div 
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            key={idx} 
+                            className="bg-zinc-950 border border-white/5 rounded-xl p-4 flex items-center justify-between group overflow-hidden relative"
+                          >
+                            <div className="flex items-center gap-4 relative z-10">
+                              <div className={`p-2 rounded-lg ${bet.winnings > 0 ? 'bg-emerald-500/20 text-emerald-500' : 'bg-red-500/20 text-red-500'}`}>
+                                {bet.winnings > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingUp className="w-4 h-4 rotate-180" />}
+                              </div>
+                              <div>
+                                <div className="text-xs font-black text-white">{bet.userName} <span className="text-zinc-600 font-medium">on</span> {bet.game}</div>
+                                <div className="text-[10px] text-zinc-500 font-mono">ID: {bet.userId?.slice(0, 8)}...</div>
+                              </div>
+                            </div>
+                            <div className="text-right flex flex-col items-end relative z-10">
+                              <div className="text-xs font-black text-white">${bet.amount?.toLocaleString()}</div>
+                              <div className={`text-[10px] font-mono ${bet.winnings > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {bet.winnings > 0 ? `+ $${bet.winnings.toLocaleString()}` : '- $0'}
+                              </div>
+                            </div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-[200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                          </motion.div>
+                        ))
+                      ) : (
+                        <div className="py-20 text-center animate-pulse">
+                          <History className="w-12 h-12 text-zinc-800 mx-auto mb-4" />
+                          <p className="text-xs font-black text-zinc-600 uppercase tracking-widest">Waiting for incoming telemetry...</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {adminTab === 'economy' && (
+                  <div className="space-y-8 max-w-2xl mx-auto">
+                    <div className="p-8 bg-zinc-950 border border-amber-500/20 rounded-[2.5rem] relative overflow-hidden">
+                       <Coins className="absolute -left-8 -top-8 w-48 h-48 opacity-[0.03] text-amber-500" />
+                       <h4 className="text-2xl font-black text-white uppercase tracking-tighter mb-4 relative z-10">System Multiplier</h4>
+                       <p className="text-zinc-500 text-sm mb-8 leading-relaxed relative z-10">
+                         Modify the global payout factor for all games. Values above 1.0 will increase average winnings, making the economy more inflationary.
+                       </p>
+                       
+                       <div className="flex items-center gap-12 relative z-10">
+                         <div className="flex-1">
+                           <input 
+                              type="range" 
+                              min="0.5" 
+                              max="2.5" 
+                              step="0.1" 
+                              value={systemConfig.globalMultiplier}
+                              onChange={(e) => updateSystemConfig({ globalMultiplier: parseFloat(e.target.value) })}
+                              className="w-full accent-amber-500"
+                           />
+                           <div className="flex justify-between mt-4 text-[10px] font-mono text-zinc-600 font-black uppercase tracking-widest">
+                             <span>Tight (0.5x)</span>
+                             <span>Neutral (1.0x)</span>
+                             <span>Loose (2.5x)</span>
+                           </div>
+                         </div>
+                         <div className="w-32 h-32 bg-zinc-900 border border-white/5 rounded-3xl flex flex-col items-center justify-center">
+                           <span className="text-3xl font-black text-amber-500">{systemConfig.globalMultiplier}x</span>
+                           <span className="text-[8px] text-zinc-600 uppercase font-bold tracking-widest mt-1">Scale Factor</span>
+                         </div>
+                       </div>
+
+                       <div className="mt-12 p-4 bg-zinc-900/50 rounded-2xl border border-white/5 flex items-center gap-4">
+                         <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+                         <span className="text-[10px] text-zinc-400 font-medium leading-relaxed italic">
+                           Warning: Increasing the multiplier above 1.2x may result in rapid chip exhaustion across the ecosystem. Monitor payout stats closely.
+                         </span>
+                       </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showResetCeremony && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[210] flex items-center justify-center bg-zinc-950 p-6 overflow-hidden"
+          >
+            <div className="absolute inset-0 opacity-40">
+              {[...Array(50)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ 
+                    x: [Math.random() * 2000 - 1000, Math.random() * 2000 - 1000], 
+                    y: [Math.random() * 2000 - 1000, Math.random() * 2000 - 1000],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ duration: 2 + Math.random() * 3, repeat: Infinity }}
+                  className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+                  style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
+                />
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="relative z-10 text-center max-w-lg"
+            >
+              <motion.div
+                animate={{ rotateY: 360, y: [0, -20, 0] }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="mb-8"
+              >
+                <Crown className="w-32 h-32 text-cyan-400 mx-auto font-glow drop-shadow-[0_0_50px_rgba(34,211,238,0.8)]" />
+              </motion.div>
+
+              <h2 className="text-5xl font-black text-white tracking-tighter uppercase mb-4 italic font-glow">
+                Nebula Champion
+              </h2>
+              <p className="text-cyan-400 font-mono text-[10px] uppercase tracking-[0.5em] mb-8 leading-relaxed">
+                You have ascended to the peak of the galactic order.
+              </p>
+              
+              <div className="bg-zinc-900/50 backdrop-blur-xl border border-cyan-500/20 rounded-[2.5rem] p-8 mb-8">
+                <p className="text-zinc-300 text-sm leading-relaxed mb-6 font-medium">
+                  The weekly season has concluded. Your supremacy in the Arena is undisputed. You have been awarded the <span className="text-cyan-400 font-bold">Nebula Crown</span> — an eternal mark of excellence.
+                </p>
+                <div className="flex items-center justify-center gap-8 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+                  <div className="flex flex-col items-center">
+                    <span className="text-white font-black text-2xl leading-none mb-1">#1</span>
+                    <span>Season Rank</span>
+                  </div>
+                  <div className="w-px h-10 bg-white/10" />
+                  <div className="flex flex-col items-center">
+                    <span className="text-white font-black text-2xl leading-none mb-1">Elite</span>
+                    <span>Class Badge</span>
+                  </div>
+                </div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowResetCeremony(false)}
+                className="px-12 py-5 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 text-zinc-950 font-black rounded-2xl text-xl shadow-[0_0_40px_rgba(34,211,238,0.4)] uppercase tracking-tighter"
+              >
+                Claim Dynasty Points
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Ad Reward Progress Modal */}
+      <AnimatePresence>
+        {pendingAdReward && adsCompletedForReward > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-md p-6"
+          >
+            <div className="bg-zinc-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+              <div className="relative w-24 h-24 mx-auto mb-6">
+                <div className="absolute inset-0 border-4 border-white/5 rounded-full" />
+                <svg className="w-24 h-24 rotate-[-90deg]">
+                  <circle
+                    cx="48"
+                    cy="48"
+                    r="44"
+                    fill="transparent"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    strokeDasharray={276}
+                    strokeDashoffset={276 - (276 * adsCompletedForReward) / pendingAdReward.adsNeeded}
+                    className="text-amber-500 transition-all duration-500"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-black">{adsCompletedForReward}/{pendingAdReward.adsNeeded}</span>
+                  <span className="text-[10px] font-bold text-zinc-500">ADS</span>
+                </div>
+              </div>
+              <h3 className="text-xl font-black mb-2 uppercase tracking-tighter">Progress Saved</h3>
+              <p className="text-zinc-400 text-sm mb-6">Watch {pendingAdReward.adsNeeded - adsCompletedForReward} more ads to unlock {pendingAdReward.amount.toLocaleString()} {pendingAdReward.type}.</p>
+              <button
+                onClick={continueAdSequence}
+                className="w-full py-4 bg-amber-500 text-black font-black rounded-xl hover:scale-105 transition-transform"
+              >
+                WATCH NEXT AD
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Ad Offer Modal */}
+      <AnimatePresence>
+        {showAdOfferModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
+            onClick={() => setShowAdOfferModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-zinc-900 border border-white/10 rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl relative overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500" />
+              
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">Free Loot</h2>
+                  <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest mt-2">Watch an ad to recharge</p>
+                </div>
+                <button onClick={() => setShowAdOfferModal(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <Plus className="w-6 h-6 rotate-45 text-zinc-500" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {Object.entries(adOffers).map(([offerKey, offer]: [string, any]) => {
+                  const Icon = offer.icon;
+                  return (
+                    <button
+                      key={offerKey}
+                      onClick={() => handleAdOfferSelect(offer.type, offer.amount, offer.ads, { packType: offer.packType })}
+                      className="w-full flex items-center justify-between p-6 bg-zinc-950 border border-white/5 rounded-2xl hover:border-emerald-500/50 hover:bg-zinc-900 transition-all group overflow-hidden relative"
+                    >
+                      <div className="absolute top-0 right-0 p-4 opacity-10">
+                        <Icon className={`w-16 h-16 ${offer.color} group-hover:scale-110 transition-transform`} />
+                      </div>
+                      <div className="text-left relative z-10">
+                        <div className={`text-xs font-bold ${offer.color} uppercase mb-1`}>{offer.label}</div>
+                        <div className="text-xl font-black text-white leading-tight">
+                          {offer.type === 'chips' && `GET $${offer.amount.toLocaleString()} CHIPS`}
+                          {offer.type === 'tokens' && `GET ${offer.amount} TOKENS`}
+                          {offer.type === 'pack' && `GET +1 ${offer.packType} PACK`}
+                        </div>
+                      </div>
+                      <div className={`${offer.color.replace('text', 'bg')} text-black p-2 rounded-xl group-hover:scale-110 transition-transform relative z-10 shadow-lg`}>
+                        <Video className="w-6 h-6" />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center">
+                <div className="flex items-center gap-2 text-zinc-600">
+                  <Sparkles className="w-3 h-3" />
+                  <span className="text-[9px] font-bold uppercase tracking-widest">Rewards refresh instantly</span>
                 </div>
               </div>
             </motion.div>

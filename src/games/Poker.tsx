@@ -157,51 +157,51 @@ export default function Poker({ gameId, title, balance, setBalance, onExit, them
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 w-full h-full bg-zinc-950 relative overflow-hidden">
+    <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 w-full h-full bg-zinc-950 relative overflow-hidden">
       <button 
         onClick={onExit}
-        className="absolute top-6 left-6 z-50 px-4 py-2 bg-zinc-900/80 backdrop-blur rounded-xl border border-white/10 hover:bg-zinc-800 transition-colors flex items-center gap-2"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-50 px-3 py-1.5 sm:px-4 sm:py-2 bg-zinc-900/80 backdrop-blur rounded-xl border border-white/10 hover:bg-zinc-800 transition-colors flex items-center gap-2 text-xs sm:text-sm"
       >
-        <ArrowLeft className="w-4 h-4" /> Exit to Lobby
+        <ArrowLeft className="w-4 h-4" /> Exit
       </button>
 
-      <div className="relative z-10 flex flex-col items-center max-w-5xl w-full">
-        <div className="mb-8 text-center">
+      <div className="relative z-10 flex flex-col items-center max-w-6xl w-full h-full justify-center">
+        <div className="mb-4 sm:mb-8 text-center">
           <motion.h2 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-black text-white tracking-tighter uppercase flex items-center gap-3"
+            className="text-2xl sm:text-4xl font-black text-white tracking-tighter uppercase flex items-center gap-3 justify-center"
           >
-            <Club className={`w-8 h-8 ${isHighStakes ? 'text-emerald-500' : 'text-amber-500'}`} />
+            <Club className={`w-6 h-6 sm:w-8 sm:h-8 ${isHighStakes ? 'text-emerald-500 font-glow' : 'text-amber-500'}`} />
             {isHighStakes ? 'High Stakes Poker' : 'Cyber Poker'}
           </motion.h2>
-          <p className="text-zinc-500 font-mono text-xs mt-2 uppercase tracking-widest">
+          <p className="text-zinc-500 font-mono text-[8px] sm:text-xs mt-1 uppercase tracking-widest leading-none">
             {isHighStakes ? 'VIP Tournament Table' : 'Neural Network Card Engine'}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
-          {/* Paytable */}
-          <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 hidden lg:block">
-            <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Paytable</h3>
-            <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-8 w-full items-start">
+          {/* Paytable - Visible on md+ */}
+          <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-4 hidden md:block md:col-span-1 lg:col-span-1 h-full overflow-y-auto max-h-[500px] lg:max-h-none">
+            <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">Paytable</h3>
+            <div className="space-y-1">
               {paytable.map((p, i) => (
-                <div key={i} className={`flex justify-between text-xs font-mono p-2 rounded-lg ${resultMessage === p.name ? 'bg-amber-500/20 text-amber-500 font-bold' : 'text-zinc-400'}`}>
-                  <span>{p.name}</span>
-                  <span>{p.multiplier}x</span>
+                <div key={i} className={`flex justify-between text-[10px] font-mono p-1.5 rounded-lg transition-colors ${resultMessage === p.name ? 'bg-amber-500 text-zinc-950 font-black' : 'text-zinc-400 hover:bg-white/5'}`}>
+                  <span className="truncate mr-1">{p.name}</span>
+                  <span className="shrink-0">{p.multiplier}x</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Game Area */}
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            <div className="flex justify-center gap-4">
+          <div className="md:col-span-3 lg:col-span-4 flex flex-col gap-4 sm:gap-8">
+            <div className="grid grid-cols-5 gap-2 sm:gap-4 justify-items-center">
               {hand.length === 0 ? (
                 [...Array(5)].map((_, i) => (
-                  <div key={i} className="w-24 h-36 md:w-32 md:h-48 rounded-2xl bg-zinc-900 border-2 border-white/5 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-zinc-800/50 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-zinc-700" />
+                  <div key={i} className="w-full aspect-[2/3] max-w-[120px] rounded-xl bg-zinc-900 border-2 border-white/5 flex items-center justify-center p-2">
+                    <div className="w-full h-full rounded-lg bg-zinc-800/30 border border-white/5 flex items-center justify-center">
+                      <Zap className="w-4 h-4 sm:w-6 sm:h-6 text-zinc-700 opacity-20" />
                     </div>
                   </div>
                 ))
@@ -211,54 +211,52 @@ export default function Poker({ gameId, title, balance, setBalance, onExit, them
                     key={i}
                     initial={{ rotateY: 90, opacity: 0 }}
                     animate={{ rotateY: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.1 }}
+                    transition={{ delay: i * 0.05 }}
                     onClick={() => toggleHold(i)}
-                    className={`w-24 h-36 md:w-32 md:h-48 rounded-2xl bg-zinc-900 border-2 transition-all cursor-pointer relative flex flex-col items-center justify-center shadow-2xl ${card.held ? 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'border-white/10'}`}
+                    className={`w-full aspect-[2/3] max-w-[120px] rounded-xl bg-zinc-900 border-2 transition-all cursor-pointer relative flex flex-col items-center justify-center shadow-2xl overflow-hidden p-2 ${card.held ? 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'border-white/10'}`}
                   >
                     {card.held && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-zinc-950 text-[10px] font-black px-3 py-1 rounded-full z-20">
+                      <div className="absolute top-1 left-1/2 -translate-x-1/2 bg-amber-500 text-zinc-950 text-[8px] font-black px-2 py-0.5 rounded-full z-20">
                         HELD
                       </div>
                     )}
-                    <div className="absolute top-3 left-3 flex flex-col items-center">
-                      <span className={`text-lg font-black ${card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-rose-500' : 'text-zinc-100'}`}>{card.value}</span>
-                      {getSuitIcon(card.suit)}
+                    <div className="absolute top-1.5 left-1.5 flex flex-col items-center leading-none">
+                      <span className={`text-xs sm:text-lg font-black ${card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-rose-500' : 'text-zinc-100'}`}>{card.value}</span>
                     </div>
-                    <div className="text-4xl">{getSuitIcon(card.suit)}</div>
-                    <div className="absolute bottom-3 right-3 rotate-180 flex flex-col items-center">
-                      <span className={`text-lg font-black ${card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-rose-500' : 'text-zinc-100'}`}>{card.value}</span>
-                      {getSuitIcon(card.suit)}
+                    <div className="text-xl sm:text-4xl">{getSuitIcon(card.suit)}</div>
+                    <div className="absolute bottom-1.5 right-1.5 rotate-180 flex flex-col items-center leading-none">
+                      <span className={`text-xs sm:text-lg font-black ${card.suit === 'hearts' || card.suit === 'diamonds' ? 'text-rose-500' : 'text-zinc-100'}`}>{card.value}</span>
                     </div>
                   </motion.div>
                 ))
               )}
             </div>
 
-            <div className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 w-full shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+            <div className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-4 sm:p-8 w-full shadow-2xl flex flex-col lg:flex-row gap-6 items-center">
+              <div className="flex-1 flex flex-col sm:flex-row items-center gap-4 w-full">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
                     <Coins className="w-5 h-5 text-amber-500" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Current Bet</div>
+                    <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">Bet</div>
                     <div className="relative flex items-center">
-                      <span className="absolute left-2 text-sm font-mono font-bold text-zinc-400">$</span>
+                      <span className="absolute left-2 text-xs font-mono font-bold text-zinc-400">$</span>
                       <input 
                         type="number" 
                         value={bet || ''} 
                         onChange={(e) => setBet(Math.max(0, Math.min(balance, Number(e.target.value) || 0)))}
-                        className="w-24 bg-zinc-900/50 border border-white/10 rounded-lg py-1 pl-6 pr-2 text-xl font-black text-white font-mono outline-none focus:border-white/30 transition-colors"
+                        className="w-full sm:w-32 bg-zinc-950 border border-white/10 rounded-lg py-1.5 pl-6 pr-2 text-xl font-black text-white font-mono outline-none focus:border-white/30 transition-colors"
                       />
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-4 gap-1.5 w-full">
                   {[100, 500, 1000, 5000].map(amt => (
                     <button
                       key={amt}
                       onClick={() => { playClick(); setBet(amt); }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${bet === amt ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'}`}
+                      className={`py-2 rounded-lg text-[10px] font-bold transition-all truncate border ${bet === amt ? 'bg-amber-500 text-zinc-950 border-amber-500' : 'bg-zinc-800 text-zinc-400 border-white/5 hover:bg-zinc-700'}`}
                     >
                       ${amt >= 1000 ? (amt/1000) + 'k' : amt}
                     </button>
@@ -266,46 +264,55 @@ export default function Poker({ gameId, title, balance, setBalance, onExit, them
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="w-full lg:w-auto lg:min-w-[200px]">
                 {gameState === 'bet' || gameState === 'result' ? (
                   <button
                     onClick={deal}
                     disabled={balance < bet}
-                    className={`w-full py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg col-span-2 ${
+                    className={`w-full py-4 sm:py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg ${
                       balance < bet 
-                        ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed' 
+                        ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed border border-white/5' 
                         : `bg-gradient-to-r ${themeGradient} text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`
                     }`}
                   >
-                    DEAL HAND
-                    <Zap className="w-6 h-6" />
+                    DEAL
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                 ) : (
                   <button
                     onClick={draw}
-                    className={`w-full py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg col-span-2 bg-gradient-to-r from-emerald-400 to-teal-500 text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`}
+                    className={`w-full py-4 sm:py-5 rounded-2xl font-black text-xl tracking-tighter uppercase transition-all flex items-center justify-center gap-3 shadow-lg bg-gradient-to-r from-emerald-400 to-teal-500 text-zinc-950 hover:scale-[1.02] active:scale-[0.98]`}
                   >
-                    DRAW CARDS
-                    <Sparkles className="w-6 h-6" />
+                    DRAW
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                 )}
               </div>
 
-              <AnimatePresence>
-                {resultMessage && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="mt-6 text-center"
-                  >
-                    <div className={`text-2xl font-black tracking-tighter uppercase ${lastWin! > 0 ? 'text-amber-500' : 'text-zinc-500'}`}>
-                      {resultMessage}
-                      {lastWin! > 0 && <span className="block text-sm font-mono mt-1">WON ${lastWin?.toLocaleString()} CHIPS</span>}
-                    </div>
-                  </motion.div>
+              <div className="w-full lg:w-48 flex flex-col items-center lg:items-end">
+                <AnimatePresence mode="wait">
+                  {resultMessage && (
+                    <motion.div
+                      key={resultMessage}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-center lg:text-right"
+                    >
+                      <div className={`text-sm sm:text-lg font-black tracking-tighter uppercase leading-none ${lastWin! > 0 ? 'text-amber-500 font-glow' : 'text-zinc-500'}`}>
+                        {resultMessage}
+                      </div>
+                      {lastWin! > 0 && <span className="block text-[10px] font-mono mt-1 text-zinc-400 tracking-tighter uppercase">Win: ${lastWin?.toLocaleString()}</span>}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                {!resultMessage && (
+                  <div className="flex flex-col items-center lg:items-end">
+                    <span className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Total Balance</span>
+                    <span className="text-sm font-black text-white font-mono">${balance.toLocaleString()}</span>
+                  </div>
                 )}
-              </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
