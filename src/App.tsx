@@ -765,7 +765,7 @@ export default function App() {
         collection(db, 'bets'),
         where('uid', '==', user.uid),
         orderBy('date', 'desc'),
-        limit(50)
+        limit(15)
       );
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const history = snapshot.docs.map(doc => ({
@@ -801,6 +801,11 @@ export default function App() {
     return () => unsubscribeWins();
   }, []);
 
+  const showChatRef = useRef(showChat);
+  useEffect(() => {
+    showChatRef.current = showChat;
+  }, [showChat]);
+
   // Real-time listener for friends and requests
   useEffect(() => {
     if (user) {
@@ -829,7 +834,7 @@ export default function App() {
         // Find latest unread message notification and show toast
         const latest = notices[0];
         if (latest && !latest.read && Date.now() - latest.timestamp < 5000) {
-          if (latest.type === 'message' && (!showChat.isOpen || showChat.friendId !== latest.fromUid)) {
+          if (latest.type === 'message' && (!showChatRef.current.isOpen || showChatRef.current.friendId !== latest.fromUid)) {
             setRewardMessage(`New DM from ${latest.fromName}`);
             setTimeout(() => setRewardMessage(''), 4000);
           } else if (latest.type === 'friend_accepted') {
@@ -844,7 +849,7 @@ export default function App() {
 
       return () => { unsubRequests(); unsubFriends(); unsubNotifications(); };
     }
-  }, [user, showChat.isOpen]);
+  }, [user]);
 
   const markNotificationsRead = async () => {
     if (!user || unreadNotificationsCount === 0) return;
@@ -1007,14 +1012,13 @@ export default function App() {
 
   const handleSignIn = async () => {
     try {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error: any) {
+      if (error.code === 'auth/popup-blocked') {
         await signInWithRedirect(auth, googleProvider);
       } else {
-        await signInWithPopup(auth, googleProvider);
+        console.error('Sign in error:', error);
       }
-    } catch (error) {
-      console.error('Sign in error:', error);
     }
   };
 
@@ -1068,12 +1072,15 @@ export default function App() {
     const newBet = {
       uid: user.uid,
       playerName, // Helpful for global ticker
+      playerEmail: user.email,
+      userRole: userProfile?.role,
       date: new Date().toISOString(),
       amount,
       winnings,
       game,
       type
     };
+    console.log('Writing new bet:', newBet);
     try {
       await addDoc(collection(db, 'bets'), newBet);
 
@@ -1140,7 +1147,9 @@ export default function App() {
             if (q.rewardType === 'balance') {
                handleSetBalance(b => b + q.rewardAmount);
             } else if (q.rewardType === 'tokens') {
-               setTokens(t => t + q.rewardAmount);
+               handleSetTokens(t => t + q.rewardAmount);
+            } else if (q.rewardType === 'tickets') {
+               handleSetTickets(t => t + q.rewardAmount);
             } else if (q.rewardType === 'xp') {
                // Reward XP
                xpUpdates.xp += q.rewardAmount;
@@ -1268,11 +1277,12 @@ export default function App() {
           const type = promoData.rewardType;
           const updates: any = { redeemedPromos: [...redeemedPromos, code] };
           
-          if (type === 'balance' || type === 'tokens') {
+          if (type === 'balance' || type === 'tokens' || type === 'tickets') {
             const amount = promoData.rewardAmount || 0;
             if (type === 'tokens') handleSetTokens(t => t + amount);
+            else if (type === 'tickets') handleSetTickets(t => t + amount);
             else handleSetBalance(b => b + amount);
-            setRewardMessage(`Redeemed ${code}! +${amount.toLocaleString()} ${type === 'tokens' ? 'Tokens' : 'Chips'}!`);
+            setRewardMessage(`Redeemed ${code}! +${amount.toLocaleString()} ${type === 'tokens' ? 'Tokens' : type === 'tickets' ? 'Tickets' : 'Chips'}!`);
           } else if (type === 'multiplier' || type === 'no_ads' || type === 'pro_access') {
              const duration = promoData.duration || 60;
              const endTime = Date.now() + duration * 60000;
@@ -1676,9 +1686,18 @@ export default function App() {
 
   useEffect(() => {
     if (showAdminPanel && adminTab === 'live') {
-      const currentQuery = query(collection(db, 'bets'), orderBy('date', 'desc'), limit(50));
+      const currentQuery = query(collection(db, 'bets'), orderBy('date', 'desc'), limit(25));
       const unsubscribe = onSnapshot(currentQuery, (snapshot) => {
-        const bets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const bets = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                playerName: data.playerName || 'Guest',
+                playerEmail: data.playerEmail || '',
+                userRole: data.userRole || 'user',
+                ...data
+            };
+        });
         setLiveBetsFeed(bets);
       }, (error) => {
         console.log('Skipping live bets error, wait for DB index', error);
@@ -4400,7 +4419,7 @@ export default function App() {
                                   <div className="flex flex-col">
                                     <div className="text-sm font-bold text-zinc-100">{bet.game}</div>
                                     <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-                                      Player: {bet.playerName || 'Guest'}
+                                      Player: {bet.playerName || 'Guest'} {bet.playerEmail ? `(${bet.playerEmail})` : ''}
                                       {(bet.userRole === 'admin' || bet.playerEmail === 'purepro4561@gmail.com') && <ShieldCheck className="w-2.5 h-2.5 text-amber-500" />}
                                     </div>
                                   </div>
